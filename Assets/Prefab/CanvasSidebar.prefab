@@ -780,6 +780,7 @@ GameObject:
   - component: {fileID: 6006832964171798532}
   - component: {fileID: 4969753929483605740}
   - component: {fileID: 352825399323006324}
+  - component: {fileID: 1970302219690758860}
   m_Layer: 5
   m_Name: leaderboard
   m_TagString: Untagged
@@ -829,7 +830,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -889,7 +890,33 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4969753929483605740}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1970302219690758860}
+        m_TargetAssemblyTypeName: SceneLoaderSmart, Assembly-CSharp
+        m_MethodName: GantiScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1970302219690758860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2553424941179722850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fc7e23fe3dfdf4aae2d22264699f70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneAsset: {fileID: 102900000, guid: 97ffa83b13e77cb4692f0020b1a45b88, type: 3}
+  nameScene: Leaderboard
 --- !u!1 &2681428878054766399
 GameObject:
   m_ObjectHideFlags: 0
@@ -966,6 +993,7 @@ GameObject:
   - component: {fileID: 2819237369859799124}
   - component: {fileID: 8136987468908459923}
   - component: {fileID: 1358701475222938780}
+  - component: {fileID: 7983639879906704226}
   m_Layer: 5
   m_Name: Profile
   m_TagString: Untagged
@@ -1015,7 +1043,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1075,7 +1103,33 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8136987468908459923}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7983639879906704226}
+        m_TargetAssemblyTypeName: SceneLoaderSmart, Assembly-CSharp
+        m_MethodName: GantiScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &7983639879906704226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3270319297368931825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fc7e23fe3dfdf4aae2d22264699f70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneAsset: {fileID: 102900000, guid: 3cd85d23832d74d4badda82dc5f4fa58, type: 3}
+  nameScene: Profile
 --- !u!1 &3691792787628506564
 GameObject:
   m_ObjectHideFlags: 0
@@ -1163,6 +1217,7 @@ GameObject:
   - component: {fileID: 3864252108536945687}
   - component: {fileID: 2108122409185428080}
   - component: {fileID: 6863157543143959608}
+  - component: {fileID: 7421253196370050590}
   m_Layer: 5
   m_Name: Dashboard
   m_TagString: Untagged
@@ -1272,7 +1327,33 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2108122409185428080}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7421253196370050590}
+        m_TargetAssemblyTypeName: SceneLoaderSmart, Assembly-CSharp
+        m_MethodName: GantiScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &7421253196370050590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3843178799045633716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fc7e23fe3dfdf4aae2d22264699f70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneAsset: {fileID: 102900000, guid: 305f2fccc381ad740bf24d635b5ac8e4, type: 3}
+  nameScene: Dashboard
 --- !u!1 &4403145166030705376
 GameObject:
   m_ObjectHideFlags: 0
@@ -1739,6 +1820,7 @@ GameObject:
   - component: {fileID: 3142586147801924233}
   - component: {fileID: 1531412704744736909}
   - component: {fileID: 8119291977315518943}
+  - component: {fileID: 3858416696327922426}
   m_Layer: 5
   m_Name: Class
   m_TagString: Untagged
@@ -1788,7 +1870,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 0.9803922, g: 0.9803922, b: 0.9803922, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1848,7 +1930,33 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1531412704744736909}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3858416696327922426}
+        m_TargetAssemblyTypeName: SceneLoaderSmart, Assembly-CSharp
+        m_MethodName: GantiScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &3858416696327922426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5599825396310632023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fc7e23fe3dfdf4aae2d22264699f70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneAsset: {fileID: 102900000, guid: 7f033d84d0c5ec8478c807a4568efb15, type: 3}
+  nameScene: Class
 --- !u!1 &6161648058623344833
 GameObject:
   m_ObjectHideFlags: 0
@@ -2338,6 +2446,7 @@ GameObject:
   - component: {fileID: 3976596933901180886}
   - component: {fileID: 73627099330316562}
   - component: {fileID: 2857138576281340840}
+  - component: {fileID: 3646902167947045673}
   m_Layer: 5
   m_Name: get Help
   m_TagString: Untagged
@@ -2387,7 +2496,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2448,6 +2557,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3646902167947045673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7166876983850639018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fc7e23fe3dfdf4aae2d22264699f70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneAsset: {fileID: 0}
+  nameScene: 
 --- !u!1 &8342477709760170701
 GameObject:
   m_ObjectHideFlags: 0
@@ -2460,6 +2583,7 @@ GameObject:
   - component: {fileID: 2899373911610542622}
   - component: {fileID: 971608963727012447}
   - component: {fileID: 3049146460600423907}
+  - component: {fileID: 4556938854570493991}
   m_Layer: 5
   m_Name: Setting
   m_TagString: Untagged
@@ -2509,7 +2633,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2570,6 +2694,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4556938854570493991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8342477709760170701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fc7e23fe3dfdf4aae2d22264699f70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneAsset: {fileID: 0}
+  nameScene: 
 --- !u!1 &8347508069500628083
 GameObject:
   m_ObjectHideFlags: 0
