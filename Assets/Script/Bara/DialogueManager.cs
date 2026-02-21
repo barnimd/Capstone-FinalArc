@@ -1,5 +1,6 @@
+using System.Collections; // Wajib ditambahkan untuk menggunakan Coroutine
 using UnityEngine;
-using TMPro; // Wajib ditambahkan untuk menggunakan TextMeshPro
+using TMPro;
 using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
@@ -15,9 +16,20 @@ public class DialogueManager : MonoBehaviour
     public TextMeshProUGUI acceptButtonText;
     public TextMeshProUGUI rejectButtonText;
 
+    [Header("Pengaturan Efek Mengetik")]
+    public float typingSpeed = 0.04f; // Kecepatan ngetik per huruf
+    public float skipDelay = 1.5f;    // Waktu tunggu sebelum teks boleh di-skip
+
     // Variabel internal
     private DialogueData currentDialogue;
     private int currentLineIndex = 0;
+    private float nextClickTime = 0f;
+
+    // Variabel baru untuk efek ngetik
+    private bool isTyping = false;
+    private Coroutine typingCoroutine;
+    private string currentSentence;
+    private float lineStartTime; // Mencatat kapan baris teks mulai diketik
 
     [Header("Data Skor Sementara")]
     public int totalDiterima = 0;
@@ -25,17 +37,14 @@ public class DialogueManager : MonoBehaviour
 
     void Start()
     {
-        // Pastikan panel dialog dan tombol mati saat game baru mulai
         dialoguePanel.SetActive(false);
         acceptButton.gameObject.SetActive(false);
         rejectButton.gameObject.SetActive(false);
 
-        // Memasang fungsi ke tombol agar saat diklik menjalankan void di bawah
         acceptButton.onClick.AddListener(OnAcceptClicked);
         rejectButton.onClick.AddListener(OnRejectClicked);
     }
 
-    // Fungsi utama untuk memulai dialog
     public void StartDialogue(DialogueData data)
     {
         currentDialogue = data;
@@ -46,25 +55,61 @@ public class DialogueManager : MonoBehaviour
         rejectButton.gameObject.SetActive(false);
 
         npcNameText.text = currentDialogue.npcName;
+        nextClickTime = Time.time + 0.2f;
 
         ShowLine();
     }
 
     void ShowLine()
     {
-        // Menampilkan teks sesuai urutan array
-        dialogueText.text = currentDialogue.dialogueLines[currentLineIndex];
+        // Ambil kalimat saat ini
+        currentSentence = currentDialogue.dialogueLines[currentLineIndex];
 
-        // Mengecek apakah ini adalah baris terakhir dari percakapan
+        // Pastikan tombol mati saat sedang ngetik
+        acceptButton.gameObject.SetActive(false);
+        rejectButton.gameObject.SetActive(false);
+
+        // Hentikan coroutine sebelumnya jika ada, lalu mulai yang baru
+        if (typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+        }
+        typingCoroutine = StartCoroutine(TypeSentence(currentSentence));
+    }
+
+    // Fungsi Coroutine untuk mengetik per huruf
+    IEnumerator TypeSentence(string sentence)
+    {
+        isTyping = true;
+        dialogueText.text = ""; // Kosongkan teks dulu
+        lineStartTime = Time.time; // Catat waktu mulai ngetik
+
+        // Looping untuk memasukkan huruf satu per satu
+        foreach (char letter in sentence.ToCharArray())
+        {
+            dialogueText.text += letter;
+            yield return new WaitForSeconds(typingSpeed); // Jeda antar huruf
+        }
+
+        // Kalau sudah selesai ngetik semua huruf secara natural
+        FinishTyping();
+    }
+
+    // Fungsi untuk menyelesaikan ketikan (dipanggil saat selesai natural atau di-skip)
+    void FinishTyping()
+    {
+        isTyping = false;
+        dialogueText.text = currentSentence; // Pastikan teks tampil utuh
+
+        // Mengecek apakah ini baris terakhir
         if (currentLineIndex == currentDialogue.dialogueLines.Length - 1)
         {
-            // Jika ini baris terakhir dan NPC meminta sesuatu (hasChoice = true)
+            // Jika baris terakhir dan butuh pilihan
             if (currentDialogue.hasChoice)
             {
                 acceptButton.gameObject.SetActive(true);
                 rejectButton.gameObject.SetActive(true);
 
-                // Ubah teks di tombol sesuai data
                 acceptButtonText.text = currentDialogue.acceptText;
                 rejectButtonText.text = currentDialogue.rejectText;
             }
@@ -73,12 +118,32 @@ public class DialogueManager : MonoBehaviour
 
     void Update()
     {
-        // Jika panel aktif, tombol pilihan belum muncul, dan player klik kiri/spasi
+        // Cek input jika panel aktif dan tombol belum muncul
         if (dialoguePanel.activeInHierarchy && !acceptButton.gameObject.activeInHierarchy)
         {
             if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
             {
-                NextLine();
+                if (Time.time < nextClickTime) return;
+
+                if (isTyping)
+                {
+                    // Sedang ngetik: Cek apakah sudah lewat 1.5 detik sejak mulai ngetik
+                    if (Time.time >= lineStartTime + skipDelay)
+                    {
+                        // Hentikan efek ngetik dan langsung tampilkan teks utuh
+                        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+                        FinishTyping();
+
+                        // Beri jeda sedikit agar klik ini tidak terhitung sebagai klik "NextLine"
+                        nextClickTime = Time.time + 0.5f;
+                    }
+                }
+                else
+                {
+                    // Tidak sedang ngetik (teks sudah utuh): Lanjut ke baris berikutnya
+                    NextLine();
+                    nextClickTime = Time.time + 0.5f;
+                }
             }
         }
     }
@@ -89,44 +154,30 @@ public class DialogueManager : MonoBehaviour
 
         if (currentLineIndex < currentDialogue.dialogueLines.Length)
         {
-            ShowLine(); // Lanjut ke kalimat berikutnya
+            ShowLine();
         }
         else
         {
-            EndDialogue(); // Percakapan biasa selesai (tidak ada pilihan)
+            EndDialogue();
         }
     }
 
-    // Dipanggil saat tombol "Terima" ditekan
     public void OnAcceptClicked()
     {
         totalDiterima++;
         Debug.Log("Pilihan: Terima. ActionID: " + currentDialogue.actionID + " | Total Diterima: " + totalDiterima);
 
-        if (currentDialogue.dialogueIfAccepted != null)
-        {
-            StartDialogue(currentDialogue.dialogueIfAccepted); // Langsung lanjut ke dialog respon
-        }
-        else
-        {
-            EndDialogue();
-        }
+        if (currentDialogue.dialogueIfAccepted != null) StartDialogue(currentDialogue.dialogueIfAccepted);
+        else EndDialogue();
     }
 
-    // Dipanggil saat tombol "Tolak" ditekan
     public void OnRejectClicked()
     {
         totalDitolak++;
         Debug.Log("Pilihan: Tolak. ActionID: " + currentDialogue.actionID + " | Total Ditolak: " + totalDitolak);
 
-        if (currentDialogue.dialogueIfRejected != null)
-        {
-            StartDialogue(currentDialogue.dialogueIfRejected); // Langsung lanjut ke dialog respon
-        }
-        else
-        {
-            EndDialogue();
-        }
+        if (currentDialogue.dialogueIfRejected != null) StartDialogue(currentDialogue.dialogueIfRejected);
+        else EndDialogue();
     }
 
     void EndDialogue()
