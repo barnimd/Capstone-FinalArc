@@ -10,15 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f87b3fa8f64f1764a9eaedc08366706a, type: 3}
-  m_Name: Dialouge 1
+  m_Name: Dialog_Reaksi_Setuju
   m_EditorClassIdentifier: 
   npcName: Bujang
   dialogueLines:
-  - eh si bro, gmn hasil meeting kmrn? lancar aman jaya kan
-  - btw gw denger  kmrn lu dpt data client kita kan, bagi dong gw mau liat juga
-  hasChoice: 1
-  acceptText: Boleh nih liat aja
+  - Anjay, thanks bro
+  hasChoice: 0
+  acceptText: Ya
   rejectText: Nu'uh
-  dialogueIfAccepted: {fileID: 11400000, guid: ffd2ae9e118d24846aa45a15d926b71a, type: 2}
-  dialogueIfRejected: {fileID: 11400000, guid: 83dde1e71b263774fa28d41a75d62f92, type: 2}
+  dialogueIfAccepted: {fileID: 0}
+  dialogueIfRejected: {fileID: 0}
   actionID: Bujang
