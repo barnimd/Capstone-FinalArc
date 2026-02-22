@@ -4,26 +4,36 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-
     private Animator anim;
     private Rigidbody2D rb;
+
     public float speed = 5f;
-    private float jumpForce = 3f;
-    
+    private float jumpForce = 8f;
+
     private float xInput;
 
     private bool isGrounded;
     private bool facingRight = true;
 
+    // ⭐ ADD THIS
+    public bool movementLocked = false;
+
     private void Awake()
     {
-        rb= GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<Animator>();
     }
 
-
     private void Update()
     {
+        // ⭐ BLOCK CONTROL WHEN LOCKED
+        if (movementLocked)
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+            HandleAnimations();
+            return;
+        }
+
         HandleInput();
         HandleMovement();
         HandleAnimations();
@@ -38,8 +48,6 @@ public class PlayerMovement : MonoBehaviour
             Jump();
     }
 
-
-
     private void HandleMovement()
     {
         rb.velocity = new Vector2(xInput * speed, rb.velocity.y);
@@ -51,11 +59,9 @@ public class PlayerMovement : MonoBehaviour
         isGrounded = false;
     }
 
-
     private void HandleAnimations()
     {
         bool isMoving = rb.velocity.x != 0;
-
         anim.SetBool("isMoving", isMoving);
     }
 
@@ -67,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
             flip();
     }
 
-    private void  flip()
+    private void flip()
     {
         transform.Rotate(0f, 180f, 0f);
         facingRight = !facingRight;
@@ -76,18 +82,12 @@ public class PlayerMovement : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
-        {
             isGrounded = true;
-        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
-        {
             isGrounded = false;
-        }
     }
-
-
 }
