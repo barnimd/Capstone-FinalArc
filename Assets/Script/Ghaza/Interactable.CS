@@ -3,7 +3,12 @@ using UnityEngine;
 public class Interactable : MonoBehaviour
 {
     public GameObject interactPrompt;
-    public GameObject dialoguePanel;
+
+    [Header("Data Dialog NPC Ini")]
+    public DialogueData dataDialogAwal;
+
+    [Header("Referensi ke Manager")]
+    public DialogueManager manager;
 
     private bool playerNearby = false;
     private PlayerMovement playerMovement;
@@ -11,7 +16,6 @@ public class Interactable : MonoBehaviour
     void Start()
     {
         interactPrompt.SetActive(false);
-        dialoguePanel.SetActive(false);
     }
 
     void Update()
@@ -21,27 +25,27 @@ public class Interactable : MonoBehaviour
             Debug.Log("Interaction triggered");
             OpenDialogue();
         }
-
-        // ⭐ ESC CLOSE SUPPORT
-        if (dialoguePanel.activeSelf && Input.GetKeyDown(KeyCode.Escape))
-        {
-            CloseDialogue();
-        }
     }
 
-    void OpenDialogue()
+        void OpenDialogue()
     {
-        dialoguePanel.SetActive(true);
+        if (manager != null && dataDialogAwal != null)
+        {
+            manager.StartDialogue(dataDialogAwal);
+        }
+        else
+        {
+            Debug.LogWarning("Manager atau Data Dialog belum dimasukkan ke Inspector NPC!");
+        }
+
         interactPrompt.SetActive(false);
 
         if (playerMovement != null)
             playerMovement.movementLocked = true;
     }
 
-    void CloseDialogue()
+    public void CloseDialogue()
     {
-        dialoguePanel.SetActive(false);
-
         if (playerMovement != null)
             playerMovement.movementLocked = false;
     }

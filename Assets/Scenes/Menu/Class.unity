@@ -1069,6 +1069,7 @@ GameObject:
   - component: {fileID: 422634969}
   - component: {fileID: 422634968}
   - component: {fileID: 422634967}
+  - component: {fileID: 422634970}
   m_Layer: 5
   m_Name: Class 1
   m_TagString: Untagged
@@ -1139,7 +1140,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 422634968}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 422634970}
+        m_TargetAssemblyTypeName: SceneLoaderSmart, Assembly-CSharp
+        m_MethodName: GantiScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &422634968
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1178,6 +1191,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 422634965}
   m_CullTransparentMesh: 1
+--- !u!114 &422634970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 422634965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fc7e23fe3dfdf4aae2d22264699f70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneAsset: {fileID: 102900000, guid: 1f19e2c3f65ad7e48bd3e4bef9740462, type: 3}
+  nameScene: Office_Level1_Prototype1
 --- !u!1 &426989544
 GameObject:
   m_ObjectHideFlags: 0
@@ -2285,7 +2312,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1347933632}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.707563
+  m_Size: 0.7075629
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

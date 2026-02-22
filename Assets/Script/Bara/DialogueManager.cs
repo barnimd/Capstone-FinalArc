@@ -20,10 +20,14 @@ public class DialogueManager : MonoBehaviour
     public float typingSpeed = 0.04f; // Kecepatan ngetik per huruf
     public float skipDelay = 1.5f;    // Waktu tunggu sebelum teks boleh di-skip
 
+    [Header("connect 2 sript")]
+    public Interactable bagi;
+
     // Variabel internal
     private DialogueData currentDialogue;
     private int currentLineIndex = 0;
     private float nextClickTime = 0f;
+    private PlayerMovement playerMovement;
 
     // Variabel baru untuk efek ngetik
     private bool isTyping = false;
@@ -47,6 +51,9 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue(DialogueData data)
     {
+        if (playerMovement != null)
+            playerMovement.movementLocked = true;
+
         currentDialogue = data;
         currentLineIndex = 0;
 
@@ -56,7 +63,6 @@ public class DialogueManager : MonoBehaviour
 
         npcNameText.text = currentDialogue.npcName;
         nextClickTime = Time.time + 0.2f;
-
         ShowLine();
     }
 
@@ -182,7 +188,11 @@ public class DialogueManager : MonoBehaviour
 
     void EndDialogue()
     {
+        if(bagi != null)
+        {
+            bagi.CloseDialogue();
+        }
         dialoguePanel.SetActive(false);
-        currentDialogue = null;
+        currentDialogue = null;        
     }
 }
