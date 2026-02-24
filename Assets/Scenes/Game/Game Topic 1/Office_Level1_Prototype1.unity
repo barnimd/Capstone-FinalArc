@@ -2054,11 +2054,7 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
-<<<<<<< HEAD
---- !u!1 &157739033
-=======
 --- !u!1 &140436970
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2066,47 +2062,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-<<<<<<< HEAD
-  - component: {fileID: 157739035}
-  - component: {fileID: 157739036}
-  m_Layer: 0
-  m_Name: BorderLevel
-=======
   - component: {fileID: 140436973}
   - component: {fileID: 140436972}
   - component: {fileID: 140436971}
   m_Layer: 5
   m_Name: StatusText
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
-<<<<<<< HEAD
---- !u!4 &157739035
-Transform:
-=======
 --- !u!114 &140436971
 MonoBehaviour:
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-<<<<<<< HEAD
-  m_GameObject: {fileID: 157739033}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.35, y: 8.441996, z: 2154.8147}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!60 &157739036
-PolygonCollider2D:
-=======
   m_GameObject: {fileID: 140436970}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -2219,57 +2190,10 @@ RectTransform:
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &171104892
 GameObject:
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-<<<<<<< HEAD
-  m_GameObject: {fileID: 157739033}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: -0.08281374, y: 10.689213}
-      - {x: -14.284077, y: 10.536519}
-      - {x: -14.707538, y: -13.438121}
-      - {x: 14.003623, y: -13.520934}
-      - {x: 13.621568, y: 10.702148}
-  m_UseDelaunayMesh: 0
-=======
   serializedVersion: 6
   m_Component:
   - component: {fileID: 171104896}
@@ -2732,7 +2656,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 246386532}
   m_CullTransparentMesh: 1
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
 --- !u!1 &289094037
 GameObject:
   m_ObjectHideFlags: 0
@@ -16724,7 +16647,6 @@ GameObject:
   - component: {fileID: 1684847432}
   - component: {fileID: 1684847431}
   - component: {fileID: 1684847434}
-  - component: {fileID: 1684847435}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -16773,7 +16695,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 40
+  field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -16800,7 +16722,7 @@ Transform:
   m_GameObject: {fileID: 1684847430}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.3199997, y: -1.0200001, z: -10}
+  m_LocalPosition: {x: 4, y: 11.7, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -16813,7 +16735,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1684847430}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d09b1ac794f0963488ca8cf9683139df, type: 3}
   m_Name: 
@@ -16822,83 +16744,25 @@ MonoBehaviour:
   smoothSpeed: 5
   minBounds: {x: -8, y: -5}
   maxBounds: {x: 8, y: 15}
-<<<<<<< HEAD
---- !u!114 &1684847435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1684847430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ShowDebugText: 0
-  m_ShowCameraFrustum: 1
-  m_IgnoreTimeScale: 0
-  m_WorldUpOverride: {fileID: 0}
-  m_UpdateMethod: 2
-  m_BlendUpdateMethod: 1
-  m_DefaultBlend:
-    m_Style: 1
-    m_Time: 2
-    m_CustomCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  m_CustomBlends: {fileID: 0}
-  m_CameraCutEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_CameraActivatedEvent:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!1 &1773698455
-GameObject:
-  m_ObjectHideFlags: 3
-=======
 --- !u!1 &1732508303
 GameObject:
   m_ObjectHideFlags: 0
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-<<<<<<< HEAD
-  - component: {fileID: 1773698456}
-  - component: {fileID: 1773698458}
-  - component: {fileID: 1773698457}
-  m_Layer: 0
-  m_Name: cm
-=======
   - component: {fileID: 1732508307}
   - component: {fileID: 1732508306}
   - component: {fileID: 1732508305}
   - component: {fileID: 1732508304}
   m_Layer: 5
   m_Name: CancelButton
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
-<<<<<<< HEAD
---- !u!4 &1773698456
-Transform:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773698455}
-  serializedVersion: 2
-=======
 --- !u!114 &1732508304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17000,71 +16864,10 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1732508303}
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-<<<<<<< HEAD
-  m_Children: []
-  m_Father: {fileID: 2043006623}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1773698457
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773698455}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ad980451443d70438faac0bc6c235a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: 0, y: 0, z: 0}
-  m_LookaheadTime: 0
-  m_LookaheadSmoothing: 0
-  m_LookaheadIgnoreY: 0
-  m_XDamping: 1
-  m_YDamping: 1
-  m_ZDamping: 1
-  m_TargetMovementOnly: 1
-  m_ScreenX: 0.5
-  m_ScreenY: 0.5
-  m_CameraDistance: 10
-  m_DeadZoneWidth: 0
-  m_DeadZoneHeight: 0
-  m_DeadZoneDepth: 0
-  m_UnlimitedSoftZone: 0
-  m_SoftZoneWidth: 0.8
-  m_SoftZoneHeight: 0.8
-  m_BiasX: 0
-  m_BiasY: 0
-  m_CenterOnActivate: 1
-  m_GroupFramingMode: 2
-  m_AdjustmentMode: 0
-  m_GroupFramingSize: 0.8
-  m_MaxDollyIn: 5000
-  m_MaxDollyOut: 5000
-  m_MinimumDistance: 1
-  m_MaximumDistance: 5000
-  m_MinimumFOV: 3
-  m_MaximumFOV: 60
-  m_MinimumOrthoSize: 1
-  m_MaximumOrthoSize: 5000
---- !u!114 &1773698458
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773698455}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-=======
   m_Children:
   - {fileID: 2125054301}
   m_Father: {fileID: 944599201}
@@ -17074,7 +16877,6 @@ MonoBehaviour:
   m_AnchoredPosition: {x: 44.8, y: -33.1}
   m_SizeDelta: {x: 60, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
 --- !u!1 &1823023753
 GameObject:
   m_ObjectHideFlags: 0
@@ -17858,9 +17660,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2234631924457425669, guid: a0bcd0dfbf75be445bebaa2ba9211a64, type: 3}
   m_PrefabInstance: {fileID: 6295106019039986930}
   m_PrefabAsset: {fileID: 0}
-<<<<<<< HEAD
---- !u!1 &2043006620
-=======
 --- !u!114 &2017184332 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4297719241355978573, guid: a0bcd0dfbf75be445bebaa2ba9211a64, type: 3}
@@ -17873,7 +17672,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2023583440
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -17881,102 +17679,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-<<<<<<< HEAD
-  - component: {fileID: 2043006623}
-  - component: {fileID: 2043006622}
-  - component: {fileID: 2043006621}
-  m_Layer: 0
-  m_Name: Cam1
-=======
   - component: {fileID: 2023583441}
   - component: {fileID: 2023583443}
   - component: {fileID: 2023583442}
   m_Layer: 5
   m_Name: TitleContent
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
-<<<<<<< HEAD
---- !u!114 &2043006621
-MonoBehaviour:
-=======
 --- !u!224 &2023583441
 RectTransform:
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-<<<<<<< HEAD
-  m_GameObject: {fileID: 2043006620}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f453f694addf4275988fac205bc91968, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BoundingShape2D: {fileID: 157739036}
-  m_Damping: 1
-  m_MaxWindowSize: -1
-  m_Padding: 0
---- !u!114 &2043006622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2043006620}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45e653bab7fb20e499bda25e1b646fea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ExcludedPropertiesInInspector:
-  - m_Script
-  m_LockStageInInspector: 
-  m_StreamingVersion: 20170927
-  m_Priority: 10
-  m_StandbyUpdate: 2
-  m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 2017184330}
-  m_Lens:
-    FieldOfView: 40
-    OrthographicSize: 5
-    NearClipPlane: 0.3
-    FarClipPlane: 1000
-    Dutch: 0
-    ModeOverride: 0
-    LensShift: {x: 0, y: 0}
-    GateFit: 2
-    FocusDistance: 10
-    m_SensorSize: {x: 1, y: 1}
-  m_Transitions:
-    m_BlendHint: 0
-    m_InheritPosition: 0
-    m_OnCameraLive:
-      m_PersistentCalls:
-        m_Calls: []
-  m_LegacyBlendHint: 0
-  m_ComponentOwner: {fileID: 1773698456}
---- !u!4 &2043006623
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2043006620}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.3199997, y: -1.0200001, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1773698456}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-=======
   m_GameObject: {fileID: 2023583440}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -18221,7 +17939,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2044302356}
   m_CullTransparentMesh: 1
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
 --- !u!1 &2058119212
 GameObject:
   m_ObjectHideFlags: 0
@@ -18866,13 +18583,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6846841630640341308, guid: a0bcd0dfbf75be445bebaa2ba9211a64, type: 3}
+      propertyPath: jumpForce
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 8244959394893355657, guid: a0bcd0dfbf75be445bebaa2ba9211a64, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.16
+      value: -5.91
       objectReference: {fileID: 0}
     - target: {fileID: 8244959394893355657, guid: a0bcd0dfbf75be445bebaa2ba9211a64, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.21
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 8244959394893355657, guid: a0bcd0dfbf75be445bebaa2ba9211a64, type: 3}
       propertyPath: m_LocalPosition.z
@@ -19038,10 +18759,5 @@ SceneRoots:
   - {fileID: 312733772}
   - {fileID: 599362417}
   - {fileID: 1853066106}
-<<<<<<< HEAD
-  - {fileID: 157739035}
-  - {fileID: 2043006623}
-=======
   - {fileID: 7800724425479531936}
   - {fileID: 171104896}
->>>>>>> parent of 171332f (Revert "Update scaling of ComputerInteraction")
