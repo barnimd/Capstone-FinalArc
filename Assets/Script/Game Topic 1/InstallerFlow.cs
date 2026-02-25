@@ -6,6 +6,7 @@ using TMPro;
 
 public class InstallerFlow : MonoBehaviour
 {
+    public GameObject desktopCanvas;
     public GameObject confirmPopup;
     public GameObject progressPanel;
     public GameObject securityPopup;
@@ -73,6 +74,7 @@ public class InstallerFlow : MonoBehaviour
     {
         if (confirmationPanel != null)
             confirmationPanel.SetActive(true);
+
     }
 
     // Tombol Back, hanya menutup panel
@@ -90,7 +92,8 @@ public class InstallerFlow : MonoBehaviour
 
         confirmationPanel.SetActive(false);
         confirmPopup.SetActive(false);
-        
+        desktopCanvas.SetActive(false);
+
         // Update score
         score += 10;
         Debug.Log("Instalasi dibatalkan. Semua popup ditutup. Score: " + score);
@@ -99,5 +102,6 @@ public class InstallerFlow : MonoBehaviour
     public void CloseSecurityPopup()
     {
         securityPopup.SetActive(false);
+        desktopCanvas.SetActive(false);
     }
 }

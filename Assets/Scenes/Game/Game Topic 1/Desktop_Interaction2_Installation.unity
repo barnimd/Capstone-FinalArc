@@ -1155,7 +1155,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1962586008}
         m_TargetAssemblyTypeName: GameFlowManager, Assembly-CSharp
-        m_MethodName: CloseAllPanels
+        m_MethodName: CloseSecurityPopup
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1791,7 +1791,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &458011340
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5755,6 +5755,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50de45413cd674a4baea7ced3b3dc442, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  desktopCanvas: {fileID: 739159984}
   ChatPanel: {fileID: 1519548922}
   AttachFilePanel: {fileID: 1784125715}
   ConfirmationPanel: {fileID: 1173157972}

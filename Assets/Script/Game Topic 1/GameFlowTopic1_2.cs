@@ -6,6 +6,7 @@ using System.Collections;
 public class GameFlowManager : MonoBehaviour
 {
     [Header("Panels")]
+    public GameObject desktopCanvas;
     public GameObject ChatPanel;
     public GameObject AttachFilePanel;
     public GameObject ConfirmationPanel;
@@ -41,6 +42,7 @@ public class GameFlowManager : MonoBehaviour
     public void CancelAttach()
     {
         CloseAllPanels();
+        desktopCanvas.SetActive(false);
     }
 
     // =============================
@@ -55,6 +57,7 @@ public class GameFlowManager : MonoBehaviour
     public void CancelConfirmation()
     {
         CloseAllPanels();
+        desktopCanvas.SetActive(false);
     }
 
     public void ConfirmSend()
@@ -86,6 +89,11 @@ public class GameFlowManager : MonoBehaviour
         SecurityAlertPanel.SetActive(true);
     }
 
+    public void CloseSecurityPopup()
+    {
+        SecurityAlertPanel.SetActive(false);
+        desktopCanvas.SetActive(false);
+    }
     // =============================
     // CLOSE ALL
     // =============================
