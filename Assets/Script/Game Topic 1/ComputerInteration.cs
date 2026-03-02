@@ -26,7 +26,6 @@ public class InteractOpenDesktop : MonoBehaviour
         if (canInteract && Input.GetKeyDown(KeyCode.E) && !desktopOpen)
         {
             desktopCanvas.SetActive(true);
-            playerMovement.enabled = false; // MATIKAN GERAK
             desktopOpen = true;
         }
     }
