@@ -7,10 +7,11 @@ public class InteractOpenDesktop : MonoBehaviour
 {
     public GameObject desktopCanvas;
     public GameObject interactText;
-    public MonoBehaviour playerMovement;
+    public MonoBehaviour playerMovement; // Legacy field kept for backward compat
 
     private bool canInteract = false;
     private bool desktopOpen = false;
+    private PlayerMovement playerMov;
 
     void Start()
     {
@@ -27,7 +28,31 @@ public class InteractOpenDesktop : MonoBehaviour
         {
             desktopCanvas.SetActive(true);
             desktopOpen = true;
+
+            // Freeze player movement while desktop is open
+            if (playerMov != null)
+                playerMov.movementLocked = true;
         }
+
+        // Allow closing desktop with Escape key
+        if (desktopOpen && Input.GetKeyDown(KeyCode.Escape))
+        {
+            CloseDesktop();
+        }
+    }
+
+    /// <summary>
+    /// Public method to close desktop (can be called from UI buttons too)
+    /// </summary>
+    public void CloseDesktop()
+    {
+        if (desktopCanvas != null)
+            desktopCanvas.SetActive(false);
+
+        desktopOpen = false;
+
+        if (playerMov != null)
+            playerMov.movementLocked = false;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -35,6 +60,7 @@ public class InteractOpenDesktop : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             canInteract = true;
+            playerMov = other.GetComponent<PlayerMovement>();
 
             if (interactText != null)
                 interactText.SetActive(true);
@@ -47,8 +73,13 @@ public class InteractOpenDesktop : MonoBehaviour
         {
             canInteract = false;
 
+            // Auto-close desktop if player walks away
+            if (desktopOpen)
+                CloseDesktop();
+
             if (interactText != null)
                 interactText.SetActive(false);
         }
     }
 }
+

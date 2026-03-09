@@ -20,14 +20,23 @@ public class DialogueManager : MonoBehaviour
     public float typingSpeed = 0.04f; // Kecepatan ngetik per huruf
     public float skipDelay = 1.5f;    // Waktu tunggu sebelum teks boleh di-skip
 
-    [Header("connect 2 sript")]
+    [Header("Legacy Interactable (backward compat)")]
     public Interactable bagi;
+
+    [Header("Scoring")]
+    [Tooltip("Score added when player accepts (e.g. -10 for penalty)")]
+    public int acceptScore = 0;
+    [Tooltip("Score added when player rejects (e.g. +10 for safe choice)")]
+    public int rejectScore = 0;
 
     // Variabel internal
     private DialogueData currentDialogue;
     private int currentLineIndex = 0;
     private float nextClickTime = 0f;
     private PlayerMovement playerMovement;
+
+    // Reference to the active NPCBubbleInteractable for callback
+    private NPCBubbleInteractable activeNPCInteractable;
 
     // Variabel baru untuk efek ngetik
     private bool isTyping = false;
@@ -49,8 +58,29 @@ public class DialogueManager : MonoBehaviour
         rejectButton.onClick.AddListener(OnRejectClicked);
     }
 
+    /// <summary>
+    /// Called by NPCBubbleInteractable to register itself before starting dialogue.
+    /// This way DialogueManager can call back OnDialogueEnd() when done.
+    /// </summary>
+    public void SetActiveInteractable(NPCBubbleInteractable npc)
+    {
+        activeNPCInteractable = npc;
+    }
+
     public void StartDialogue(DialogueData data)
     {
+        if (playerMovement != null)
+            playerMovement.movementLocked = true;
+
+        // Find player if we haven't yet
+        if (playerMovement == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+                playerMovement = player.GetComponent<PlayerMovement>();
+        }
+
+        // Lock movement
         if (playerMovement != null)
             playerMovement.movementLocked = true;
 
@@ -173,6 +203,10 @@ public class DialogueManager : MonoBehaviour
         totalDiterima++;
         Debug.Log("Pilihan: Terima. ActionID: " + currentDialogue.actionID + " | Total Diterima: " + totalDiterima);
 
+        // Apply score via ScoreManager if available
+        if (ScoreManager.instance != null && acceptScore != 0)
+            ScoreManager.instance.AddScore(acceptScore);
+
         if (currentDialogue.dialogueIfAccepted != null) StartDialogue(currentDialogue.dialogueIfAccepted);
         else EndDialogue();
     }
@@ -182,17 +216,34 @@ public class DialogueManager : MonoBehaviour
         totalDitolak++;
         Debug.Log("Pilihan: Tolak. ActionID: " + currentDialogue.actionID + " | Total Ditolak: " + totalDitolak);
 
+        // Apply score via ScoreManager if available
+        if (ScoreManager.instance != null && rejectScore != 0)
+            ScoreManager.instance.AddScore(rejectScore);
+
         if (currentDialogue.dialogueIfRejected != null) StartDialogue(currentDialogue.dialogueIfRejected);
         else EndDialogue();
     }
 
     void EndDialogue()
     {
-        if(bagi != null)
+        // Legacy callback for old Interactable system
+        if (bagi != null)
         {
             bagi.CloseDialogue();
         }
+
+        // New callback for NPCBubbleInteractable system
+        if (activeNPCInteractable != null)
+        {
+            activeNPCInteractable.OnDialogueEnd();
+            activeNPCInteractable = null;
+        }
+
+        // Unlock player movement
+        if (playerMovement != null)
+            playerMovement.movementLocked = false;
+
         dialoguePanel.SetActive(false);
-        currentDialogue = null;        
+        currentDialogue = null;
     }
 }

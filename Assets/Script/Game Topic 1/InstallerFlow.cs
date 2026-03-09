@@ -14,6 +14,7 @@ public class InstallerFlow : MonoBehaviour
     public Slider progressBar;
     public TMP_Text statusText;
 
+    [System.Obsolete("Use ScoreManager.instance instead")]
     public int score = 0;
 
     // Tambahan untuk konfirmasi cancel
@@ -63,8 +64,9 @@ public class InstallerFlow : MonoBehaviour
 
         progressPanel.SetActive(false);
 
-        score -= 10;
-        Debug.Log("Data Bocor! Score: " + score);
+        if (ScoreManager.instance != null)
+            ScoreManager.instance.AddScore(-10);
+        Debug.Log("Data Bocor! Score: " + (ScoreManager.instance != null ? ScoreManager.instance.score : score));
 
         securityPopup.SetActive(true);
     }
@@ -95,8 +97,9 @@ public class InstallerFlow : MonoBehaviour
         desktopCanvas.SetActive(false);
 
         // Update score
-        score += 10;
-        Debug.Log("Instalasi dibatalkan. Semua popup ditutup. Score: " + score);
+        if (ScoreManager.instance != null)
+            ScoreManager.instance.AddScore(10);
+        Debug.Log("Instalasi dibatalkan. Semua popup ditutup. Score: " + (ScoreManager.instance != null ? ScoreManager.instance.score : score));
     }
 
     public void CloseSecurityPopup()
