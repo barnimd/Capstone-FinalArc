@@ -175,6 +175,109 @@ public class FirebaseManager : MonoBehaviour
         localId = ExtractJsonField(json, "localId");
     }
 
+    public void SignUpWithEmail(string email, string password, string username, Action<bool> callback)
+    {
+        StartCoroutine(SignUpWithEmailCoroutine(email, password, username, callback));
+    }
+
+    private IEnumerator SignUpWithEmailCoroutine(string email, string password, string username, Action<bool> callback)
+    {
+        string url  = authBase + "/accounts:signUp?key=" + apiKey;
+        string body = "{\"email\":\"" + email + "\",\"password\":\"" + password + "\",\"returnSecureToken\":true}";
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
+            request.uploadHandler   = new UploadHandlerRaw(bodyBytes);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogWarning("[FirebaseManager] SignUpWithEmail failed: " + request.downloadHandler.text);
+                callback?.Invoke(false);
+                yield break;
+            }
+
+            ParseAuthResponse(request.downloadHandler.text);
+        }
+
+        // Auth succeeded — save username to Firestore
+        SaveUsername(localId, username, callback);
+    }
+
+    public void SaveUsername(string userId, string username, Action<bool> callback)
+    {
+        StartCoroutine(SaveUsernameCoroutine(userId, username, callback));
+    }
+
+    private IEnumerator SaveUsernameCoroutine(string userId, string username, Action<bool> callback)
+    {
+        string url       = firestoreBase + "/players/" + userId;
+        string createdAt = DateTime.UtcNow.ToString("o");
+        string body =
+            "{\"fields\":{" +
+                "\"username\":{\"stringValue\":\"" + username + "\"}," +
+                "\"createdAt\":{\"stringValue\":\"" + createdAt + "\"}" +
+            "}}";
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "PATCH"))
+        {
+            byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
+            request.uploadHandler   = new UploadHandlerRaw(bodyBytes);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            if (!string.IsNullOrEmpty(idToken))
+                request.SetRequestHeader("Authorization", "Bearer " + idToken);
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                callback?.Invoke(true);
+            }
+            else
+            {
+                Debug.LogWarning("[FirebaseManager] SaveUsername failed: " + request.downloadHandler.text);
+                callback?.Invoke(false);
+            }
+        }
+    }
+
+    public void GetUsername(string userId, Action<string> callback)
+    {
+        StartCoroutine(GetUsernameCoroutine(userId, callback));
+    }
+
+    private IEnumerator GetUsernameCoroutine(string userId, Action<string> callback)
+    {
+        string url = firestoreBase + "/players/" + userId;
+
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            if (!string.IsNullOrEmpty(idToken))
+                request.SetRequestHeader("Authorization", "Bearer " + idToken);
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogWarning("[FirebaseManager] GetUsername failed: " + request.downloadHandler.text);
+                callback?.Invoke(null);
+                yield break;
+            }
+
+            int fieldsIndex = request.downloadHandler.text.IndexOf("\"fields\"", StringComparison.Ordinal);
+            string username = fieldsIndex >= 0
+                ? ExtractFirestoreString(request.downloadHandler.text, fieldsIndex, "username")
+                : "";
+
+            callback?.Invoke(username);
+        }
+    }
+
     public IEnumerator SignUp(string email, string password, Action<bool, string> callback)
     {
         string url  = $"{authBase}/accounts:signUp?key={apiKey}";
