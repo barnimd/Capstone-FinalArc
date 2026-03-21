@@ -2,6 +2,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Events;
 
 namespace GameTopic2
 {
@@ -24,7 +25,7 @@ namespace GameTopic2
         public GameObject tooltipNoCaps;
 
         [Header("Renewal UI")]
-        [Tooltip("The button the player clicks to confirm their new password. Only enabled when password is Strong.")]
+        [Tooltip("The button the player clicks to confirm their new password. Enabled as long as it's not empty.")]
         public Button renewButton;
 
         [Tooltip("Optional text showing the old/expired password hint (e.g. 'Your password has expired')")]
@@ -33,6 +34,16 @@ namespace GameTopic2
         [Header("Manager Reference")]
         [Tooltip("Reference to the desktop manager to notify when renewal is complete")]
         public Topic2_DesktopManager desktopManager;
+
+        [Header("Animation Sequences")]
+        [Tooltip("Fired when the password is Strong, or Medium with MFA (Success)")]
+        public UnityEvent onSuccessSequence;
+        
+        [Tooltip("Fired when the password is Medium with no MFA, or Weak with MFA (Bruteforce)")]
+        public UnityEvent onBruteforceSequence;
+        
+        [Tooltip("Fired when the password is Weak with no MFA (Instant Hack)")]
+        public UnityEvent onInstantHackSequence;
 
         /// <summary>
         /// Current password strength classification.
@@ -142,10 +153,10 @@ namespace GameTopic2
                 tooltipNoCaps.SetActive(!hasCapitals && password.Length > 0 && CurrentStrength != PasswordStrength.Strong);
             }
 
-            // Enable renew button only when password is Strong
+            // Enable renew button only when password is not empty
             if (renewButton != null)
             {
-                renewButton.interactable = (CurrentStrength == PasswordStrength.Strong);
+                renewButton.interactable = !string.IsNullOrEmpty(password);
             }
         }
 
@@ -174,27 +185,63 @@ namespace GameTopic2
 
         /// <summary>
         /// Called when the player clicks the "Renew Password" button.
-        /// Only possible when CurrentStrength is Strong.
-        /// Notifies the desktop manager that password renewal is complete.
+        /// Evaluates strength + MFA state to determine which outcome sequence to trigger.
         /// </summary>
         public void OnRenewClicked()
         {
-            if (CurrentStrength != PasswordStrength.Strong)
+            string passwordText = passwordInput != null ? passwordInput.text : "";
+            
+            if (string.IsNullOrEmpty(passwordText))
             {
-                Debug.LogWarning("PasswordValidator: Renew clicked but password is not Strong");
+                Debug.LogWarning("PasswordValidator: Renew clicked but password is empty.");
                 return;
             }
 
-            Debug.Log("PasswordValidator: Password renewed successfully");
+            Debug.Log($"PasswordValidator: Password renewed. Strength: {CurrentStrength}");
 
-            // Notify the desktop manager
+            // Notify the desktop manager with both string and strength (optional)
             if (desktopManager != null)
             {
-                desktopManager.OnPasswordRenewed(CurrentStrength);
+                desktopManager.OnPasswordRenewed(passwordText, CurrentStrength);
             }
             else
             {
-                Debug.LogError("PasswordValidator: desktopManager reference is null");
+                Debug.LogWarning("PasswordValidator: desktopManager reference is not assigned. Skipping manager notification.");
+            }
+
+            // Determine which sequence to play based on Strength and MFA status
+            bool mfaEnabled = desktopManager != null && desktopManager.hasMFAEnabled;
+
+            if (CurrentStrength == PasswordStrength.Strong)
+            {
+                // Strong always succeeds
+                onSuccessSequence?.Invoke();
+            }
+            else if (CurrentStrength == PasswordStrength.Medium)
+            {
+                if (mfaEnabled)
+                {
+                    // Medium + MFA = Success
+                    onSuccessSequence?.Invoke();
+                }
+                else
+                {
+                    // Medium + No MFA = Bruteforce success
+                    onBruteforceSequence?.Invoke();
+                }
+            }
+            else if (CurrentStrength == PasswordStrength.Weak)
+            {
+                if (mfaEnabled)
+                {
+                    // Weak + MFA = Slowed down, but still brute forced
+                    onBruteforceSequence?.Invoke();
+                }
+                else
+                {
+                    // Weak + No MFA = Instant hack
+                    onInstantHackSequence?.Invoke();
+                }
             }
         }
 
