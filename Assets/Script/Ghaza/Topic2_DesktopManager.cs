@@ -23,6 +23,9 @@ namespace GameTopic2
         [Tooltip("Set to true after the player completes the one-time password renewal")]
         public bool hasRenewedPassword = false;
 
+        [Tooltip("The actual text of the renewed password")]
+        public string renewedPassword = "";
+
         [Tooltip("Set to true after the player activates MFA on their account")]
         public bool hasMFAEnabled = false;
 
@@ -91,10 +94,12 @@ namespace GameTopic2
         /// one-time password renewal. Records the chosen password strength
         /// for the brute force simulation later.
         /// </summary>
+        /// <param name="password">The text of the renewed password</param>
         /// <param name="strength">The strength of the renewed password</param>
-        public void OnPasswordRenewed(PasswordStrength strength)
+        public void OnPasswordRenewed(string password, PasswordStrength strength)
         {
             hasRenewedPassword = true;
+            renewedPassword = password;
             renewedPasswordStrength = strength;
 
             onPasswordRenewed?.Invoke();
