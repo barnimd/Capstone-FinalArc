@@ -6,13 +6,26 @@ using TMPro;
 
 public class AuthUIManager : MonoBehaviour
 {
-    public static AuthUIManager Instance { get; private set; }
+    private static AuthUIManager _instance;
+    public static AuthUIManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                var go = new GameObject("AuthUIManager");
+                _instance = go.AddComponent<AuthUIManager>();
+                DontDestroyOnLoad(go);
+            }
+            return _instance;
+        }
+    }
 
     // ─── Scene Constants ─────────────────────────────────────────────────────
 
     public static readonly string SCENE_LOGIN  = "LoginScene";
     public static readonly string SCENE_SIGNUP = "SignUpScene";
-    public static readonly string SCENE_GAME   = "MainGame";
+    public static readonly string SCENE_GAME   = "Dashboard";
 
     // ─── Inspector References ─────────────────────────────────────────────────
 
@@ -41,12 +54,12 @@ public class AuthUIManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (_instance != null && _instance != this)
         {
             Destroy(gameObject);
             return;
         }
-        Instance = this;
+        _instance = this;
         DontDestroyOnLoad(gameObject);
 
         // Ensure overlay starts invisible and non-blocking
