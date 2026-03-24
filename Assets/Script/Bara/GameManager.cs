@@ -12,6 +12,8 @@ public class GameplayManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI timeText;
 
+    public GameObject canvasInstructor;
+
     // Variabel internal
     private Vector3 lastPlayerPosition;
     private bool isTimerRunning = false;
@@ -72,5 +74,11 @@ public class GameplayManager : MonoBehaviour
 
         // {0:00} memastikan formatnya selalu dua digit (contoh: 05:09)
         timeText.text = "Waktu Penyelesaian: " + string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    public void CloseCanvas() { 
+       
+        canvasInstructor.SetActive(false);
+
     }
 }
