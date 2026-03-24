@@ -35,21 +35,43 @@ namespace GameTopic2
         [Tooltip("Reference to the desktop manager to notify when renewal is complete")]
         public Topic2_DesktopManager desktopManager;
 
+        [Header("MFA Choice Panel")]
+        [Tooltip("Panel shown after clicking Renew — asks player whether to enable MFA before evaluating outcome")]
+        public GameObject mfaChoicePanel;
+
         [Header("Animation Sequences")]
         [Tooltip("Fired when the password is Strong, or Medium with MFA (Success)")]
         public UnityEvent onSuccessSequence;
-        
+
         [Tooltip("Fired when the password is Medium with no MFA, or Weak with MFA (Bruteforce)")]
         public UnityEvent onBruteforceSequence;
-        
+
         [Tooltip("Fired when the password is Weak with no MFA (Instant Hack)")]
         public UnityEvent onInstantHackSequence;
+
+        [Header("Scoring")]
+        [Tooltip("Score awarded for a Strong password")]
+        public int scoreStrong = 50;
+        [Tooltip("Score awarded for a Medium password")]
+        public int scoreMedium = 25;
+        [Tooltip("Score awarded for a Weak password")]
+        public int scoreWeak = 10;
+        [Tooltip("Bonus score awarded when MFA is successfully activated")]
+        public int scoreMFABonus = 50;
+        [Tooltip("Optional: TMP_Text to display the final score on screen")]
+        public TMP_Text scoreDisplayText;
 
         /// <summary>
         /// Current password strength classification.
         /// Updated on every password input change.
         /// </summary>
         public PasswordStrength CurrentStrength { get; private set; }
+
+        /// <summary>
+        /// Final score calculated after the player completes the flow.
+        /// Password score (10/25/50) + MFA bonus (0/50).
+        /// </summary>
+        public int FinalScore { get; private set; }
 
         /// <summary>
         /// Initialize component and subscribe to password input events.
@@ -171,8 +193,8 @@ namespace GameTopic2
                 return 0f;
             }
 
-            // Length contributes up to 0.5 (maxes out at 12 chars)
-            float lengthScore = Mathf.Clamp01(password.Length / 12f) * 0.5f;
+            // Length contributes up to 0.5 (maxes out at 8 chars)
+            float lengthScore = Mathf.Clamp01(password.Length / 8f) * 0.5f;
 
             // Complexity contributes up to 0.5 (each criterion = ~0.167)
             float complexityScore = 0f;
@@ -185,23 +207,50 @@ namespace GameTopic2
 
         /// <summary>
         /// Called when the player clicks the "Renew Password" button.
-        /// Evaluates strength + MFA state to determine which outcome sequence to trigger.
+        /// Caches the current password strength, then opens the MFA choice panel
+        /// instead of immediately triggering an outcome.
         /// </summary>
         public void OnRenewClicked()
         {
             string passwordText = passwordInput != null ? passwordInput.text : "";
-            
+
             if (string.IsNullOrEmpty(passwordText))
             {
                 Debug.LogWarning("PasswordValidator: Renew clicked but password is empty.");
                 return;
             }
 
-            Debug.Log($"PasswordValidator: Password renewed. Strength: {CurrentStrength}");
+            // Cache strength now — will be used once player makes the MFA choice
+            CurrentStrength = EvaluatePassword(passwordText);
+            Debug.Log($"PasswordValidator: Password evaluated. Strength: {CurrentStrength}. Awaiting MFA choice.");
 
-            // Notify the desktop manager with both string and strength (optional)
+            if (mfaChoicePanel != null)
+            {
+                mfaChoicePanel.SetActive(true);
+            }
+            else
+            {
+                Debug.LogWarning("PasswordValidator: mfaChoicePanel not assigned. Falling back to no-MFA outcome.");
+                TriggerOutcome(false);
+            }
+        }
+
+        /// <summary>
+        /// Called by the "Aktifkan MFA" and "Lewati" buttons inside the MFA choice panel.
+        /// Closes the panel, notifies the manager, and triggers the correct outcome animation.
+        /// </summary>
+        /// <param name="enableMFA">True if the player chose to enable MFA, false otherwise.</param>
+        public void OnMFAChosen(bool enableMFA)
+        {
+            if (mfaChoicePanel != null)
+                mfaChoicePanel.SetActive(false);
+
+            string passwordText = passwordInput != null ? passwordInput.text : "";
+
+            // Update MFA state on manager before notifying renewal
             if (desktopManager != null)
             {
+                desktopManager.hasMFAEnabled = enableMFA;
                 desktopManager.OnPasswordRenewed(passwordText, CurrentStrength);
             }
             else
@@ -209,9 +258,27 @@ namespace GameTopic2
                 Debug.LogWarning("PasswordValidator: desktopManager reference is not assigned. Skipping manager notification.");
             }
 
-            // Determine which sequence to play based on Strength and MFA status
-            bool mfaEnabled = desktopManager != null && desktopManager.hasMFAEnabled;
+            TriggerOutcome(enableMFA);
+        }
 
+        /// <summary>
+        /// Fires the correct outcome UnityEvent based on password strength and MFA choice.
+        /// Also calculates and stores the FinalScore.
+        /// </summary>
+        private void TriggerOutcome(bool mfaEnabled)
+        {
+            // ── Scoring ──────────────────────────────────────────────────
+            int passwordScore = CurrentStrength == PasswordStrength.Strong ? scoreStrong :
+                                CurrentStrength == PasswordStrength.Medium ? scoreMedium : scoreWeak;
+            int mfaScore = mfaEnabled ? scoreMFABonus : 0;
+            FinalScore = passwordScore + mfaScore;
+
+            Debug.Log($"PasswordValidator: Final Score = {FinalScore} (Password: {passwordScore}, MFA: {mfaScore})");
+
+            if (scoreDisplayText != null)
+                scoreDisplayText.text = $"Score: {FinalScore}";
+
+            // ── Outcome animation ─────────────────────────────────────────
             if (CurrentStrength == PasswordStrength.Strong)
             {
                 // Strong always succeeds
@@ -220,43 +287,27 @@ namespace GameTopic2
             else if (CurrentStrength == PasswordStrength.Medium)
             {
                 if (mfaEnabled)
-                {
-                    // Medium + MFA = Success
-                    onSuccessSequence?.Invoke();
-                }
+                    onSuccessSequence?.Invoke();       // Medium + MFA = Success
                 else
-                {
-                    // Medium + No MFA = Bruteforce success
-                    onBruteforceSequence?.Invoke();
-                }
+                    onBruteforceSequence?.Invoke();    // Medium + No MFA = Bruteforce
             }
             else if (CurrentStrength == PasswordStrength.Weak)
             {
                 if (mfaEnabled)
-                {
-                    // Weak + MFA = Slowed down, but still brute forced
-                    onBruteforceSequence?.Invoke();
-                }
+                    onBruteforceSequence?.Invoke();    // Weak + MFA = Bruteforce
                 else
-                {
-                    // Weak + No MFA = Instant hack
-                    onInstantHackSequence?.Invoke();
-                }
+                    onInstantHackSequence?.Invoke();   // Weak + No MFA = Instant hack
             }
         }
 
         /// <summary>
         /// Evaluates password strength based on length and complexity criteria.
         /// 
-        /// 🔴 Weak: password is too short (under 8 chars) or has zero complexity
-        ///    - Empty or less than 5 chars = always Weak
-        ///    - 5-7 chars with no numbers, no symbols, no capitals = Weak
-        ///    - Under 8 chars regardless = Weak
-        /// 
-        /// 🟢 Strong: 12+ chars AND has numbers AND symbols AND capitals
-        /// 
-        /// 🟡 Medium: everything in between (8-11 chars with some complexity,
-        ///    or 12+ chars missing one or more criteria)
+        /// 🔴 Weak: kurang dari 6 karakter ATAU tidak ada complexity sama sekali
+        ///
+        /// 🟢 Strong: 8+ karakter AND ada angka AND ada simbol AND ada huruf besar
+        ///
+        /// 🟡 Medium: antara Weak dan Strong (6+ karakter dengan sebagian criteria)
         /// </summary>
         /// <param name="password">Password string to evaluate</param>
         /// <returns>PasswordStrength classification (Weak, Medium, or Strong)</returns>
@@ -278,19 +329,19 @@ namespace GameTopic2
             if (hasSymbols) complexityCount++;
             if (hasCapitals) complexityCount++;
 
-            // Strong: 12+ chars with all three complexity criteria
-            if (length >= 12 && hasNumbers && hasSymbols && hasCapitals)
+            // Strong: 8+ chars with all three complexity criteria
+            if (length >= 8 && hasNumbers && hasSymbols && hasCapitals)
             {
                 return PasswordStrength.Strong;
             }
 
             // Weak: too short or no complexity at all
-            if (length < 8 || complexityCount == 0)
+            if (length < 6 || complexityCount == 0)
             {
                 return PasswordStrength.Weak;
             }
 
-            // Medium: 8+ chars with at least some complexity (but not Strong)
+            // Medium: 6+ chars with at least some complexity (but not Strong)
             return PasswordStrength.Medium;
         }
     }
