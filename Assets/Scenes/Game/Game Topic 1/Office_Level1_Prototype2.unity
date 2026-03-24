@@ -2517,6 +2517,11 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
+--- !u!1 &174177127 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5409479713633745855, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+  m_PrefabInstance: {fileID: 312733772}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &178180438
 GameObject:
   m_ObjectHideFlags: 0
@@ -3880,6 +3885,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 829224864007642310, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -48
+      objectReference: {fileID: 0}
     - target: {fileID: 3621894167517056473, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -3960,12 +3969,68 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4787754482634145770, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4863880720639456251, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_margin.w
+      value: -66.258156
+      objectReference: {fileID: 0}
+    - target: {fileID: 4863880720639456251, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_margin.x
+      value: -125.12233
+      objectReference: {fileID: 0}
+    - target: {fileID: 4863880720639456251, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_margin.z
+      value: -134.72595
+      objectReference: {fileID: 0}
     - target: {fileID: 5409479713633745855, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
       propertyPath: m_Name
       value: CanvasSummaryPanel
       objectReference: {fileID: 0}
     - target: {fileID: 5409479713633745855, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8390182075060593370, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_margin.w
+      value: -47.879784
+      objectReference: {fileID: 0}
+    - target: {fileID: 8390182075060593370, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_margin.x
+      value: -116.3138
+      objectReference: {fileID: 0}
+    - target: {fileID: 8390182075060593370, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_margin.z
+      value: -134.81335
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657939355153898354, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657939355153898354, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657939355153898354, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657939355153898354, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657939355153898354, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657939355153898354, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8657939355153898354, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -6043,7 +6108,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1000041697}
         m_TargetAssemblyTypeName: GameFlowManager, Assembly-CSharp
-        m_MethodName: CloseSecurityPopup
+        m_MethodName: OpenUIWithTransition
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8045,7 +8110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6839622, g: 0.76418376, b: 1, a: 0.95686275}
+  m_Color: {r: 0.6839622, g: 0.76418376, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9113,7 +9178,7 @@ GameObject:
   - component: {fileID: 1000041698}
   - component: {fileID: 1000041697}
   m_Layer: 0
-  m_Name: GameManager_2
+  m_Name: GameManager chat desktop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9139,6 +9204,11 @@ MonoBehaviour:
   SecurityAlertPanel: {fileID: 1726559997}
   progressBar: {fileID: 403300560}
   statusText: {fileID: 401436826}
+  mainCanvas: {fileID: 174177127}
+  blackBackground: {fileID: 1196782393}
+  contentPanel: {fileID: 312733775}
+  fadeDuration: 1.2
+  gameManager: {fileID: 309491451}
 --- !u!4 &1000041698
 Transform:
   m_ObjectHideFlags: 0
@@ -10643,6 +10713,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1196782393 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 782199522741841264, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+  m_PrefabInstance: {fileID: 312733772}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1203384316
 GameObject:
   m_ObjectHideFlags: 0
@@ -10724,7 +10805,7 @@ GameObject:
   - component: {fileID: 1207122232}
   - component: {fileID: 1207122231}
   m_Layer: 5
-  m_Name: DesktopCanvas
+  m_Name: DesktopCanvas-Installdatasyn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22265,7 +22346,7 @@ Transform:
   m_GameObject: {fileID: 1684847430}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.8154864, y: -0.20159006, z: -10}
+  m_LocalPosition: {x: -3.812896, y: -0.20159996, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -23267,7 +23348,7 @@ GameObject:
   - component: {fileID: 1878552519}
   - component: {fileID: 1878552518}
   m_Layer: 5
-  m_Name: DesktopCanvas_2
+  m_Name: DesktopCanvas-chatdesktop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24304,6 +24385,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CanvasClue
       objectReference: {fileID: 0}
+    - target: {fileID: 1693029653513539982, guid: 860263dd0ecb7e04d969ce7c32becba4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5656725995888289933, guid: 860263dd0ecb7e04d969ce7c32becba4, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -24328,10 +24413,12 @@ SceneRoots:
   - {fileID: 1414622424}
   - {fileID: 312733772}
   - {fileID: 599362417}
+  - {fileID: 1000041698}
   - {fileID: 1853066106}
   - {fileID: 7800724425479531936}
   - {fileID: 1152462124}
   - {fileID: 1207122234}
+  - {fileID: 1878552521}
   - {fileID: 1350695800}
   - {fileID: 1826064025}
   - {fileID: 1527223725}
@@ -24353,5 +24440,3 @@ SceneRoots:
   - {fileID: 966130099}
   - {fileID: 1072252656}
   - {fileID: 1141895470}
-  - {fileID: 1000041698}
-  - {fileID: 1878552521}

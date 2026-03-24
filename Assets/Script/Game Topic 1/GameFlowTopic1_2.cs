@@ -17,9 +17,59 @@ public class GameFlowManager : MonoBehaviour
     public Slider progressBar;
     public TMP_Text statusText;
 
+    public GameObject mainCanvas;      // Tarik Canvas kamu ke sini
+    public Image blackBackground;      // Tarik Image Background Hitam ke sini
+    public GameObject contentPanel;
+    public float fadeDuration = 1.2f;
+    public GameplayManager gameManager;
     void Start()
     {
         CloseAllPanels();
+
+        mainCanvas.SetActive(false);
+        contentPanel.SetActive(false);
+
+        Color c = blackBackground.color;
+        c.a = 0f;
+        blackBackground.color = c;
+
+    }
+
+    public void OpenUIWithTransition()
+    {
+        StartCoroutine(ExecuteTransition());
+    }
+
+    IEnumerator ExecuteTransition()
+    {
+        // 1. Aktifkan Canvas terlebih dahulu
+        mainCanvas.SetActive(true);
+
+        // 2. Transisi Background Hitam (0f ke 255f / 1.0f)
+        float elapsedTime = 0f;
+        Color tempColor = blackBackground.color;
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+
+            // Lerp dari 0f (Transparan) ke 1f (Hitam Pekat)
+            float alpha = Mathf.Lerp(0f, 1f, elapsedTime / fadeDuration);
+
+            tempColor.a = alpha;
+            blackBackground.color = tempColor;
+
+            yield return null; // Tunggu frame berikutnya
+        }
+
+        // Pastikan alpha benar-benar 1 (255f) di akhir
+        tempColor.a = 1f;
+        blackBackground.color = tempColor;
+
+        // 3. Setelah Fade-In selesai, Munculkan Konten Utama
+        contentPanel.SetActive(true);
+        gameManager.FinishGame();
+        Debug.Log("Transition Complete: Canvas Active -> BG Faded -> Content Shown");
     }
 
     // =============================

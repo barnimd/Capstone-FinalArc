@@ -61,9 +61,6 @@ public class GameplayManager : MonoBehaviour
         isGameFinished = true;
         isTimerRunning = false;
 
-        // Munculkan panel
-        summaryPanel.SetActive(true);
-
         // Ambil data skor "Terima/Ya" dari DialogueManager
         int skorYa = dialogueManager.totalDiterima;
         scoreText.text = "Keputusan 'Ya' yang dipilih: " + skorYa;
