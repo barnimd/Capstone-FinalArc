@@ -229,7 +229,7 @@ GameObject:
   - component: {fileID: 114767994}
   - component: {fileID: 114767993}
   m_Layer: 5
-  m_Name: Class 1 (3)
+  m_Name: Class 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -828,7 +828,7 @@ GameObject:
   - component: {fileID: 412184957}
   - component: {fileID: 412184956}
   m_Layer: 5
-  m_Name: Class 1 (5)
+  m_Name: Class 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -949,7 +949,7 @@ GameObject:
   - component: {fileID: 421067125}
   - component: {fileID: 421067124}
   m_Layer: 5
-  m_Name: Class 1 (4)
+  m_Name: Class 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1173,8 +1173,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 1302a6d597ca56d42bca7209d86b48ac, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1203,8 +1203,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36fc7e23fe3dfdf4aae2d22264699f70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneAsset: {fileID: 102900000, guid: 1f19e2c3f65ad7e48bd3e4bef9740462, type: 3}
-  nameScene: Office_Level1_Prototype1
+  sceneAsset: {fileID: 102900000, guid: 94f01757694519944b6cfae63d08fb32, type: 3}
+  nameScene: Office_Level1_Prototype2
 --- !u!1 &426989544
 GameObject:
   m_ObjectHideFlags: 0
@@ -1725,7 +1725,7 @@ GameObject:
   - component: {fileID: 883972323}
   - component: {fileID: 883972322}
   m_Layer: 5
-  m_Name: Class 1 (6)
+  m_Name: Class 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1846,7 +1846,7 @@ GameObject:
   - component: {fileID: 972784949}
   - component: {fileID: 972784948}
   m_Layer: 5
-  m_Name: Class 1 (2)
+  m_Name: Class 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1915,7 +1915,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 972784949}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 972784946}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &972784949
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2368,7 +2380,7 @@ GameObject:
   - component: {fileID: 1213111500}
   - component: {fileID: 1213111499}
   m_Layer: 5
-  m_Name: Class 1 (7)
+  m_Name: Class 8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2884,7 +2896,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -65}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1489829173
@@ -2907,7 +2919,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: Kata Sandi yang Kuat
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3312,8 +3324,9 @@ GameObject:
   - component: {fileID: 1743217377}
   - component: {fileID: 1743217376}
   - component: {fileID: 1743217375}
+  - component: {fileID: 1743217378}
   m_Layer: 5
-  m_Name: Class 1 (1)
+  m_Name: Class 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3382,7 +3395,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1743217376}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1743217378}
+        m_TargetAssemblyTypeName: SceneLoaderSmart, Assembly-CSharp
+        m_MethodName: GantiScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1743217376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3403,8 +3428,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 374f9108899e59e42a5e716d444590fc, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3421,6 +3446,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1743217373}
   m_CullTransparentMesh: 1
+--- !u!114 &1743217378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1743217373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36fc7e23fe3dfdf4aae2d22264699f70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneAsset: {fileID: 102900000, guid: eb77fd6b7c884fa4ca2ec2d422e720cb, type: 3}
+  nameScene: Office_Environment
 --- !u!1 &1931600970
 GameObject:
   m_ObjectHideFlags: 0
@@ -3434,7 +3473,7 @@ GameObject:
   - component: {fileID: 1931600973}
   - component: {fileID: 1931600972}
   m_Layer: 5
-  m_Name: Class 1 (8)
+  m_Name: Class 9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3576,7 +3615,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -79}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2007252149
@@ -3599,7 +3638,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: Privasi & Penanganan Data
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
