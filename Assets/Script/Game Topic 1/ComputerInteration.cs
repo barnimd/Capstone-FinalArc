@@ -9,6 +9,9 @@ public class InteractOpenDesktop : MonoBehaviour
     public GameObject interactText;
     public MonoBehaviour playerMovement; // Legacy field kept for backward compat
 
+    [Tooltip("If true, player cannot open this desktop by pressing E — must be unlocked via NPC dialogue (activateOnAccept)")]
+    public bool requiresNPCUnlock = false;
+
     private bool canInteract = false;
     private bool desktopOpen = false;
     private PlayerMovement playerMov;
@@ -24,7 +27,7 @@ public class InteractOpenDesktop : MonoBehaviour
 
     void Update()
     {
-        if (canInteract && Input.GetKeyDown(KeyCode.E) && !desktopOpen)
+        if (canInteract && Input.GetKeyDown(KeyCode.E) && !desktopOpen && !requiresNPCUnlock)
         {
             desktopCanvas.SetActive(true);
             desktopOpen = true;

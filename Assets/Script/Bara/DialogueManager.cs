@@ -204,8 +204,21 @@ public class DialogueManager : MonoBehaviour
         Debug.Log("Pilihan: Terima. ActionID: " + currentDialogue.actionID + " | Total Diterima: " + totalDiterima);
 
         // Apply score via ScoreManager if available
-        if (ScoreManager.instance != null && acceptScore != 0)
-            ScoreManager.instance.AddScore(acceptScore);
+        if (ScoreManager.instance != null)
+        {
+            if (acceptScore != 0)
+                ScoreManager.instance.AddScore(acceptScore);
+            else
+                Debug.LogWarning("[DialogueManager] acceptScore is 0 — set it in the Inspector on the DialogueManager component (e.g. -50).");
+        }
+        else
+        {
+            Debug.LogWarning("[DialogueManager] ScoreManager not found in scene!");
+        }
+
+        // Notify the active NPC that the player accepted (e.g. activates desktop canvas)
+        if (activeNPCInteractable != null)
+            activeNPCInteractable.OnDialogueAccepted();
 
         if (currentDialogue.dialogueIfAccepted != null) StartDialogue(currentDialogue.dialogueIfAccepted);
         else EndDialogue();
@@ -219,6 +232,12 @@ public class DialogueManager : MonoBehaviour
         // Apply score via ScoreManager if available
         if (ScoreManager.instance != null && rejectScore != 0)
             ScoreManager.instance.AddScore(rejectScore);
+        else if (ScoreManager.instance == null)
+            Debug.LogWarning("[DialogueManager] ScoreManager not found in scene!");
+
+        // Notify the active NPC that the player rejected
+        if (activeNPCInteractable != null)
+            activeNPCInteractable.OnDialogueRejected();
 
         if (currentDialogue.dialogueIfRejected != null) StartDialogue(currentDialogue.dialogueIfRejected);
         else EndDialogue();

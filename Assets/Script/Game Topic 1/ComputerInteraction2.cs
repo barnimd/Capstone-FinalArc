@@ -31,9 +31,9 @@ public class ComputerInteraction2 : MonoBehaviour
 
     [Header("Scoring")]
     [Tooltip("Penalty for sending the file (bad choice)")]
-    public int sendPenalty = -10;
+    public int sendPenalty = -25;
     [Tooltip("Reward for refusing to send (safe choice)")]
-    public int refuseReward = 10;
+    public int refuseReward = 0;
 
     [Header("Feedback Panels")]
     public GameObject penaltyFeedbackPanel;

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro; // Untuk UI Text
 
 public class GameplayManager : MonoBehaviour
@@ -24,29 +25,22 @@ public class GameplayManager : MonoBehaviour
     {
         summaryPanel.SetActive(false);
 
-        // Simpan posisi awal player saat game mulai
+        // Simpan posisi awal player & langsung mulai timer
         if (playerTransform != null)
         {
             lastPlayerPosition = playerTransform.position;
         }
+
+        // Mulai timer langsung — lebih reliable dari cek movement
+        isTimerRunning = true;
+        Debug.Log("[GameplayManager] Timer dimulai.");
     }
 
     void Update()
     {
         if (isGameFinished) return;
 
-        // 1. Cek apakah waktu belum jalan & player mulai bergerak
-        if (!isTimerRunning && playerTransform != null)
-        {
-            // Jika posisi sekarang beda dengan posisi awal, mulai waktu!
-            if (Vector3.Distance(playerTransform.position, lastPlayerPosition) > 0.01f)
-            {
-                isTimerRunning = true;
-                Debug.Log("Player bergerak! Waktu dimulai.");
-            }
-        }
-
-        // 2. Jika waktu berjalan, tambahkan terus hitungannya
+        // Tambahkan waktu selama timer berjalan
         if (isTimerRunning)
         {
             elapsedTime += Time.deltaTime;
@@ -61,9 +55,18 @@ public class GameplayManager : MonoBehaviour
         isGameFinished = true;
         isTimerRunning = false;
 
-        // Ambil data skor "Terima/Ya" dari DialogueManager
-        int skorYa = dialogueManager.totalDiterima;
-        scoreText.text = "Keputusan 'Ya' yang dipilih: " + skorYa;
+        // Ambil skor gabungan dari ScoreManager
+        ScoreManager sm = ScoreManager.instance != null ? ScoreManager.instance : FindObjectOfType<ScoreManager>();
+        if (sm == null)
+            Debug.LogError("[GameplayManager] ScoreManager NOT FOUND in scene! Add a ScoreManager component to a GameObject.");
+
+        int finalScore = (sm != null) ? sm.score : 0;
+        Debug.Log("[GameplayManager] FinishGame — Final Score = " + finalScore);
+
+        if (scoreText != null)
+            scoreText.text = "Score: " + finalScore;
+        else
+            Debug.LogWarning("[GameplayManager] scoreText (summary panel) not assigned in Inspector!");
 
         // Format waktu ke mm:ss (menit:detik)
         int minutes = Mathf.FloorToInt(elapsedTime / 60f);
@@ -71,11 +74,19 @@ public class GameplayManager : MonoBehaviour
 
         // {0:00} memastikan formatnya selalu dua digit (contoh: 05:09)
         timeText.text = "Waktu Penyelesaian: " + string.Format("{0:00}:{1:00}", minutes, seconds);
+
+        // Tampilkan summary panel
+        summaryPanel.SetActive(true);
     }
 
-    public void CloseCanvas() { 
-       
-        canvasInstructor.SetActive(false);
+    // Dipanggil oleh tombol di summary panel untuk kembali ke Dashboard
+    public void GoToDashboard()
+    {
+        SceneManager.LoadScene("Dashboard");
+    }
 
+    public void CloseCanvas()
+    {
+        canvasInstructor.SetActive(false);
     }
 }

@@ -65,7 +65,7 @@ public class InstallerFlow : MonoBehaviour
         progressPanel.SetActive(false);
 
         if (ScoreManager.instance != null)
-            ScoreManager.instance.AddScore(-10);
+            ScoreManager.instance.AddScore(-25);
         Debug.Log("Data Bocor! Score: " + (ScoreManager.instance != null ? ScoreManager.instance.score : score));
 
         securityPopup.SetActive(true);
@@ -96,9 +96,9 @@ public class InstallerFlow : MonoBehaviour
         confirmPopup.SetActive(false);
         desktopCanvas.SetActive(false);
 
-        // Update score
+        // Update score - cancelling is the safe choice, no penalty
         if (ScoreManager.instance != null)
-            ScoreManager.instance.AddScore(10);
+            ScoreManager.instance.AddScore(0);
         Debug.Log("Instalasi dibatalkan. Semua popup ditutup. Score: " + (ScoreManager.instance != null ? ScoreManager.instance.score : score));
     }
 

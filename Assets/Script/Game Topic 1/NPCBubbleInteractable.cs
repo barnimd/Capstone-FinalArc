@@ -32,6 +32,10 @@ public class NPCBubbleInteractable : MonoBehaviour
     [Tooltip("Optional: NPC to disable after this dialogue ends (e.g., paired NPC)")]
     public NPCBubbleInteractable npcToDisableAfterDialogue;
 
+    [Header("Accept / Reject Actions")]
+    [Tooltip("Optional: GameObject to activate when player chooses Accept/Yes in dialogue")]
+    public GameObject activateOnAccept;
+
     [Header("State")]
     [Tooltip("If false, NPC cannot be interacted with yet")]
     public bool isInteractable = true;
@@ -92,6 +96,23 @@ public class NPCBubbleInteractable : MonoBehaviour
             playerMovement.movementLocked = true;
 
         hasInteracted = true;
+    }
+
+    /// <summary>
+    /// Called by DialogueManager immediately when player clicks Accept/Yes.
+    /// </summary>
+    public void OnDialogueAccepted()
+    {
+        if (activateOnAccept != null)
+            activateOnAccept.SetActive(true);
+    }
+
+    /// <summary>
+    /// Called by DialogueManager immediately when player clicks Reject/No.
+    /// </summary>
+    public void OnDialogueRejected()
+    {
+        // activateOnAccept is NOT activated — desktop stays closed
     }
 
     /// <summary>

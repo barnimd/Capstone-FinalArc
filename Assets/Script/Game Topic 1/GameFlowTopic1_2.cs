@@ -112,6 +112,10 @@ public class GameFlowManager : MonoBehaviour
 
     public void ConfirmSend()
     {
+        // Penalty for accepting to send the file (bad decision)
+        if (ScoreManager.instance != null)
+            ScoreManager.instance.AddScore(-25);
+
         ConfirmationPanel.SetActive(false);
         InstallationPanel.SetActive(true);
         StartCoroutine(SendProgress());

@@ -5,18 +5,22 @@ using UnityEngine.SceneManagement;
 
 public class InstallDecision : MonoBehaviour
 {
-    public int safeScore = 10;
-    public int penaltyScore = -10;
+    public int safeScore = 0;
+    public int penaltyScore = -25;
 
     public void Install()
     {
-        ScoreManager.instance.AddScore(penaltyScore);
+        if (ScoreManager.instance != null)
+            ScoreManager.instance.AddScore(penaltyScore);
+        else
+            Debug.LogWarning("[InstallDecision] ScoreManager not found — score not applied.");
         CloseAll();
     }
 
     public void Cancel()
     {
-        ScoreManager.instance.AddScore(safeScore);
+        if (ScoreManager.instance != null)
+            ScoreManager.instance.AddScore(safeScore);
         CloseAll();
     }
 
