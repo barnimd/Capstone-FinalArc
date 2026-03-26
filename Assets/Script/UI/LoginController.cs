@@ -5,82 +5,74 @@ using TMPro;
 public class LoginController : MonoBehaviour
 {
     // ─── Inspector References ─────────────────────────────────────────────────
+    // These are auto-resolved by name in Awake if not set in the Inspector.
 
-    [Header("Inputs")]
+    [Header("Input")]
     [SerializeField] private TMP_InputField usernameInput;
-    [SerializeField] private TMP_InputField passwordInput;
 
-    [Header("Buttons")]
+    [Header("Button")]
     [SerializeField] private Button loginButton;
-    [SerializeField] private Button goToSignUpButton;
-    [SerializeField] private Button showHidePasswordButton;
 
-    [Header("Password Visibility")]
-    [SerializeField] private Image passwordEyeIcon;
-    [SerializeField] private Sprite eyeOpenSprite;
-    [SerializeField] private Sprite eyeClosedSprite;
-
-    [Header("Feedback")]
+    [Header("Feedback (optional)")]
     [SerializeField] private TextMeshProUGUI errorText;
     [SerializeField] private GameObject loadingSpinner;
 
-    // ─── State ────────────────────────────────────────────────────────────────
-
-    private bool isPasswordVisible = false;
-
     // ─── Lifecycle ────────────────────────────────────────────────────────────
+
+    void Awake()
+    {
+        // Auto-resolve references by GameObject name if not set in Inspector
+        if (usernameInput == null)
+        {
+            GameObject go = GameObject.Find("input username");
+            if (go != null) usernameInput = go.GetComponent<TMP_InputField>();
+        }
+        if (loginButton == null)
+        {
+            GameObject go = GameObject.Find("submit username btn");
+            if (go != null) loginButton = go.GetComponent<Button>();
+        }
+    }
 
     void Start()
     {
-        loginButton.onClick.AddListener(OnLoginClicked);
-        goToSignUpButton.onClick.AddListener(OnGoToSignUpClicked);
-        showHidePasswordButton.onClick.AddListener(TogglePasswordVisibility);
+        if (loginButton != null)
+            loginButton.onClick.AddListener(OnLoginClicked);
 
-        // Start with password hidden
-        passwordInput.contentType = TMP_InputField.ContentType.Password;
-        passwordInput.ForceLabelUpdate();
+        if (errorText != null)
+            errorText.gameObject.SetActive(false);
 
-        if (errorText != null) errorText.gameObject.SetActive(false);
-        if (loadingSpinner != null) loadingSpinner.SetActive(false);
-    }
-
-    // ─── Password Visibility ──────────────────────────────────────────────────
-
-    public void TogglePasswordVisibility()
-    {
-        isPasswordVisible = !isPasswordVisible;
-
-        passwordInput.contentType = isPasswordVisible
-            ? TMP_InputField.ContentType.Standard
-            : TMP_InputField.ContentType.Password;
-
-        passwordInput.ForceLabelUpdate();
-
-        if (passwordEyeIcon != null)
-            passwordEyeIcon.sprite = isPasswordVisible ? eyeOpenSprite : eyeClosedSprite;
+        if (loadingSpinner != null)
+            loadingSpinner.SetActive(false);
     }
 
     // ─── Login ────────────────────────────────────────────────────────────────
 
     public void OnLoginClicked()
     {
-        string username = usernameInput.text.Trim();
-        string password = passwordInput.text;
-
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+        if (usernameInput == null)
         {
-            ShowError("Username dan password tidak boleh kosong");
+            Debug.LogError("[LoginController] usernameInput not found.");
+            return;
+        }
+
+        string username = usernameInput.text.Trim();
+
+        if (string.IsNullOrEmpty(username) || username.Length < 3)
+        {
+            ShowError("Username minimal 3 karakter");
             return;
         }
 
         HideError();
-        AuthUIManager.Instance.ShowLoading(true);
-        FirebaseManager.Instance.SignInWithEmail(username, password, OnLoginResult);
+        SetLoading(true);
+
+        FirebaseManager.Instance.SignInAsGuest(username, OnLoginResult);
     }
 
-    private void OnLoginResult(bool success)
+    private void OnLoginResult(bool success, string errorMessage)
     {
-        AuthUIManager.Instance.ShowLoading(false);
+        SetLoading(false);
 
         if (success)
         {
@@ -88,18 +80,17 @@ public class LoginController : MonoBehaviour
         }
         else
         {
-            AuthUIManager.Instance.ShowError("Username atau password salah");
+            ShowError(errorMessage ?? "Gagal terhubung. Coba lagi.");
         }
     }
 
-    // ─── Navigation ───────────────────────────────────────────────────────────
-
-    public void OnGoToSignUpClicked()
-    {
-        AuthUIManager.Instance.TransitionToScene(AuthUIManager.SCENE_SIGNUP);
-    }
-
     // ─── Helpers ──────────────────────────────────────────────────────────────
+
+    private void SetLoading(bool isLoading)
+    {
+        if (loginButton != null)    loginButton.interactable = !isLoading;
+        if (loadingSpinner != null) loadingSpinner.SetActive(isLoading);
+    }
 
     private void ShowError(string message)
     {

@@ -17,12 +17,14 @@ public class FirebaseManager : MonoBehaviour
 
     private string measurementId = "G-5BHQNWRTMY";
 
-    private string idToken  = "";
-    private string localId  = "";
+    private string idToken   = "";
+    private string localId   = "";
+    private string _username = "";
 
     public bool   IsAuthenticated => !string.IsNullOrEmpty(idToken);
     public string IdToken         => idToken;
     public string LocalId         => localId;
+    public string Username        => _username;
 
     void Awake()
     {
@@ -215,12 +217,14 @@ public class FirebaseManager : MonoBehaviour
 
     private IEnumerator SaveUsernameCoroutine(string userId, string username, Action<bool> callback)
     {
-        string url       = firestoreBase + "/players/" + userId;
-        string createdAt = DateTime.UtcNow.ToString("o");
+        string url         = firestoreBase + "/players/" + userId;
+        string createdAt   = DateTime.UtcNow.ToString("o");
+        string createdDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
         string body =
             "{\"fields\":{" +
                 "\"username\":{\"stringValue\":\"" + username + "\"}," +
-                "\"createdAt\":{\"stringValue\":\"" + createdAt + "\"}" +
+                "\"createdAt\":{\"stringValue\":\"" + createdAt + "\"}," +
+                "\"createdDate\":{\"stringValue\":\"" + createdDate + "\"}" +
             "}}";
 
         using (UnityWebRequest request = new UnityWebRequest(url, "PATCH"))
@@ -292,10 +296,123 @@ public class FirebaseManager : MonoBehaviour
         yield return SendAuthRequest(url, body, callback);
     }
 
+    // ─── Guest Sign-In (anonymous + username) ────────────────────────────────
+
+    /// <summary>
+    /// Signs in anonymously, validates username is unique for today, then saves it.
+    /// Callback: (success, errorMessage). errorMessage is null on success.
+    /// </summary>
+    public void SignInAsGuest(string username, Action<bool, string> callback)
+    {
+        StartCoroutine(SignInAsGuestCoroutine(username, callback));
+    }
+
+    private IEnumerator SignInAsGuestCoroutine(string username, Action<bool, string> callback)
+    {
+        // Step 1: anonymous sign-in to get a token (needed for Firestore query)
+        bool signInDone = false;
+        bool signInOk   = false;
+        SignInAnonymous(result => { signInOk = result; signInDone = true; });
+        yield return new WaitUntil(() => signInDone);
+
+        if (!signInOk)
+        {
+            Debug.LogWarning("[FirebaseManager] SignInAsGuest: anonymous sign-in failed");
+            callback?.Invoke(false, "Gagal terhubung ke server. Coba lagi.");
+            yield break;
+        }
+
+        // Step 2: check username availability for today
+        bool checkDone      = false;
+        bool usernameIsFree = false;
+        CheckUsernameAvailableToday(username, result => { usernameIsFree = result; checkDone = true; });
+        yield return new WaitUntil(() => checkDone);
+
+        if (!usernameIsFree)
+        {
+            Debug.LogWarning("[FirebaseManager] SignInAsGuest: username already taken today — " + username);
+            // clear the anonymous token we just created
+            idToken = "";
+            localId = "";
+            callback?.Invoke(false, "Username sudah dipakai hari ini. Coba username lain.");
+            yield break;
+        }
+
+        // Step 3: save username to Firestore players/{localId}
+        bool saveDone = false;
+        bool saveOk   = false;
+        SaveUsername(localId, username, result => { saveOk = result; saveDone = true; });
+        yield return new WaitUntil(() => saveDone);
+
+        if (!saveOk)
+        {
+            Debug.LogWarning("[FirebaseManager] SignInAsGuest: SaveUsername failed");
+            idToken = "";
+            localId = "";
+            callback?.Invoke(false, "Gagal menyimpan username. Coba lagi.");
+            yield break;
+        }
+
+        _username = username;
+        Debug.Log("[FirebaseManager] SignInAsGuest OK — username: " + username + " | localId: " + localId);
+        callback?.Invoke(true, null);
+    }
+
+    /// <summary>
+    /// Returns true if username is NOT used today (available), false if taken.
+    /// Requires a valid idToken to query Firestore.
+    /// </summary>
+    private void CheckUsernameAvailableToday(string username, Action<bool> callback)
+    {
+        StartCoroutine(CheckUsernameAvailableTodayCoroutine(username, callback));
+    }
+
+    private IEnumerator CheckUsernameAvailableTodayCoroutine(string username, Action<bool> callback)
+    {
+        string today = DateTime.UtcNow.ToString("yyyy-MM-dd");
+        string url   = firestoreBase + ":runQuery";
+        string body  =
+            "{\"structuredQuery\":{" +
+                "\"from\":[{\"collectionId\":\"players\"}]," +
+                "\"where\":{\"compositeFilter\":{\"op\":\"AND\",\"filters\":[" +
+                    "{\"fieldFilter\":{\"field\":{\"fieldPath\":\"username\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"" + username + "\"}}}," +
+                    "{\"fieldFilter\":{\"field\":{\"fieldPath\":\"createdDate\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"" + today + "\"}}}" +
+                "]}}," +
+                "\"limit\":1" +
+            "}}";
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
+            request.uploadHandler   = new UploadHandlerRaw(bodyBytes);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            if (!string.IsNullOrEmpty(idToken))
+                request.SetRequestHeader("Authorization", "Bearer " + idToken);
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogWarning("[FirebaseManager] CheckUsernameAvailableToday query failed: " + request.downloadHandler.text);
+                // On query failure, allow login (fail open — better UX than hard block)
+                callback?.Invoke(true);
+                yield break;
+            }
+
+            // Firestore returns [{document: {...}}] if found, or [{}] if no results
+            string json    = request.downloadHandler.text;
+            bool   hasDoc  = json.Contains("\"document\"");
+            Debug.Log("[FirebaseManager] CheckUsername '" + username + "' today=" + today + " taken=" + hasDoc);
+            callback?.Invoke(!hasDoc); // available = not taken
+        }
+    }
+
     public void SignOut()
     {
-        idToken = "";
-        localId = "";
+        idToken   = "";
+        localId   = "";
+        _username = "";
     }
 
     private IEnumerator SendAuthRequest(string url, string jsonBody, Action<bool, string> callback)
