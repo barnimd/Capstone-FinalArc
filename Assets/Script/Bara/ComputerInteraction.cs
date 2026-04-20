@@ -36,4 +36,15 @@ public class ComputerInteraction : MonoBehaviour
         // TODO: Load computer mini-game scene or open desktop UI here
         Debug.Log("[ComputerInteraction] Fade complete — ready to load next scene or UI.");
     }
+
+    /// <summary>
+    /// Call this when the desktop UI closes to restore Cinemachine player-follow camera.
+    /// </summary>
+    public void OnDesktopClosed()
+    {
+        CameraZoomFade.Instance?.RestoreCinemachine(0.5f, () =>
+        {
+            Debug.Log("[ComputerInteraction] Camera restored to player follow.");
+        });
+    }
 }

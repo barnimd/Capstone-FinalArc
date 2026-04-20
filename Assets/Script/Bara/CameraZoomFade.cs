@@ -2,10 +2,12 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using Cinemachine;
 
 /// <summary>
 /// Zoom camera toward a target and fade to black simultaneously.
 /// Supports both Orthographic (orthographicSize) and Perspective (fieldOfView) cameras.
+/// Disables CinemachineBrain during zoom so Cinemachine doesn't override the movement.
 /// </summary>
 public class CameraZoomFade : MonoBehaviour
 {
@@ -24,11 +26,21 @@ public class CameraZoomFade : MonoBehaviour
     [Tooltip("Fade starts after this fraction of the duration (0 = immediately, 0.5 = halfway through zoom)")]
     [SerializeField][Range(0f, 1f)] private float fadeStartFraction = 0.3f;
 
+    private CinemachineBrain _cinemachineBrain;
+    private float _originalOrthoSize;
+    private float _originalFOV;
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         if (mainCamera == null) mainCamera = Camera.main;
+        if (mainCamera != null)
+        {
+            _cinemachineBrain = mainCamera.GetComponent<CinemachineBrain>();
+            _originalOrthoSize = mainCamera.orthographicSize;
+            _originalFOV = mainCamera.fieldOfView;
+        }
         SetFadeAlpha(0f);
         if (fadeImage != null) fadeImage.gameObject.SetActive(false);
     }
@@ -49,9 +61,24 @@ public class CameraZoomFade : MonoBehaviour
 
     // ---- Coroutines ----
 
+    /// <summary>Re-enables Cinemachine and resets camera size. Call this when returning to gameplay.</summary>
+    public void RestoreCinemachine(float fadeDuration = 0.5f, Action onComplete = null)
+    {
+        if (_cinemachineBrain != null) _cinemachineBrain.enabled = true;
+        if (mainCamera != null)
+        {
+            if (mainCamera.orthographic) mainCamera.orthographicSize = _originalOrthoSize;
+            else mainCamera.fieldOfView = _originalFOV;
+        }
+        FadeIn(fadeDuration, onComplete);
+    }
+
     private IEnumerator ZoomFadeRoutine(Vector3 targetPosition, Action onComplete)
     {
         bool isOrtho = mainCamera.orthographic;
+
+        // Disable Cinemachine so it doesn't override our manual camera movement
+        if (_cinemachineBrain != null) _cinemachineBrain.enabled = false;
 
         // Capture start values
         float startOrthoSize = mainCamera.orthographicSize;
