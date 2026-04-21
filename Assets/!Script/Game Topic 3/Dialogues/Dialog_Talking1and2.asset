@@ -14,15 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   npcName: Karyawan
   dialogueLines:
-  - '[Rio] Semangat Pagi Bro, masa pagi-pagi udah lesu gitu?'
-  - '[Bagas] Nih Bro minum dulu kali, begadang lu ya?'
-  - '[Rio] Eh katanya kemaren ada kasus phising ya? Ada orang yang nyamar jadi IT
-    support.'
-  - '[Bagas] Serius? kalo iya ngeri banget sih, harus lebih hati- hati lagi'
-  - '[Rio] Iya nih, kita pastiin dulu itu beneran karyawan sini apa engga sebelum
-    kasih file apapun'
-  - '[Bagas] Sama ini juga bre, hati-hati jangan install aplikasi sembarangan, yang
-    gaada lisensi nya jangan dilaptop kantor '
+  - '[Edward] Eh, kamu udah lihat notifikasi soal update password di desktop belum?'
+  - '[Jimmy] Yang dari IT itu ya? Baru lihat sekilas, kenapa emang?'
+  - '[Edward] Sekarang wajib ubah password lewat desktop, terus sekalian aktivasi
+    MFA pakai kode OTP.'
+  - '[Jimmy] Oh jadi bukan pakai authenticator app lagi?'
+  - '[Edward] Nggak, sekarang lebih ke OTP yang dikirim tiap login. Tadi aku coba,
+    setelah ganti password langsung diminta verifikasi kode.'
+  - '[Jimmy] Kodenya dikirim ke mana?'
+  - '[Edward] Ke email yang terdaftar. Jadi nanti tiap login dari desktop, masukin
+    password dulu, habis itu verifikasi OTP.'
+  - '[Jimmy] Oke sih, lebih simpel. Proses ubah password-nya ribet nggak?'
+  - '[Edward] Nggak juga, tinggal masuk ke menu security di desktop, terus ikutin
+    step-nya aja.'
+  - '[Jimmy] Baiklah, nanti aku kerjain deh. Deadline-nya kapan?'
+  - '[Edward] Katanya sebelum akhir minggu, kalau belum aktifin MFA bisa kena pembatasan
+    akses.'
+  - '[Jimmy] Wah, mending cepet-cepet deh. Thanks ya infonya.'
+  - '[Edward] Siap, sama-sama.'
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak
