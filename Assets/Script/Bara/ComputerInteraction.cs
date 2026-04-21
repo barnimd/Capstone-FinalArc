@@ -28,6 +28,12 @@ public class ComputerInteraction : MonoBehaviour
             return;
         }
 
+        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        if (collider != null)
+        {
+            collider.enabled = false;
+        }
+
         CameraZoomFade.Instance.ZoomAndFade(zoomTarget.position, OnFadeComplete);
     }
 
