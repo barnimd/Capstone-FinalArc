@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f87b3fa8f64f1764a9eaedc08366706a, type: 3}
+  m_Name: Dialog_Talking1and2
+  m_EditorClassIdentifier: 
+  npcName: Karyawan
+  dialogueLines:
+  - '[Rio] Semangat Pagi Bro, masa pagi-pagi udah lesu gitu?'
+  - '[Bagas] Nih Bro minum dulu kali, begadang lu ya?'
+  - '[Rio] Eh katanya kemaren ada kasus phising ya? Ada orang yang nyamar jadi IT
+    support.'
+  - '[Bagas] Serius? kalo iya ngeri banget sih, harus lebih hati- hati lagi'
+  - '[Rio] Iya nih, kita pastiin dulu itu beneran karyawan sini apa engga sebelum
+    kasih file apapun'
+  - '[Bagas] Sama ini juga bre, hati-hati jangan install aplikasi sembarangan, yang
+    gaada lisensi nya jangan dilaptop kantor '
+  hasChoice: 0
+  acceptText: Ya
+  rejectText: Tidak
+  dialogueIfAccepted: {fileID: 0}
+  dialogueIfRejected: {fileID: 0}
+  actionID: NPC_Talking1and2
