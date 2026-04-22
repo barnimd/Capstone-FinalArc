@@ -127,6 +127,7 @@ namespace GameTopic2
                 yield return new WaitForSeconds(autoHideDelay);
                 successPanel.SetActive(false);
             }
+            SummaryManager.instance.TriggerSummary();
         }
 
         private IEnumerator BruteforceRoutine()
@@ -193,6 +194,7 @@ namespace GameTopic2
                 yield return new WaitForSeconds(autoHideDelay);
                 bruteforcePanel.SetActive(false);
             }
+            SummaryManager.instance.TriggerSummary();
         }
 
         private IEnumerator InstantHackRoutine()
@@ -227,6 +229,7 @@ namespace GameTopic2
                 yield return new WaitForSeconds(autoHideDelay);
                 instantHackPanel.SetActive(false);
             }
+            SummaryManager.instance.TriggerSummary();
         }
 
         // ─────────────────────── UTILITY HELPERS ───────────────────────

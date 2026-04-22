@@ -99,6 +99,7 @@ public class InstallerFlow : MonoBehaviour
         // Update score - cancelling is the safe choice, no penalty
         if (ScoreManager.instance != null)
             ScoreManager.instance.AddScore(0);
+        SummaryManager.instance.TriggerSummary();
         Debug.Log("Instalasi dibatalkan. Semua popup ditutup. Score: " + (ScoreManager.instance != null ? ScoreManager.instance.score : score));
     }
 
@@ -106,5 +107,6 @@ public class InstallerFlow : MonoBehaviour
     {
         securityPopup.SetActive(false);
         desktopCanvas.SetActive(false);
+        SummaryManager.instance.TriggerSummary();
     }
 }
