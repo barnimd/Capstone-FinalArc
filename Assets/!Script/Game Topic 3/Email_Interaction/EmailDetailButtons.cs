@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// Attach script ini ke EmailDetailPanel.
+/// Attach ke EmailDetailPanel.
 /// Assign semua referensi di Inspector.
 /// </summary>
 public class EmailDetailButtons : MonoBehaviour
@@ -14,41 +14,48 @@ public class EmailDetailButtons : MonoBehaviour
     public Button btnLaporkan;
 
     [Header("=== Konfirmasi Dialog Panel ===")]
-    public GameObject panelKonfirmasi;
+    public GameObject      panelKonfirmasi;
     public TextMeshProUGUI txtKonfirmasiPesan;
-    public Button btnKonfirmasiYes;
-    public Button btnKonfirmasiNo;
+    public Button          btnKonfirmasiYes;
+    public Button          btnKonfirmasiNo;
 
     [Header("=== Hasil / Notifikasi Panel ===")]
-    public GameObject panelHasil;
+    public GameObject      panelHasil;
     public TextMeshProUGUI txtHasilPesan;
-    public Button btnHasilOk;
+    public Button          btnHasilOk;
 
-    [Header("=== Panel yang perlu ditutup/dibuka ===")]
-    public GameObject panelEmailDetail;   // panel detail ini sendiri
-    public GameObject panelEmailList;     // panel daftar email (EmailList)
+    [Header("=== Panel ===")]
+    public GameObject panelEmailDetail;
+    public GameObject panelEmailList;
 
-    // Menyimpan action yang akan dijalankan saat Yes diklik
-    private System.Action _onYesAction;
+    [Header("=== Referensi Randomizer ===")]
+    [Tooltip("Assign GameObject yang punya EmailRandomizer component.")]
+    public EmailRandomizer emailRandomizer;
 
     // ─────────────────────────────────────────────
+    private System.Action _onYesAction;
+
     private void Start()
     {
-        // Pastikan panel dialog tertutup di awal
         panelKonfirmasi.SetActive(false);
         panelHasil.SetActive(false);
 
-        // Wire tombol utama
         btnBalas.onClick.AddListener(OnClickBalas);
         btnHapus.onClick.AddListener(OnClickHapus);
         btnLaporkan.onClick.AddListener(OnClickLaporkan);
 
-        // Wire tombol konfirmasi
         btnKonfirmasiYes.onClick.AddListener(OnKonfirmasiYes);
         btnKonfirmasiNo.onClick.AddListener(OnKonfirmasiNo);
 
-        // Wire tombol hasil OK
         btnHasilOk.onClick.AddListener(OnHasilOk);
+    }
+
+    // ─────────────────────────────────────────────
+    private bool EmailSaatIniPhishing()
+    {
+        if (emailRandomizer == null) return false;
+        var entry = emailRandomizer.GetEmailTerbuka();
+        return entry != null && entry.isPhishing;
     }
 
     // ─────────────────────────────────────────────
@@ -60,8 +67,10 @@ public class EmailDetailButtons : MonoBehaviour
             pesan: "Apakah kamu yakin ingin membalas email ini?",
             onYes: () =>
             {
-                // Tampilkan peringatan phishing
-                TampilHasil("Kamu telah mengklik Phishing!\nLain kali harap lebih berhati-hati.");
+                if (EmailSaatIniPhishing())
+                    TampilHasil("⚠️ Kamu telah membalas email Phishing!\nLain kali harap lebih berhati-hati.");
+                else
+                    TampilHasil("✅ Balasan terkirim.\nEmail ini adalah email normal.");
             }
         );
     }
@@ -73,11 +82,7 @@ public class EmailDetailButtons : MonoBehaviour
     {
         TampilKonfirmasi(
             pesan: "Apakah kamu yakin ingin menghapus email ini?",
-            onYes: () =>
-            {
-                // Langsung kembali ke email list (Yes maupun No sama-sama kembali)
-                KembaliKeEmailList();
-            }
+            onYes: () => KembaliKeEmailList()
         );
     }
 
@@ -90,13 +95,14 @@ public class EmailDetailButtons : MonoBehaviour
             pesan: "Apakah kamu yakin ingin melaporkan email ini sebagai Phishing?",
             onYes: () =>
             {
-                TampilHasil("Kamu berhasil melaporkan email Phishing!\nTerima kasih, kami akan menindaklanjuti laporan ini.");
+                if (EmailSaatIniPhishing())
+                    TampilHasil("✅ Benar! Ini adalah email Phishing.\nTerima kasih sudah melaporkannya!");
+                else
+                    TampilHasil("❌ Email ini bukan Phishing.\nHarap periksa lebih teliti sebelum melapor.");
             }
         );
     }
 
-    // ─────────────────────────────────────────────
-    // KONFIRMASI: YES
     // ─────────────────────────────────────────────
     private void OnKonfirmasiYes()
     {
@@ -105,9 +111,6 @@ public class EmailDetailButtons : MonoBehaviour
         _onYesAction = null;
     }
 
-    // ─────────────────────────────────────────────
-    // KONFIRMASI: NO  →  kembali ke email list
-    // ─────────────────────────────────────────────
     private void OnKonfirmasiNo()
     {
         panelKonfirmasi.SetActive(false);
@@ -115,17 +118,12 @@ public class EmailDetailButtons : MonoBehaviour
         KembaliKeEmailList();
     }
 
-    // ─────────────────────────────────────────────
-    // HASIL OK  →  kembali ke email list
-    // ─────────────────────────────────────────────
     private void OnHasilOk()
     {
         panelHasil.SetActive(false);
         KembaliKeEmailList();
     }
 
-    // ─────────────────────────────────────────────
-    // HELPER: Tampilkan dialog konfirmasi
     // ─────────────────────────────────────────────
     private void TampilKonfirmasi(string pesan, System.Action onYes)
     {
@@ -134,18 +132,12 @@ public class EmailDetailButtons : MonoBehaviour
         panelKonfirmasi.SetActive(true);
     }
 
-    // ─────────────────────────────────────────────
-    // HELPER: Tampilkan panel hasil/notifikasi
-    // ─────────────────────────────────────────────
     private void TampilHasil(string pesan)
     {
         txtHasilPesan.text = pesan;
         panelHasil.SetActive(true);
     }
 
-    // ─────────────────────────────────────────────
-    // HELPER: Kembali ke daftar email
-    // ─────────────────────────────────────────────
     private void KembaliKeEmailList()
     {
         panelEmailDetail.SetActive(false);

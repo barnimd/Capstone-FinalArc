@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdca1a7bf4201fc40a4525c056c38ef7, type: 3}
+  m_Name: EmailData
+  m_EditorClassIdentifier: 
+  semuaEmail:
+  - namaPengirim: BeliJual
+    subjek: Password akan Expired dalam 30 Hari
+    waktu: 10:44
+    emailPengirim: security@bel1jual.com
+    teksHeader: Password akan Expired
+    warnaHeader: {r: 1, g: 0, b: 0, a: 0}
+    isiEmail: Halo, password kamu akan expired...
+    isPhishing: 1
+  - namaPengirim: LapakKomputer
+    subjek: Tawaran
+    waktu: 10:44
+    emailPengirim: info@lapakkomputer.com
+    teksHeader: Penawaran Spesial
+    warnaHeader: {r: 1, g: 0, b: 0, a: 0}
+    isiEmail: Halo, kami memiliki penawaran spesial untuk kamu. Dapatkan diskon 20%
+      untuk semua produk komputer minggu ini. Kunjungi toko kami sekarang.
+    isPhishing: 0
+  - namaPengirim: BRI Bank
+    subjek: URGENT - Rekening kamu akan ditutup
+    waktu: 09:15
+    emailPengirim: alert@bri-bank-id.com
+    teksHeader: Peringatan Rekening
+    warnaHeader: {r: 1, g: 0, b: 0, a: 0}
+    isiEmail: Kepada Nasabah Yth, rekening tabungan kamu akan ditutup dalam 48 jam
+      karena tidak memenuhi persyaratan KYC terbaru. Balas email ini dengan nomor
+      rekening, nama lengkap, dan PIN ATM kamu untuk menghindari penutupan rekening.
+    isPhishing: 1
+  - namaPengirim: GoJek Promo
+    subjek: Kamu menang GoPay Rp 5.000.000! Klaim sekarang
+    waktu: 11:00
+    emailPengirim: promo@g0jek-hadiah.com
+    teksHeader: Selamat Kamu Menang!
+    warnaHeader: {r: 1, g: 0, b: 0, a: 0}
+    isiEmail: Selamat! Nomor kamu terpilih sebagai pemenang undian GoJek berhadiah.
+      Hadiah senilai Rp 5.000.000 dalam bentuk GoPay sudah menunggu. Balas email
+      ini dengan nama lengkap, nomor HP, dan nomor rekening bank. Hadiah hangus dalam
+      24 jam jika tidak diklaim.
+    isPhishing: 1
+  - namaPengirim: Ahmad
+    subjek: Meeting Besok - Jangan lupa meeting jam 10 pagi
+    waktu: 08:30
+    emailPengirim: ahmad@perusahaan.com
+    teksHeader: Pengingat Meeting
+    warnaHeader: {r: 1, g: 0, b: 0, a: 0}
+    isiEmail: Halo, ini adalah pengingat bahwa kita memiliki meeting besok pukul
+      10:00 pagi. Mohon hadir tepat waktu dan siapkan laporan progres mingguan. Terima
+      kasih, Ahmad.
+    isPhishing: 0
+  - namaPengirim: HR Department
+    subjek: Slip Gaji Bulan Ini Sudah Tersedia
+    waktu: 08:00
+    emailPengirim: hr@perusahaan.com
+    teksHeader: Informasi Penggajian
+    warnaHeader: {r: 1, g: 0, b: 0, a: 0}
+    isiEmail: Halo, slip gaji bulan ini sudah dapat diakses melalui portal karyawan.
+      Silakan login ke sistem HRIS perusahaan untuk melihat detailnya. Hubungi HR
+      jika ada pertanyaan. Salam, HR Department.
+    isPhishing: 0
+  - namaPengirim: Tokopedia
+    subjek: Akun kamu akan diblokir! Verifikasi sekarang
+    waktu: 14:22
+    emailPengirim: noreply@t0kopedia.com
+    teksHeader: Verifikasi Akun
+    warnaHeader: {r: 1, g: 0, b: 0, a: 0}
+    isiEmail: 'Yth. Pengguna Tokopedia, kami mendeteksi aktivitas mencurigakan pada
+      akun kamu. Untuk menghindari pemblokiran permanen, segera verifikasi identitas
+      kamu. Klik balas dan kirimkan username serta password kamu untuk '
+    isPhishing: 1
+  - namaPengirim: Budi
+    subjek: Revisi Dokumen Proposal
+    waktu: 14:22
+    emailPengirim: budi@perusahaan.com
+    teksHeader: Revisi Dokumen
+    warnaHeader: {r: 1, g: 0, b: 0, a: 0}
+    isiEmail: Hi, tolong cek lampiran untuk revisi proposal yang sudah aku update.
+      Ada beberapa perubahan di bagian anggaran dan timeline. Mohon konfirmasi jika
+      sudah diterima. Thanks, Budi.
+    isPhishing: 0
