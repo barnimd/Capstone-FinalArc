@@ -82,7 +82,14 @@ public class EmailDetailButtons : MonoBehaviour
     {
         TampilKonfirmasi(
             pesan: "Apakah kamu yakin ingin menghapus email ini?",
-            onYes: () => KembaliKeEmailList()
+            onYes: () =>
+            {
+                // Hapus email dari daftar aktif dan otomatis kembali ke inbox
+                if (emailRandomizer != null)
+                    emailRandomizer.HapusEmailTerbuka();
+                else
+                    KembaliKeEmailList();
+            }
         );
     }
 

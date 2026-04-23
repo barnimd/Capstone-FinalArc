@@ -44,6 +44,7 @@ public class EmailRandomizer : MonoBehaviour
     // ─── Runtime ──────────────────────────────────────────────────────────────
     private List<EmailEntry> _activeEmails = new();
     private EmailEntry       _emailTerbuka;
+    private int              _indexTerbuka = -1;
 
     // ─────────────────────────────────────────────────────────────────────────
     private void Start()
@@ -65,6 +66,7 @@ public class EmailRandomizer : MonoBehaviour
     {
         if (index < 0 || index >= _activeEmails.Count) return;
 
+        _indexTerbuka = index;
         _emailTerbuka = _activeEmails[index];
         IsiPanelDetail(_emailTerbuka);
 
@@ -74,6 +76,25 @@ public class EmailRandomizer : MonoBehaviour
 
     /// <summary>Dipakai oleh EmailDetailButtons untuk cek isPhishing.</summary>
     public EmailEntry GetEmailTerbuka() => _emailTerbuka;
+
+    /// <summary>
+    /// Hapus email yang sedang dibuka dari daftar aktif,
+    /// sembunyikan EmailItem-nya, lalu kembali ke inbox.
+    /// </summary>
+    public void HapusEmailTerbuka()
+    {
+        if (_indexTerbuka < 0 || _indexTerbuka >= _activeEmails.Count) return;
+
+        // Sembunyikan EmailItem di Hierarchy
+        // Cari EmailItem mana yang menampilkan email di index ini
+        // dengan cara re-render ulang list tanpa email tersebut
+        _activeEmails.RemoveAt(_indexTerbuka);
+        _emailTerbuka = null;
+        _indexTerbuka = -1;
+
+        RefreshTampilanList();
+        TutupDetailEmail();
+    }
 
     // =========================================================================
     // RANDOMIZER
@@ -114,7 +135,29 @@ public class EmailRandomizer : MonoBehaviour
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Isi SenderText, SubjectText, TimeText di EmailItem
+    // Refresh tampilan list setelah ada email yang dihapus
+    // ─────────────────────────────────────────────────────────────────────────
+    private void RefreshTampilanList()
+    {
+        for (int i = 0; i < emailItems.Count; i++)
+        {
+            if (emailItems[i] == null) continue;
+
+            if (i < _activeEmails.Count)
+            {
+                emailItems[i].SetActive(true);
+                IsiBarisList(emailItems[i], _activeEmails[i]);
+                SetupTombolBaris(emailItems[i], i);
+            }
+            else
+            {
+                // Tidak ada data lagi untuk slot ini — sembunyikan
+                emailItems[i].SetActive(false);
+            }
+        }
+    }
+
+
     // ─────────────────────────────────────────────────────────────────────────
     private void IsiBarisList(GameObject item, EmailEntry entry)
     {
