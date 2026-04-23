@@ -213,6 +213,10 @@ public class EmailRandomizer : MonoBehaviour
         // Messages → BodyContent → Text (TMP) = isi email
         if (txtBodyContent != null)
             txtBodyContent.text = entry.isiEmail;
+
+        // Update tooltip dengan data email yang sedang dibuka
+        if (SenderTooltip.Instance != null)
+            SenderTooltip.Instance.SetEmailData(entry);
     }
 
     // =========================================================================
