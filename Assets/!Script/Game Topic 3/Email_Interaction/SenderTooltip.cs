@@ -21,10 +21,17 @@ public class SenderTooltip : MonoBehaviour
 
     private void Awake()
     {
+        // Setup singleton — dipanggil meskipun GameObject tidak aktif
+        // karena Awake hanya dipanggil saat pertama kali diaktifkan
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
 
-        gameObject.SetActive(false);
+    // OnEnable dipanggil setiap kali GameObject diaktifkan
+    private void OnEnable()
+    {
+        // Pastikan Instance selalu ter-set ulang saat panel diaktifkan
+        if (Instance == null) Instance = this;
     }
 
     private void Update()
@@ -36,39 +43,21 @@ public class SenderTooltip : MonoBehaviour
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    /// <summary>
-    /// Dipanggil oleh EmailRandomizer setiap kali email baru dibuka.
-    /// Menyimpan data email — tooltip akan pakai data ini saat ShowTooltip dipanggil.
-    /// </summary>
     public void SetEmailData(EmailEntry entry)
     {
         _emailAktif = entry;
+
+        // Jika tooltip sedang aktif saat email berganti, langsung update teksnya
+        if (gameObject.activeSelf)
+            UpdateTeks();
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    /// <summary>
-    /// Tampilkan tooltip. Isi teks otomatis dari data email aktif.
-    /// Parameter message dan isPhishing tetap ada untuk kompatibilitas,
-    /// tapi isi teks sekarang diambil dari _emailAktif.
-    /// </summary>
     public void ShowTooltip(string message = "", bool isPhishing = false)
     {
-        if (infoText != null)
-        {
-            if (_emailAktif != null)
-            {
-                // Format otomatis dari data email yang sedang dibuka
-                infoText.text = $"dikirim oleh: {_emailAktif.emailPengirim}\n" +
-                                $"waktu: {_emailAktif.waktu}\n" +
-                                $"subject: {_emailAktif.subjek}";
-            }
-            else
-            {
-                // Fallback jika belum ada data
-                infoText.text = message;
-            }
-        }
+        UpdateTeks();
 
+        // Logika penggantian warna dihapus, hanya mengaktifkan panel
         gameObject.SetActive(true);
     }
 
@@ -76,5 +65,22 @@ public class SenderTooltip : MonoBehaviour
     public void HideTooltip()
     {
         gameObject.SetActive(false);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    private void UpdateTeks()
+    {
+        if (infoText == null) return;
+
+        if (_emailAktif != null)
+        {
+            infoText.text = $"dikirim oleh: {_emailAktif.emailPengirim}\n" +
+                            $"waktu: {_emailAktif.waktu}\n" +
+                            $"subject: {_emailAktif.subjek}";
+        }
+        else
+        {
+            infoText.text = "Tidak ada data email.";
+        }
     }
 }

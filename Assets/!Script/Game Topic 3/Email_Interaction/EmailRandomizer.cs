@@ -72,6 +72,11 @@ public class EmailRandomizer : MonoBehaviour
 
         if (panelDetail != null) panelDetail.SetActive(true);
         if (panelInbox  != null) panelInbox.SetActive(false);
+
+        // Set data tooltip — cari instance dengan dua cara agar tidak terlewat
+        SenderTooltip tooltip = SenderTooltip.Instance ?? FindObjectOfType<SenderTooltip>(true);
+        if (tooltip != null)
+            tooltip.SetEmailData(_emailTerbuka);
     }
 
     /// <summary>Dipakai oleh EmailDetailButtons untuk cek isPhishing.</summary>
@@ -214,9 +219,6 @@ public class EmailRandomizer : MonoBehaviour
         if (txtBodyContent != null)
             txtBodyContent.text = entry.isiEmail;
 
-        // Update tooltip dengan data email yang sedang dibuka
-        if (SenderTooltip.Instance != null)
-            SenderTooltip.Instance.SetEmailData(entry);
     }
 
     // =========================================================================
