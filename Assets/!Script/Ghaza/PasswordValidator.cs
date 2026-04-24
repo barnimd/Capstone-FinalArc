@@ -278,6 +278,13 @@ namespace GameTopic2
             if (scoreDisplayText != null)
                 scoreDisplayText.text = $"Score: {FinalScore}";
 
+            // ── Kirim ke ScoreManager ─────────────────────────────────────
+            if (ScoreManager.instance != null)
+            {
+                ScoreManager.instance.AddScore(-ScoreManager.instance.score); // reset ke 0
+                ScoreManager.instance.AddScore(FinalScore);                   // set nilai baru
+            }
+
             // ── Outcome animation ─────────────────────────────────────────
             if (CurrentStrength == PasswordStrength.Strong)
             {

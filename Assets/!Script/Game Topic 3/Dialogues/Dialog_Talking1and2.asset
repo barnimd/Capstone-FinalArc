@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f87b3fa8f64f1764a9eaedc08366706a, type: 3}
+  m_Name: Dialog_Talking1and2
+  m_EditorClassIdentifier: 
+  npcName: Karyawan
+  dialogueLines:
+  - '[Edward] Eh, kamu udah lihat notifikasi soal update password di desktop belum?'
+  - '[Jimmy] Yang dari IT itu ya? Baru lihat sekilas, kenapa emang?'
+  - '[Edward] Sekarang wajib ubah password lewat desktop, terus sekalian aktivasi
+    MFA pakai kode OTP.'
+  - '[Jimmy] Oh jadi ada security yang ditambahkan?'
+  - '[Edward] Iya, sekarang ada OTP yang dikirim tiap login. Tadi aku coba, setelah
+    ganti password langsung diminta verifikasi kode.'
+  - '[Jimmy] Kodenya dikirim ke mana?'
+  - '[Edward] Ke email yang terdaftar. Jadi nanti tiap login dari desktop, masukin
+    password dulu, habis itu verifikasi OTP.'
+  - '[Jimmy] Oke sih, kelihatannya simpel. Proses ubah password-nya susah nggak?'
+  - '[Edward] Nggak juga, tinggal masuk ke menu security di desktop, terus ikutin
+    step-nya aja.'
+  - '[Jimmy] Baiklah, nanti aku kerjain deh. Makasih informasi nya, Mas.'
+  - '[Edward] Siap, sama-sama.'
+  hasChoice: 0
+  acceptText: Ya
+  rejectText: Tidak
+  dialogueIfAccepted: {fileID: 0}
+  dialogueIfRejected: {fileID: 0}
+  actionID: NPC_Talking1and2

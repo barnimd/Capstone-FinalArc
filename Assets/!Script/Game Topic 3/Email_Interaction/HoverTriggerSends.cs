@@ -8,21 +8,28 @@ public class SimpleHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [Header("Panel yang ingin dimunculkan")]
     public GameObject panelClue;
 
-    // Saat mouse masuk ke area teks
+    // Saat mouse masuk ke area
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (panelClue != null)
         {
-            panelClue.SetActive(true);
+            // Panggil ShowTooltip agar teks terisi otomatis dari data email aktif
+            if (SenderTooltip.Instance != null)
+                SenderTooltip.Instance.ShowTooltip();
+            else
+                panelClue.SetActive(true); // fallback jika SenderTooltip tidak ada
         }
     }
 
-    // Saat mouse keluar dari area teks
+    // Saat mouse keluar dari area
     public void OnPointerExit(PointerEventData eventData)
     {
         if (panelClue != null)
         {
-            panelClue.SetActive(false);
+            if (SenderTooltip.Instance != null)
+                SenderTooltip.Instance.HideTooltip();
+            else
+                panelClue.SetActive(false); // fallback
         }
     }
 }

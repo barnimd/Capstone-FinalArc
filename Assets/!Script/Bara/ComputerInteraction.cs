@@ -11,6 +11,8 @@ public class ComputerInteraction : MonoBehaviour
     [Tooltip("Where the camera should zoom to — defaults to this object's position")]
     [SerializeField] private Transform zoomTarget;
 
+    public MonoBehaviour playerMovementScript;
+
     private void Awake()
     {
         if (zoomTarget == null) zoomTarget = transform;
@@ -32,6 +34,11 @@ public class ComputerInteraction : MonoBehaviour
         if (collider != null)
         {
             collider.enabled = false;
+        }
+
+        if (playerMovementScript != null)
+        {
+            playerMovementScript.enabled = false;
         }
 
         CameraZoomFade.Instance.ZoomAndFade(zoomTarget.position, OnFadeComplete);

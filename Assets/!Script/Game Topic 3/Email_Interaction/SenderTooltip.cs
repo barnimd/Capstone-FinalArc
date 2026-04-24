@@ -10,41 +10,69 @@ public class SenderTooltip : MonoBehaviour
     public static SenderTooltip Instance;
 
     [Header("UI Elements")]
-    public Image background;         // Tarik komponen Image panel ini ke sini
-    public TextMeshProUGUI infoText;    // Tarik komponen Text (TMP) di dalam panel ke sini
+    public Image background;
+    public TextMeshProUGUI infoText;
 
     [Header("Posisi")]
-    public Vector2 offset = new Vector2(10f, -10f); // Jarak dari kursor mouse
+    public Vector2 offset = new Vector2(10f, -10f);
+
+    // ─── Data email aktif ─────────────────────────────────────────────────────
+    private EmailEntry _emailAktif;
 
     private void Awake()
     {
-        // Setup Singleton
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        // Sembunyikan tooltip saat game dimulai
         gameObject.SetActive(false);
     }
 
     private void Update()
     {
-        // Update posisi panel agar mengikuti koordinat mouse setiap frame
         if (gameObject.activeSelf)
         {
             transform.position = Input.mousePosition + (Vector3)offset;
         }
     }
 
-    // Fungsi untuk memunculkan tooltip dengan data spesifik
-    public void ShowTooltip(string message, bool isPhishing)
+    // ─────────────────────────────────────────────────────────────────────────
+    /// <summary>
+    /// Dipanggil oleh EmailRandomizer setiap kali email baru dibuka.
+    /// Menyimpan data email — tooltip akan pakai data ini saat ShowTooltip dipanggil.
+    /// </summary>
+    public void SetEmailData(EmailEntry entry)
     {
-        if (infoText != null) infoText.text = message;
+        _emailAktif = entry;
+    }
 
-        // Logika penggantian warna dihapus, hanya mengaktifkan panel
+    // ─────────────────────────────────────────────────────────────────────────
+    /// <summary>
+    /// Tampilkan tooltip. Isi teks otomatis dari data email aktif.
+    /// Parameter message dan isPhishing tetap ada untuk kompatibilitas,
+    /// tapi isi teks sekarang diambil dari _emailAktif.
+    /// </summary>
+    public void ShowTooltip(string message = "", bool isPhishing = false)
+    {
+        if (infoText != null)
+        {
+            if (_emailAktif != null)
+            {
+                // Format otomatis dari data email yang sedang dibuka
+                infoText.text = $"dikirim oleh: {_emailAktif.emailPengirim}\n" +
+                                $"waktu: {_emailAktif.waktu}\n" +
+                                $"subject: {_emailAktif.subjek}";
+            }
+            else
+            {
+                // Fallback jika belum ada data
+                infoText.text = message;
+            }
+        }
+
         gameObject.SetActive(true);
     }
 
-    // Fungsi untuk menyembunyikan tooltip
+    // ─────────────────────────────────────────────────────────────────────────
     public void HideTooltip()
     {
         gameObject.SetActive(false);
