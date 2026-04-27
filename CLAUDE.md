@@ -57,6 +57,12 @@ Scripts are organized by team member under `Assets/Script/`:
 - **RSG.Promise** — async/promise pattern
 - **Speech Bubble** — dialogue UI plugin
 
+## How to Work With Me (Claude Workflow)
+
+1. **CAVEMAN MODE** — Always use simple, direct, no-fluff language. Short sentences. No filler words. No corporate speak. Just the facts and the code.
+2. **Plan with Opus, Execute with Sonnet** — Use `/opus` (or the Opus model) to create a plan first. Check off each step as it is completed. Use Sonnet for the actual implementation and edits.
+3. **End-of-task summary** — After finishing any task, provide a brief summary of what was done: what changed, what files were modified, and what is next.
+
 ## Conventions
 
 - Prefabs stored in `Assets/Prefab/` (Canvas, Manager, player)

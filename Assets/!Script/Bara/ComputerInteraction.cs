@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -7,15 +8,30 @@ using UnityEngine;
 /// </summary>
 public class ComputerInteraction : MonoBehaviour
 {
+    [Header("Desktop UI")]
+    [Tooltip("The desktop canvas to activate after the fade is fully black")]
+    [SerializeField] private GameObject desktopCanvas;
+    [Tooltip("How long the desktop canvas fades in (seconds)")]
+    [SerializeField] private float desktopFadeInDuration = 0.4f;
+
     [Header("Camera Effect")]
     [Tooltip("Where the camera should zoom to — defaults to this object's position")]
     [SerializeField] private Transform zoomTarget;
 
     public MonoBehaviour playerMovementScript;
 
+    private CanvasGroup _desktopCanvasGroup;
+
     private void Awake()
     {
         if (zoomTarget == null) zoomTarget = transform;
+
+        if (desktopCanvas != null)
+        {
+            _desktopCanvasGroup = desktopCanvas.GetComponent<CanvasGroup>();
+            if (_desktopCanvasGroup == null)
+                _desktopCanvasGroup = desktopCanvas.AddComponent<CanvasGroup>();
+        }
     }
 
     /// <summary>
@@ -32,22 +48,34 @@ public class ComputerInteraction : MonoBehaviour
 
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
         if (collider != null)
-        {
             collider.enabled = false;
-        }
 
         if (playerMovementScript != null)
-        {
             playerMovementScript.enabled = false;
-        }
 
         CameraZoomFade.Instance.ZoomAndFade(zoomTarget.position, OnFadeComplete);
     }
 
     private void OnFadeComplete()
     {
-        // TODO: Load computer mini-game scene or open desktop UI here
-        Debug.Log("[ComputerInteraction] Fade complete — ready to load next scene or UI.");
+        if (desktopCanvas != null)
+            StartCoroutine(FadeInDesktop());
+    }
+
+    private IEnumerator FadeInDesktop()
+    {
+        _desktopCanvasGroup.alpha = 0f;
+        desktopCanvas.SetActive(true);
+
+        float elapsed = 0f;
+        while (elapsed < desktopFadeInDuration)
+        {
+            elapsed += Time.deltaTime;
+            _desktopCanvasGroup.alpha = Mathf.Clamp01(elapsed / desktopFadeInDuration);
+            yield return null;
+        }
+
+        _desktopCanvasGroup.alpha = 1f;
     }
 
     /// <summary>
