@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     void StartGame()
     {
         currentStep = 0;
-        objectiveUI.SetObjective("Cari orang di meja kerja");
+        objectiveUI.SetObjective("Sapa orang di meja kerja");
     }
 
     public void CloseInstructor()
