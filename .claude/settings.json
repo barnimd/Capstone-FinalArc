@@ -1,0 +1,25 @@
+{
+  "sandbox": {
+    "network": {
+      "allowedDomains": [
+        "api.notion.com",
+        "*.notion.com"
+      ]
+    }
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/user/Capstone-FinalArc/.claude/run-daily-recap.sh",
+            "statusMessage": "Checking daily recap...",
+            "timeout": 60,
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
