@@ -120,9 +120,9 @@ public class SummaryManager : MonoBehaviour
         {
             summaryPanel.SetActive(true); // aktifkan CanvasSummaryPanel
                                           // Force aktifkan SummaryPannel (child index 1, sesuai hierarchy)
-            Transform summaryPanelChild = summaryPanel.transform.Find("SummaryPanel");
-            if (summaryPanelChild != null)
-                summaryPanelChild.gameObject.SetActive(true);
+            Transform summaryPannel = summaryPanel.transform.Find("SummaryPannel");
+            if (summaryPannel != null)
+                summaryPannel.gameObject.SetActive(true);
         }
 
         // ── 4. Fade overlay back out so panel is visible ──────
