@@ -82,7 +82,7 @@ public class GameplayManager : MonoBehaviour
     // Dipanggil oleh tombol di summary panel untuk kembali ke Dashboard
     public void GoToDashboard()
     {
-        SceneManager.LoadScene("Dashboard");
+        SceneManager.LoadScene("All_Menu");
     }
 
     public void CloseCanvas()
