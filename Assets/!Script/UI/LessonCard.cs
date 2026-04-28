@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class LessonCard : MonoBehaviour
@@ -36,6 +37,14 @@ public class LessonCard : MonoBehaviour
             lockOverlay.SetActive(!data.isUnlocked);
 
         if (button != null)
+        {
             button.interactable = data.isUnlocked;
+
+            if (data.isUnlocked && !string.IsNullOrEmpty(data.sceneName))
+            {
+                string scene = data.sceneName;
+                button.onClick.AddListener(() => SceneManager.LoadScene(scene));
+            }
+        }
     }
 }
