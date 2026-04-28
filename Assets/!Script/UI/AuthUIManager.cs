@@ -25,7 +25,7 @@ public class AuthUIManager : MonoBehaviour
 
     public static readonly string SCENE_LOGIN  = "LoginScene";
     public static readonly string SCENE_SIGNUP = "SignUpScene";
-    public static readonly string SCENE_GAME   = "Dashboard";
+    public static readonly string SCENE_GAME   = "All_Menu";
 
     // ─── Inspector References ─────────────────────────────────────────────────
 
