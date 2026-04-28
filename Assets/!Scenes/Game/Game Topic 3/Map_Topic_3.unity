@@ -10375,7 +10375,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &629709397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12059,6 +12059,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -25
       objectReference: {fileID: 0}
+    - target: {fileID: 5547256938520848219, guid: 35d7f840751508248aca82b0739f4436, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5690138346936041200, guid: 35d7f840751508248aca82b0739f4436, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -12086,6 +12090,10 @@ PrefabInstance:
     - target: {fileID: 6073174020307656111, guid: 35d7f840751508248aca82b0739f4436, type: 3}
       propertyPath: m_text
       value: "Update Proyek \u2013 Tahap 2 Selesai"
+      objectReference: {fileID: 0}
+    - target: {fileID: 6119483446551260808, guid: 35d7f840751508248aca82b0739f4436, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6125804172874648688, guid: 35d7f840751508248aca82b0739f4436, type: 3}
       propertyPath: m_text
@@ -12173,7 +12181,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7376608412458954319, guid: 35d7f840751508248aca82b0739f4436, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0.06436157
+      value: -0.14926147
       objectReference: {fileID: 0}
     - target: {fileID: 7481390135269115053, guid: 35d7f840751508248aca82b0739f4436, type: 3}
       propertyPath: m_text
@@ -17758,7 +17766,7 @@ Transform:
   m_GameObject: {fileID: 1175442671}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.353342, y: -13.000001, z: -10}
+  m_LocalPosition: {x: -5.3684216, y: -13.000001, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20584,6 +20592,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   emailCanvas: {fileID: 1508570917}
   fadeInDuration: 0.3
+  scoreCorrect: 0
+  scoreWrong: 0
+  scoreNeutral: 0
 --- !u!114 &1614695591 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8849315710303620566, guid: 33b8aa1d56a809b4f88ac6b6012ca549, type: 3}
@@ -20946,7 +20957,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1507760057588672999, guid: ceaaffb379e350c4f8be4f9888b01b00, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3183359196734846107, guid: ceaaffb379e350c4f8be4f9888b01b00, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21537,7 +21548,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1776125877
 RectTransform:
   m_ObjectHideFlags: 0
@@ -22146,7 +22157,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6667635559812533186, guid: ed5f220ccd782db4c8fbaab5bd1511bc, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7030168584098340934, guid: ed5f220ccd782db4c8fbaab5bd1511bc, type: 3}
       propertyPath: m_Pivot.x
