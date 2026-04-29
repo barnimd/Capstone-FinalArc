@@ -34,6 +34,8 @@ public class EmailDetailButtons : MonoBehaviour
 
     // ─────────────────────────────────────────────
     private System.Action _onYesAction;
+    private PlayerAction  _pendingAction;
+    private bool          _pendingIsPhishing;
 
     private void Start()
     {
@@ -63,11 +65,14 @@ public class EmailDetailButtons : MonoBehaviour
     // ─────────────────────────────────────────────
     private void OnClickBalas()
     {
+        _pendingAction    = PlayerAction.Balas;
+        _pendingIsPhishing = EmailSaatIniPhishing();
+
         TampilKonfirmasi(
             pesan: "Apakah kamu yakin ingin membalas email ini?",
             onYes: () =>
             {
-                if (EmailSaatIniPhishing())
+                if (_pendingIsPhishing)
                     TampilHasil("⚠️ Kamu telah membalas email Phishing!\nLain kali harap lebih berhati-hati.");
                 else
                     TampilHasil("✅ Balasan terkirim.\nEmail ini adalah email normal.");
@@ -80,11 +85,13 @@ public class EmailDetailButtons : MonoBehaviour
     // ─────────────────────────────────────────────
     private void OnClickHapus()
     {
+        _pendingAction     = PlayerAction.Hapus;
+        _pendingIsPhishing = EmailSaatIniPhishing();
+
         TampilKonfirmasi(
             pesan: "Apakah kamu yakin ingin menghapus email ini?",
             onYes: () =>
             {
-                // Hapus email dari daftar aktif dan otomatis kembali ke inbox
                 if (emailRandomizer != null)
                     emailRandomizer.HapusEmailTerbuka();
                 else
@@ -98,11 +105,14 @@ public class EmailDetailButtons : MonoBehaviour
     // ─────────────────────────────────────────────
     private void OnClickLaporkan()
     {
+        _pendingAction     = PlayerAction.Laporkan;
+        _pendingIsPhishing = EmailSaatIniPhishing();
+
         TampilKonfirmasi(
             pesan: "Apakah kamu yakin ingin melaporkan email ini sebagai Phishing?",
             onYes: () =>
             {
-                if (EmailSaatIniPhishing())
+                if (_pendingIsPhishing)
                     TampilHasil("✅ Benar! Ini adalah email Phishing.\nTerima kasih sudah melaporkannya!");
                 else
                     TampilHasil("❌ Email ini bukan Phishing.\nHarap periksa lebih teliti sebelum melapor.");
@@ -114,14 +124,19 @@ public class EmailDetailButtons : MonoBehaviour
     private void OnKonfirmasiYes()
     {
         panelKonfirmasi.SetActive(false);
+        EmailManager.Instance?.RecordDecision(_pendingAction, _pendingIsPhishing);
         _onYesAction?.Invoke();
-        _onYesAction = null;
+        _onYesAction      = null;
+        _pendingAction    = PlayerAction.None;
+        _pendingIsPhishing = false;
     }
 
     private void OnKonfirmasiNo()
     {
         panelKonfirmasi.SetActive(false);
-        _onYesAction = null;
+        _onYesAction      = null;
+        _pendingAction    = PlayerAction.None;
+        _pendingIsPhishing = false;
         KembaliKeEmailList();
     }
 
