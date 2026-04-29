@@ -12,16 +12,39 @@ public enum VNSpeaker
 }
 
 /// <summary>
+/// Mood / facial expression for a portrait.
+///   Default  = idle face (used when not the active speaker, or after a line finishes typing).
+///   Talking  = mouth-open / speaking face (auto-applied to the active speaker WHILE text is typing).
+///   Thinking = pensive face (set per-line via VNLine.mood).
+///   Smiling  = happy face   (set per-line via VNLine.mood).
+/// Add more values here as your portrait library grows (Sad, Angry, Surprised, ...).
+/// </summary>
+public enum VNExpression
+{
+    Default,
+    Talking,
+    Thinking,
+    Smiling,
+}
+
+/// <summary>
 /// One line of VN dialogue. Each line has its own speaker,
-/// optional expression override (face sprite), and text.
+/// an optional mood (auto-applied) and an optional direct sprite override.
 /// </summary>
 [System.Serializable]
 public class VNLine
 {
     public VNSpeaker speaker = VNSpeaker.NPC;
 
-    [Tooltip("Optional. Override the default portrait/expression for this speaker " +
-             "(e.g. angry, sad, surprised). If empty, the default portrait is used.")]
+    [Tooltip("Mood for this line.\n" +
+             "  Default = AUTO: shows the speaker's Talking sprite while typing, " +
+             "then reverts to their Default sprite.\n" +
+             "  Thinking / Smiling = uses the matching sprite from the data " +
+             "(no auto-revert; stays until next line).")]
+    public VNExpression mood = VNExpression.Default;
+
+    [Tooltip("Optional. Direct Sprite override for this single line — bypasses the mood lookup. " +
+             "Leave empty to use the mood-based sprite.")]
     public Sprite expression;
 
     [TextArea(2, 5)]
@@ -43,12 +66,34 @@ public class VNDialogueData : ScriptableObject
     [Tooltip("Display name for the NPC (e.g. 'Receptionist').")]
     public string npcName = "Receptionist";
 
-    [Header("Default Portraits (Image 3 = male-vn, Image 4 = female-vn)")]
-    [Tooltip("Default full-body / portrait sprite for the PLAYER (male-vn).")]
+    [Header("Player Portraits — Expressions")]
+    [Tooltip("Default / idle sprite for the PLAYER. Used when not actively speaking " +
+             "and as the fallback when an expression sprite below is empty.")]
     public Sprite playerPortrait;
 
-    [Tooltip("Default full-body / portrait sprite for the NPC (female-vn).")]
+    [Tooltip("Mouth-open / speaking sprite for the PLAYER. Auto-shown while typing. " +
+             "Leave empty to keep the default sprite during talking.")]
+    public Sprite playerTalkingPortrait;
+
+    [Tooltip("Pensive / thinking sprite for the PLAYER. Used when a line's mood = Thinking. (Optional)")]
+    public Sprite playerThinkingPortrait;
+
+    [Tooltip("Happy / smiling sprite for the PLAYER. Used when a line's mood = Smiling. (Optional)")]
+    public Sprite playerSmilingPortrait;
+
+    [Header("NPC Portraits — Expressions")]
+    [Tooltip("Default / idle sprite for the NPC.")]
     public Sprite npcPortrait;
+
+    [Tooltip("Mouth-open / speaking sprite for the NPC. Auto-shown while typing. " +
+             "Leave empty to keep the default sprite during talking.")]
+    public Sprite npcTalkingPortrait;
+
+    [Tooltip("Pensive / thinking sprite for the NPC. Used when a line's mood = Thinking. (Optional)")]
+    public Sprite npcThinkingPortrait;
+
+    [Tooltip("Happy / smiling sprite for the NPC. Used when a line's mood = Smiling. (Optional)")]
+    public Sprite npcSmilingPortrait;
 
     [Header("Background (Image 8 = reception scene)")]
     [Tooltip("Background image shown behind the VN scene during this dialogue.")]
@@ -72,4 +117,42 @@ public class VNDialogueData : ScriptableObject
     [Header("Scoring / Flag")]
     [Tooltip("ID for scoring + analytics, e.g. 'VN_Receptionist_Topic1'.")]
     public string actionID;
+
+    /// <summary>
+    /// Returns the portrait sprite for <paramref name="speaker"/> in the given
+    /// <paramref name="mood"/>, falling back to the speaker's Default sprite
+    /// if no expression-specific sprite is assigned.
+    /// </summary>
+    public Sprite GetExpressionSprite(VNSpeaker speaker, VNExpression mood)
+    {
+        // Narrator has no portrait of its own — fall through to NPC sprite.
+        if (speaker == VNSpeaker.Player)
+        {
+            switch (mood)
+            {
+                case VNExpression.Talking:
+                    return playerTalkingPortrait != null ? playerTalkingPortrait : playerPortrait;
+                case VNExpression.Thinking:
+                    return playerThinkingPortrait != null ? playerThinkingPortrait : playerPortrait;
+                case VNExpression.Smiling:
+                    return playerSmilingPortrait != null ? playerSmilingPortrait : playerPortrait;
+                default:
+                    return playerPortrait;
+            }
+        }
+        else
+        {
+            switch (mood)
+            {
+                case VNExpression.Talking:
+                    return npcTalkingPortrait != null ? npcTalkingPortrait : npcPortrait;
+                case VNExpression.Thinking:
+                    return npcThinkingPortrait != null ? npcThinkingPortrait : npcPortrait;
+                case VNExpression.Smiling:
+                    return npcSmilingPortrait != null ? npcSmilingPortrait : npcPortrait;
+                default:
+                    return npcPortrait;
+            }
+        }
+    }
 }

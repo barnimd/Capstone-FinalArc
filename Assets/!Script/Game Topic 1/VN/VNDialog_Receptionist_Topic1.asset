@@ -15,26 +15,38 @@ MonoBehaviour:
   playerName: You
   npcName: Receptionist
   playerPortrait: {fileID: 21300000, guid: 91753b50188160e469f1596dd7b4e6be, type: 3}
+  playerTalkingPortrait: {fileID: 21300000, guid: 6f7b85b4da78fd74eb50431daa554c0f, type: 3}
+  playerThinkingPortrait: {fileID: 0}
+  playerSmilingPortrait: {fileID: 0}
   npcPortrait: {fileID: 21300000, guid: db561ec6e2c62ca4d97523d8036c50a1, type: 3}
+  npcTalkingPortrait: {fileID: 21300000, guid: 5c65e9eda00eafd4295869a651231baa, type: 3}
+  npcThinkingPortrait: {fileID: 0}
+  npcSmilingPortrait: {fileID: 0}
   background: {fileID: 21300000, guid: 226c45f7d559b5c4585666cf850d72f9, type: 3}
   lines:
   - speaker: 1
+    mood: 1
     expression: {fileID: 0}
     text: Selamat datang di kantor! Apakah ini hari pertamamu?
   - speaker: 0
+    mood: 1
     expression: {fileID: 0}
     text: Iya, hari pertama. Saya masih bingung harus mulai dari mana.
   - speaker: 1
+    mood: 1
     expression: {fileID: 0}
     text: Tenang, saya bantu. Meja kerjamu ada di lantai 2, sebelah kiri tangga.
   - speaker: 1
+    mood: 0
     expression: {fileID: 0}
     text: "Sebelum mulai \u2014 jangan asal klik link di email atau pasang aplikasi
       sembarangan, ya."
   - speaker: 0
+    mood: 1
     expression: {fileID: 0}
     text: Baik, saya akan hati-hati.
   - speaker: 1
+    mood: 1
     expression: {fileID: 0}
     text: Bagus. Selamat bekerja!
   hasChoice: 0

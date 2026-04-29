@@ -121,6 +121,11 @@ public class VNDialogueManager : MonoBehaviour
     private Color playerBaseColor = Color.white;
     private Color npcBaseColor = Color.white;
 
+    // Tracks the currently typing line so FinishTyping can revert the active
+    // speaker's portrait from Talking back to Default (auto mode only).
+    private VNSpeaker currentLineSpeaker;
+    private bool autoRevertOnFinish;
+
     void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -275,22 +280,34 @@ public class VNDialogueManager : MonoBehaviour
 
         VNLine line = current.lines[lineIndex];
 
-        // Per-line expression override
+        // Resolve portraits based on the line's mood + per-line override.
+        // The INACTIVE speaker always uses the Default sprite (listening face).
+        // The ACTIVE speaker uses:
+        //   - line.expression (Sprite) if assigned (highest priority manual override), OR
+        //   - the Talking sprite when mood == Default (auto-revert to Default after typing), OR
+        //   - the matching mood sprite otherwise (Thinking / Smiling — stays put).
+        currentLineSpeaker = line.speaker;
+        autoRevertOnFinish = (line.expression == null && line.mood == VNExpression.Default);
+
+        Sprite activeSprite;
         if (line.expression != null)
-        {
-            if (line.speaker == VNSpeaker.Player && playerPortraitImage != null)
-                playerPortraitImage.sprite = line.expression;
-            else if (line.speaker == VNSpeaker.NPC && npcPortraitImage != null)
-                npcPortraitImage.sprite = line.expression;
-        }
+            activeSprite = line.expression;
+        else if (line.mood == VNExpression.Default)
+            activeSprite = current.GetExpressionSprite(line.speaker, VNExpression.Talking);
         else
-        {
-            // Restore default portraits if a previous line used a custom expression
-            if (current.playerPortrait != null && playerPortraitImage != null)
-                playerPortraitImage.sprite = current.playerPortrait;
-            if (current.npcPortrait != null && npcPortraitImage != null)
-                npcPortraitImage.sprite = current.npcPortrait;
-        }
+            activeSprite = current.GetExpressionSprite(line.speaker, line.mood);
+
+        Sprite playerSprite = (line.speaker == VNSpeaker.Player)
+            ? activeSprite
+            : current.GetExpressionSprite(VNSpeaker.Player, VNExpression.Default);
+        Sprite npcSprite = (line.speaker == VNSpeaker.NPC)
+            ? activeSprite
+            : current.GetExpressionSprite(VNSpeaker.NPC, VNExpression.Default);
+
+        if (playerPortraitImage != null && playerSprite != null)
+            playerPortraitImage.sprite = playerSprite;
+        if (npcPortraitImage != null && npcSprite != null)
+            npcPortraitImage.sprite = npcSprite;
 
         // Highlight active speaker
         ApplySpeakerHighlight(line.speaker);
@@ -364,6 +381,22 @@ public class VNDialogueManager : MonoBehaviour
         isTyping = false;
         if (dialogueText != null) dialogueText.text = fullSentence;
         if (continueIndicator != null) continueIndicator.SetActive(true);
+
+        // Auto-revert the active speaker from Talking back to Default once the
+        // line is fully typed (only when this line was in auto / Default mood).
+        // Lines with mood = Thinking / Smiling keep their expression until the
+        // next line replaces it.
+        if (autoRevertOnFinish && current != null)
+        {
+            Sprite defaultSprite = current.GetExpressionSprite(currentLineSpeaker, VNExpression.Default);
+            if (defaultSprite != null)
+            {
+                if (currentLineSpeaker == VNSpeaker.Player && playerPortraitImage != null)
+                    playerPortraitImage.sprite = defaultSprite;
+                else if (currentLineSpeaker == VNSpeaker.NPC && npcPortraitImage != null)
+                    npcPortraitImage.sprite = defaultSprite;
+            }
+        }
 
         // If this is the last line and the dialogue has a choice, show buttons
         bool isLastLine = (current != null && lineIndex == current.lines.Length - 1);
