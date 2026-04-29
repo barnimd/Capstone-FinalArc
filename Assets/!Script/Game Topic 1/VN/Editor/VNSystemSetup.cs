@@ -61,7 +61,7 @@ public static class VNSystemSetup
         playerImg.preserveAspect = true;
         AnchorBottomLeftPortrait(playerGo.GetComponent<RectTransform>());
 
-        AddPortraitLabel(playerGo.transform, "PLAYER");
+        GameObject playerLabel = AddPortraitLabel(playerGo.transform, "PLAYER");
 
         // ---- NPC portrait (RIGHT) ----
         GameObject npcGo = NewUI("NpcPortrait", rootGo.transform, true);
@@ -71,13 +71,15 @@ public static class VNSystemSetup
         npcImg.preserveAspect = true;
         AnchorBottomRightPortrait(npcGo.GetComponent<RectTransform>());
 
-        AddPortraitLabel(npcGo.transform, "NPC");
+        GameObject npcLabel = AddPortraitLabel(npcGo.transform, "NPC");
 
         // ---- Dialogue Box ----
         GameObject boxGo = NewUI("DialogueBox", rootGo.transform, true);
         Image boxImg = boxGo.GetComponent<Image>();
         boxImg.sprite = GetBuiltinUISprite();
-        boxImg.color = new Color(0f, 0f, 0f, 0.78f);
+        // Strong dark background so text is always readable on bright BGs.
+        boxImg.color = new Color(0f, 0f, 0f, 0.88f);
+        boxImg.raycastTarget = false;
         AnchorBottomBox(boxGo.GetComponent<RectTransform>());
 
         // Speaker name
@@ -122,7 +124,10 @@ public static class VNSystemSetup
         mgr.backgroundImage = bg;
         mgr.playerPortraitImage = playerImg;
         mgr.npcPortraitImage = npcImg;
+        mgr.playerPortraitLabel = playerLabel;
+        mgr.npcPortraitLabel = npcLabel;
         mgr.dialogueBox = boxGo;
+        mgr.dialogueBoxImage = boxImg;
         mgr.speakerNameText = nameTmp;
         mgr.dialogueText = textTmp;
         mgr.continueIndicator = contGo;
@@ -142,6 +147,60 @@ public static class VNSystemSetup
 
         Debug.Log("[VN System] VN_Canvas built and wired up. " +
                   "Add a VNNPCInteractable to your receptionist NPC and assign a VNDialogueData.");
+    }
+
+    // ------------------------------------------------------------------
+    // 1b. Patch the existing VN_Canvas in the active scene
+    //      - wires up playerPortraitLabel / npcPortraitLabel / dialogueBoxImage
+    //        if you built the canvas before those fields existed
+    //      - guarantees the dialogue box has a visible dark background
+    // ------------------------------------------------------------------
+    [MenuItem("Tools/VN System (Topic 1)/Patch Existing VN Canvas in Active Scene")]
+    public static void PatchExistingCanvas()
+    {
+        VNDialogueManager mgr = Object.FindObjectOfType<VNDialogueManager>();
+        if (mgr == null)
+        {
+            Debug.LogWarning("[VN System] No VNDialogueManager found in the active scene. " +
+                "Run 'Create VN Canvas in Active Scene' first.");
+            return;
+        }
+
+        int patches = 0;
+
+        // Wire portrait labels (they should be children of the portrait images, named "Label")
+        if (mgr.playerPortraitLabel == null && mgr.playerPortraitImage != null)
+        {
+            Transform t = mgr.playerPortraitImage.transform.Find("Label");
+            if (t != null) { mgr.playerPortraitLabel = t.gameObject; patches++; }
+        }
+        if (mgr.npcPortraitLabel == null && mgr.npcPortraitImage != null)
+        {
+            Transform t = mgr.npcPortraitImage.transform.Find("Label");
+            if (t != null) { mgr.npcPortraitLabel = t.gameObject; patches++; }
+        }
+
+        // Wire dialogueBoxImage from the dialogueBox
+        if (mgr.dialogueBoxImage == null && mgr.dialogueBox != null)
+        {
+            Image boxImg = mgr.dialogueBox.GetComponent<Image>();
+            if (boxImg != null)
+            {
+                mgr.dialogueBoxImage = boxImg;
+                patches++;
+
+                // Force a strong dark background so it's always readable
+                if (boxImg.sprite == null)
+                    boxImg.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
+                boxImg.color = new Color(0f, 0f, 0f, 0.88f);
+            }
+        }
+
+        EditorUtility.SetDirty(mgr);
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+
+        Debug.Log("[VN System] Patched VN_Canvas — " + patches + " field(s) wired up. " +
+            "Save the scene (Ctrl+S).");
     }
 
     // ------------------------------------------------------------------
@@ -291,7 +350,7 @@ public static class VNSystemSetup
         return go;
     }
 
-    private static void AddPortraitLabel(Transform parent, string label)
+    private static GameObject AddPortraitLabel(Transform parent, string label)
     {
         GameObject txtGo = NewUI("Label", parent);
         TextMeshProUGUI tmp = txtGo.AddComponent<TextMeshProUGUI>();
@@ -301,6 +360,7 @@ public static class VNSystemSetup
         tmp.color = new Color(1f, 1f, 1f, 0.85f);
         tmp.alignment = TextAlignmentOptions.Center;
         StretchFull(txtGo.GetComponent<RectTransform>());
+        return txtGo;
     }
 
     /// <summary>

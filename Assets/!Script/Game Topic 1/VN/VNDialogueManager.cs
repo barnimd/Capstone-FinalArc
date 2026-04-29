@@ -32,6 +32,14 @@ public class VNDialogueManager : MonoBehaviour
     public Image playerPortraitImage;
     public Image npcPortraitImage;
 
+    [Tooltip("Optional 'PLAYER' label child of the player portrait. " +
+             "Auto-hidden when a real portrait sprite is assigned in the data.")]
+    public GameObject playerPortraitLabel;
+
+    [Tooltip("Optional 'NPC' label child of the NPC portrait. " +
+             "Auto-hidden when a real portrait sprite is assigned in the data.")]
+    public GameObject npcPortraitLabel;
+
     [Tooltip("Color when the speaker is active (usually white).")]
     public Color activePortraitColor = Color.white;
 
@@ -41,6 +49,13 @@ public class VNDialogueManager : MonoBehaviour
 
     [Header("Dialogue Box")]
     public GameObject dialogueBox;
+    [Tooltip("Optional. The Image component on the dialogue box. " +
+             "If assigned, the manager will guarantee a visible dark background " +
+             "(handy if the box's sprite is null).")]
+    public Image dialogueBoxImage;
+    [Tooltip("Color used for the dialogue box background (only applied when " +
+             "dialogueBoxImage has no sprite assigned).")]
+    public Color dialogueBoxColor = new Color(0f, 0f, 0f, 0.85f);
     public TextMeshProUGUI speakerNameText;
     public TextMeshProUGUI dialogueText;
     public GameObject continueIndicator; // optional little arrow that pulses when ready
@@ -110,16 +125,32 @@ public class VNDialogueManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-    }
 
-    void Start()
-    {
+        // IMPORTANT: do all initial UI state in Awake (NOT Start).
+        //
+        // If this GameObject was inactive at scene start, Awake/Start are
+        // skipped. When the first E press calls StartDialogue and we
+        // SetActive(true), Awake fires immediately (good). Awake resets
+        // the UI to the closed state — then StartDialogue continues and
+        // re-opens it correctly.
+        //
+        // If we did this in Start(), Start would fire AFTER StartDialogue
+        // already activated vnRoot, instantly hiding the dialogue and
+        // forcing the player to press E twice.
         if (vnRoot != null) vnRoot.SetActive(false);
-        if (acceptButton != null) acceptButton.gameObject.SetActive(false);
-        if (rejectButton != null) rejectButton.gameObject.SetActive(false);
 
-        if (acceptButton != null) acceptButton.onClick.AddListener(OnAcceptClicked);
-        if (rejectButton != null) rejectButton.onClick.AddListener(OnRejectClicked);
+        if (acceptButton != null)
+        {
+            acceptButton.gameObject.SetActive(false);
+            acceptButton.onClick.RemoveAllListeners();
+            acceptButton.onClick.AddListener(OnAcceptClicked);
+        }
+        if (rejectButton != null)
+        {
+            rejectButton.gameObject.SetActive(false);
+            rejectButton.onClick.RemoveAllListeners();
+            rejectButton.onClick.AddListener(OnRejectClicked);
+        }
     }
 
     /// <summary>
@@ -165,6 +196,24 @@ public class VNDialogueManager : MonoBehaviour
         if (vnRoot != null) vnRoot.SetActive(true);
         if (acceptButton != null) acceptButton.gameObject.SetActive(false);
         if (rejectButton != null) rejectButton.gameObject.SetActive(false);
+
+        // Hide PLAYER / NPC placeholder labels when real portrait sprites are provided.
+        if (playerPortraitLabel != null)
+            playerPortraitLabel.SetActive(data.playerPortrait == null);
+        if (npcPortraitLabel != null)
+            npcPortraitLabel.SetActive(data.npcPortrait == null);
+
+        // Guarantee the dialogue box is visible — fill in a dark background
+        // even if the box was created without a sprite.
+        if (dialogueBoxImage != null)
+        {
+            if (dialogueBoxImage.sprite == null)
+            {
+                dialogueBoxImage.sprite = WhitePixelSprite;
+                dialogueBoxImage.color = dialogueBoxColor;
+            }
+            dialogueBoxImage.enabled = true;
+        }
 
         // Background — fall back to a tinted placeholder if missing
         if (backgroundImage != null)
@@ -342,6 +391,10 @@ public class VNDialogueManager : MonoBehaviour
         if (!Input.GetMouseButtonDown(0) && !Input.GetKeyDown(KeyCode.Space)) return;
         if (Time.time < nextClickTime) return;
 
+        // Two-stage click (classic VN feel):
+        //   - While typing AND skipDelay has passed: finish typing (skip animation),
+        //     stay on the same line so the player can read the full text.
+        //   - When typing is finished: advance to the next line.
         if (isTyping)
         {
             if (Time.time >= lineStartTime + skipDelay)
