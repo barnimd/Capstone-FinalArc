@@ -72,6 +72,22 @@ public class VNDialogueManager : MonoBehaviour
     [Tooltip("Earliest time after a line starts where a click is allowed to skip.")]
     public float skipDelay = 0.4f;
 
+    [Header("Fade In / Out (cinematic black overlay)")]
+    [Tooltip("Optional. Fullscreen black Image used to fade the screen to black " +
+             "between gameplay <-> VN. Auto-created at runtime if left empty.")]
+    public Image fadeOverlay;
+
+    [Tooltip("Color of the fade overlay (default = solid black).")]
+    public Color fadeColor = Color.black;
+
+    [Tooltip("Seconds for one HALF of the fade-in (gameplay -> black, OR black -> VN). " +
+             "Total fade-in time = 2 x this value.")]
+    [Range(0f, 2f)] public float fadeInDuration = 0.3f;
+
+    [Tooltip("Seconds for one HALF of the fade-out (VN -> black, OR black -> gameplay). " +
+             "Total fade-out time = 2 x this value.")]
+    [Range(0f, 2f)] public float fadeOutDuration = 0.3f;
+
     [Header("Scoring")]
     [Tooltip("Score added on Accept. Set per-DialogueManager (e.g. -10 if Accept is unsafe).")]
     public int acceptScore = 0;
@@ -126,6 +142,10 @@ public class VNDialogueManager : MonoBehaviour
     private VNSpeaker currentLineSpeaker;
     private bool autoRevertOnFinish;
 
+    // Fade state
+    private Coroutine fadeCo;
+    private bool isFadingOut;
+
     void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -143,6 +163,9 @@ public class VNDialogueManager : MonoBehaviour
         // already activated vnRoot, instantly hiding the dialogue and
         // forcing the player to press E twice.
         if (vnRoot != null) vnRoot.SetActive(false);
+
+        // Build / find the fullscreen fade overlay used for cinematic transitions.
+        EnsureFadeOverlay();
 
         if (acceptButton != null)
         {
@@ -195,6 +218,32 @@ public class VNDialogueManager : MonoBehaviour
         }
         if (playerMovement != null) playerMovement.movementLocked = true;
 
+        isFadingOut = false;
+
+        // Branch: if VN is ALREADY visible (chained dialogue from Accept/Reject),
+        // just swap content directly without any fade. Feels continuous.
+        bool chained = vnRoot != null && vnRoot.activeInHierarchy
+                       && (fadeOverlay == null || fadeOverlay.color.a < 0.01f);
+
+        if (chained)
+        {
+            ApplyDialogueData(data);
+            nextClickTime = Time.time + 0.2f;
+            ShowLine();
+            return;
+        }
+
+        // Fresh entry — animate the cinematic fade.
+        if (fadeCo != null) StopCoroutine(fadeCo);
+        fadeCo = StartCoroutine(FadeInAndStart(data));
+    }
+
+    /// <summary>
+    /// Applies the data to the UI (sprites, background, labels, dialogue box).
+    /// Does NOT call ShowLine — caller decides when typing should begin.
+    /// </summary>
+    void ApplyDialogueData(VNDialogueData data)
+    {
         current = data;
         lineIndex = 0;
 
@@ -265,9 +314,24 @@ public class VNDialogueManager : MonoBehaviour
             }
             npcPortraitImage.enabled = true;
         }
+    }
 
-        nextClickTime = Time.time + 0.2f;
+    IEnumerator FadeInAndStart(VNDialogueData data)
+    {
+        // Phase 1: gameplay -> black
+        SetOverlayActive(true);
+        yield return FadeOverlayTo(1f, fadeInDuration);
+
+        // Setup VN content while the screen is fully black.
+        ApplyDialogueData(data);
+
+        // Phase 2: black -> VN (typing starts the moment we begin revealing).
+        nextClickTime = Time.time + fadeInDuration + 0.1f;
         ShowLine();
+        yield return FadeOverlayTo(0f, fadeInDuration);
+
+        SetOverlayActive(false);
+        fadeCo = null;
     }
 
     void ShowLine()
@@ -421,6 +485,10 @@ public class VNDialogueManager : MonoBehaviour
         if (vnRoot == null || !vnRoot.activeInHierarchy) return;
         if (acceptButton != null && acceptButton.gameObject.activeInHierarchy) return;
 
+        // Don't accept input while fading in or out.
+        if (isFadingOut) return;
+        if (fadeOverlay != null && fadeOverlay.color.a > 0.01f) return;
+
         if (!Input.GetMouseButtonDown(0) && !Input.GetKeyDown(KeyCode.Space)) return;
         if (Time.time < nextClickTime) return;
 
@@ -479,6 +547,48 @@ public class VNDialogueManager : MonoBehaviour
 
     void EndDialogue()
     {
+        if (isFadingOut) return; // already closing — ignore re-entry
+
+        // Hide buttons / continue indicator immediately so the fade looks clean.
+        if (acceptButton != null) acceptButton.gameObject.SetActive(false);
+        if (rejectButton != null) rejectButton.gameObject.SetActive(false);
+        if (continueIndicator != null) continueIndicator.SetActive(false);
+
+        if (fadeOverlay != null && vnRoot != null && vnRoot.activeInHierarchy && fadeOutDuration > 0f)
+        {
+            isFadingOut = true;
+            if (fadeCo != null) StopCoroutine(fadeCo);
+            fadeCo = StartCoroutine(FadeOutAndClose());
+        }
+        else
+        {
+            FinalizeEnd();
+        }
+    }
+
+    IEnumerator FadeOutAndClose()
+    {
+        // Phase 1: VN -> black
+        SetOverlayActive(true);
+        yield return FadeOverlayTo(1f, fadeOutDuration);
+
+        // Tear down VN while fully black.
+        if (typingCo != null) { StopCoroutine(typingCo); typingCo = null; }
+        isTyping = false;
+        if (vnRoot != null) vnRoot.SetActive(false);
+
+        // Phase 2: black -> gameplay
+        yield return FadeOverlayTo(0f, fadeOutDuration);
+        SetOverlayActive(false);
+
+        FinalizeEnd();
+    }
+
+    void FinalizeEnd()
+    {
+        if (typingCo != null) { StopCoroutine(typingCo); typingCo = null; }
+        isTyping = false;
+
         if (vnRoot != null) vnRoot.SetActive(false);
         if (playerMovement != null) playerMovement.movementLocked = false;
 
@@ -489,5 +599,84 @@ public class VNDialogueManager : MonoBehaviour
         }
 
         current = null;
+        isFadingOut = false;
+        fadeCo = null;
+    }
+
+    // -----------------------------------------------------------------
+    // Fade overlay helpers
+    // -----------------------------------------------------------------
+
+    /// <summary>
+    /// Builds the fullscreen black overlay used for cinematic fades and
+    /// caches it. Called from Awake so the overlay is ready before any
+    /// dialogue starts. Safe to call multiple times.
+    /// </summary>
+    void EnsureFadeOverlay()
+    {
+        if (fadeOverlay != null) return;
+
+        // Place the overlay as a child of THIS canvas (VN_Canvas) so it
+        // renders on top of vnRoot. As the last sibling it draws above
+        // every VN element, including portraits and the dialogue box.
+        Transform parent = (vnRoot != null && vnRoot.transform.parent != null)
+            ? vnRoot.transform.parent
+            : transform;
+
+        GameObject go = new GameObject("VN_FadeOverlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        go.transform.SetParent(parent, false);
+        go.transform.SetAsLastSibling();
+
+        RectTransform rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+
+        fadeOverlay = go.GetComponent<Image>();
+        fadeOverlay.raycastTarget = false; // never block clicks underneath
+        Color c = fadeColor; c.a = 0f;
+        fadeOverlay.color = c;
+        go.SetActive(false);
+    }
+
+    void SetOverlayActive(bool active)
+    {
+        if (fadeOverlay == null) return;
+        if (fadeOverlay.gameObject.activeSelf != active)
+            fadeOverlay.gameObject.SetActive(active);
+        fadeOverlay.transform.SetAsLastSibling(); // always render on top
+    }
+
+    /// <summary>
+    /// Lerps the overlay alpha to <paramref name="targetAlpha"/> over
+    /// <paramref name="duration"/> seconds. Uses unscaled time so the
+    /// transition still plays while the game is paused.
+    /// </summary>
+    IEnumerator FadeOverlayTo(float targetAlpha, float duration)
+    {
+        if (fadeOverlay == null) yield break;
+
+        Color baseColor = fadeColor;
+        float startAlpha = fadeOverlay.color.a;
+
+        if (duration <= 0f)
+        {
+            baseColor.a = targetAlpha;
+            fadeOverlay.color = baseColor;
+            yield break;
+        }
+
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            float a = Mathf.Lerp(startAlpha, targetAlpha, Mathf.Clamp01(t / duration));
+            baseColor.a = a;
+            fadeOverlay.color = baseColor;
+            yield return null;
+        }
+        baseColor.a = targetAlpha;
+        fadeOverlay.color = baseColor;
     }
 }
