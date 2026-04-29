@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
+  m_Name: VNDialog_Receptionist_Topic1
+  m_EditorClassIdentifier: 
+  playerName: You
+  npcName: Receptionist
+  playerPortrait: {fileID: 21300000, guid: 8870194a7f0066148879ec5d32812b12, type: 3}
+  npcPortrait: {fileID: 21300000, guid: 35420c023ff4f2f4095f5b7dc0e1e366, type: 3}
+  background: {fileID: 21300000, guid: 226c45f7d559b5c4585666cf850d72f9, type: 3}
+  lines:
+  - speaker: 1
+    expression: {fileID: 0}
+    text: Selamat datang di kantor! Apakah ini hari pertamamu?
+  - speaker: 0
+    expression: {fileID: 0}
+    text: Iya, hari pertama. Saya masih bingung harus mulai dari mana.
+  - speaker: 1
+    expression: {fileID: 0}
+    text: Tenang, saya bantu. Meja kerjamu ada di lantai 2, sebelah kiri tangga.
+  - speaker: 1
+    expression: {fileID: 0}
+    text: "Sebelum mulai \u2014 jangan asal klik link di email atau pasang aplikasi
+      sembarangan, ya."
+  - speaker: 0
+    expression: {fileID: 0}
+    text: Baik, saya akan hati-hati.
+  - speaker: 1
+    expression: {fileID: 0}
+    text: Bagus. Selamat bekerja!
+  hasChoice: 0
+  acceptText: Ya
+  rejectText: Tidak
+  dialogueIfAccepted: {fileID: 0}
+  dialogueIfRejected: {fileID: 0}
+  actionID: VN_Receptionist_Topic1
