@@ -3,42 +3,28 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// Attach ke GameObject manapun di scene (misal EmailManager).
-/// Tidak butuh prefab, tidak butuh ScrollView.
-/// Langsung referensikan EmailItem dan field detail dari Hierarchy.
-/// </summary>
 public class EmailRandomizer : MonoBehaviour
 {
     // ─── Panel ────────────────────────────────────────────────────────────────
     [Header("=== Panel ===")]
-    public GameObject panelInbox;    // EmailList
-    public GameObject panelDetail;   // EmailDetailPanel
+    public GameObject panelInbox;
+    public GameObject panelDetail;
 
     // ─── Data ─────────────────────────────────────────────────────────────────
     [Header("=== Data Email ===")]
-    [Tooltip("Assign EmailData ScriptableObject asset di sini.")]
     public EmailData emailData;
     public int minPhishing = 1;
     public int minNormal   = 1;
 
     // ─── Email Items di Hierarchy ─────────────────────────────────────────────
     [Header("=== Email Items (drag dari Hierarchy) ===")]
-    [Tooltip("Drag EmailItem (1) s/d (6) dari Hierarchy ke sini, urut dari atas.")]
     public List<GameObject> emailItems;
 
     // ─── Email Detail UI ──────────────────────────────────────────────────────
     [Header("=== Email Detail UI ===")]
-    [Tooltip("Topbar → Text (TMP)")]
     public TMP_Text txtTopbarSubjek;
-
-    [Tooltip("Sender → SenderInformation")]
     public TMP_Text txtSenderInformation;
-
-    [Tooltip("Messages → Title → Text (TMP)")]
     public TMP_Text txtTitleHeader;
-
-    [Tooltip("Messages → BodyContent → Text (TMP)")]
     public TMP_Text txtBodyContent;
 
     // ─── Runtime ──────────────────────────────────────────────────────────────
@@ -46,7 +32,6 @@ public class EmailRandomizer : MonoBehaviour
     private EmailEntry       _emailTerbuka;
     private int              _indexTerbuka = -1;
 
-    // ─────────────────────────────────────────────────────────────────────────
     private void Start()
     {
         GenerateEmailList();
@@ -73,32 +58,39 @@ public class EmailRandomizer : MonoBehaviour
         if (panelDetail != null) panelDetail.SetActive(true);
         if (panelInbox  != null) panelInbox.SetActive(false);
 
-        // Set data tooltip — cari instance dengan dua cara agar tidak terlewat
         SenderTooltip tooltip = SenderTooltip.Instance ?? FindObjectOfType<SenderTooltip>(true);
         if (tooltip != null)
             tooltip.SetEmailData(_emailTerbuka);
     }
 
-    /// <summary>Dipakai oleh EmailDetailButtons untuk cek isPhishing.</summary>
     public EmailEntry GetEmailTerbuka() => _emailTerbuka;
 
     /// <summary>
-    /// Hapus email yang sedang dibuka dari daftar aktif,
-    /// sembunyikan EmailItem-nya, lalu kembali ke inbox.
+    /// Hilangkan email yang sedang dibuka dari list.
+    /// Dipanggil setelah player sudah action (Balas/Hapus/Laporkan).
+    /// Jika semua email habis → panggil GameplayManager.FinishGame().
     /// </summary>
-    public void HapusEmailTerbuka()
+    public void HilangkanEmailDariList()
     {
         if (_indexTerbuka < 0 || _indexTerbuka >= _activeEmails.Count) return;
 
-        // Sembunyikan EmailItem di Hierarchy
-        // Cari EmailItem mana yang menampilkan email di index ini
-        // dengan cara re-render ulang list tanpa email tersebut
         _activeEmails.RemoveAt(_indexTerbuka);
         _emailTerbuka = null;
         _indexTerbuka = -1;
 
         RefreshTampilanList();
         TutupDetailEmail();
+
+        // Cek apakah semua email sudah selesai
+        if (_activeEmails.Count == 0)
+        {
+            Debug.Log("[EmailRandomizer] Semua email selesai! Trigger FinishGame.");
+            GameplayManager gm = FindObjectOfType<GameplayManager>();
+            if (gm != null)
+                gm.FinishGame();
+            else
+                Debug.LogError("[EmailRandomizer] GameplayManager tidak ditemukan di scene!");
+        }
     }
 
     // =========================================================================
@@ -115,7 +107,7 @@ public class EmailRandomizer : MonoBehaviour
 
         if (emailItems == null || emailItems.Count == 0)
         {
-            Debug.LogError("[EmailRandomizer] emailItems kosong! Drag EmailItem dari Hierarchy.");
+            Debug.LogError("[EmailRandomizer] emailItems kosong!");
             return;
         }
 
@@ -139,9 +131,6 @@ public class EmailRandomizer : MonoBehaviour
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Refresh tampilan list setelah ada email yang dihapus
-    // ─────────────────────────────────────────────────────────────────────────
     private void RefreshTampilanList()
     {
         for (int i = 0; i < emailItems.Count; i++)
@@ -156,14 +145,11 @@ public class EmailRandomizer : MonoBehaviour
             }
             else
             {
-                // Tidak ada data lagi untuk slot ini — sembunyikan
                 emailItems[i].SetActive(false);
             }
         }
     }
 
-
-    // ─────────────────────────────────────────────────────────────────────────
     private void IsiBarisList(GameObject item, EmailEntry entry)
     {
         foreach (TMP_Text tmp in item.GetComponentsInChildren<TMP_Text>())
@@ -177,9 +163,6 @@ public class EmailRandomizer : MonoBehaviour
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Pasang listener klik ke Button di EmailItem
-    // ─────────────────────────────────────────────────────────────────────────
     private void SetupTombolBaris(GameObject item, int index)
     {
         Button btn = item.GetComponent<Button>();
@@ -196,29 +179,14 @@ public class EmailRandomizer : MonoBehaviour
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Isi panel detail sesuai struktur Hierarchy
-    // ─────────────────────────────────────────────────────────────────────────
     private void IsiPanelDetail(EmailEntry entry)
     {
         if (entry == null) return;
 
-        // Topbar → Text (TMP) = subjek email
-        if (txtTopbarSubjek != null)
-            txtTopbarSubjek.text = entry.subjek;
-
-        // Sender → SenderInformation = "Nama <email>"
-        if (txtSenderInformation != null)
-            txtSenderInformation.text = $"{entry.namaPengirim} <{entry.emailPengirim}>";
-
-        // Messages → Title → Text (TMP) = teks header
-        if (txtTitleHeader != null)
-            txtTitleHeader.text = entry.teksHeader;
-
-        // Messages → BodyContent → Text (TMP) = isi email
-        if (txtBodyContent != null)
-            txtBodyContent.text = entry.isiEmail;
-
+        if (txtTopbarSubjek      != null) txtTopbarSubjek.text      = entry.subjek;
+        if (txtSenderInformation != null) txtSenderInformation.text = $"{entry.namaPengirim} <{entry.emailPengirim}>";
+        if (txtTitleHeader       != null) txtTitleHeader.text       = entry.teksHeader;
+        if (txtBodyContent       != null) txtBodyContent.text       = entry.isiEmail;
     }
 
     // =========================================================================
