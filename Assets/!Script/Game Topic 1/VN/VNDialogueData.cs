@@ -8,7 +8,8 @@ public enum VNSpeaker
 {
     Player,
     NPC,
-    Narrator
+    Narrator,
+    NPC2   // karakter kanan ke-2, pakai slot portrait yang sama dengan NPC
 }
 
 /// <summary>
@@ -81,6 +82,9 @@ public class VNDialogueData : ScriptableObject
     [Tooltip("Happy / smiling sprite for the PLAYER. Used when a line's mood = Smiling. (Optional)")]
     public Sprite playerSmilingPortrait;
 
+    [Tooltip("Display name for NPC 2 (optional, hanya diisi kalau dialog punya 2 NPC).")]
+    public string npc2Name = "";
+
     [Header("NPC Portraits — Expressions")]
     [Tooltip("Default / idle sprite for the NPC.")]
     public Sprite npcPortrait;
@@ -94,6 +98,19 @@ public class VNDialogueData : ScriptableObject
 
     [Tooltip("Happy / smiling sprite for the NPC. Used when a line's mood = Smiling. (Optional)")]
     public Sprite npcSmilingPortrait;
+
+    [Header("NPC 2 Portraits — Expressions (opsional, untuk dialog 2 NPC)")]
+    [Tooltip("Default / idle sprite untuk NPC 2. Kosongkan kalau cuma 1 NPC.")]
+    public Sprite npc2Portrait;
+
+    [Tooltip("Sprite bicara untuk NPC 2.")]
+    public Sprite npc2TalkingPortrait;
+
+    [Tooltip("Sprite thinking untuk NPC 2. (Opsional)")]
+    public Sprite npc2ThinkingPortrait;
+
+    [Tooltip("Sprite smiling untuk NPC 2. (Opsional)")]
+    public Sprite npc2SmilingPortrait;
 
     [Header("Background (Image 8 = reception scene)")]
     [Tooltip("Background image shown behind the VN scene during this dialogue.")]
@@ -125,33 +142,34 @@ public class VNDialogueData : ScriptableObject
     /// </summary>
     public Sprite GetExpressionSprite(VNSpeaker speaker, VNExpression mood)
     {
-        // Narrator has no portrait of its own — fall through to NPC sprite.
         if (speaker == VNSpeaker.Player)
         {
             switch (mood)
             {
-                case VNExpression.Talking:
-                    return playerTalkingPortrait != null ? playerTalkingPortrait : playerPortrait;
-                case VNExpression.Thinking:
-                    return playerThinkingPortrait != null ? playerThinkingPortrait : playerPortrait;
-                case VNExpression.Smiling:
-                    return playerSmilingPortrait != null ? playerSmilingPortrait : playerPortrait;
-                default:
-                    return playerPortrait;
+                case VNExpression.Talking:  return playerTalkingPortrait  != null ? playerTalkingPortrait  : playerPortrait;
+                case VNExpression.Thinking: return playerThinkingPortrait != null ? playerThinkingPortrait : playerPortrait;
+                case VNExpression.Smiling:  return playerSmilingPortrait  != null ? playerSmilingPortrait  : playerPortrait;
+                default: return playerPortrait;
             }
         }
-        else
+        else if (speaker == VNSpeaker.NPC2)
         {
             switch (mood)
             {
-                case VNExpression.Talking:
-                    return npcTalkingPortrait != null ? npcTalkingPortrait : npcPortrait;
-                case VNExpression.Thinking:
-                    return npcThinkingPortrait != null ? npcThinkingPortrait : npcPortrait;
-                case VNExpression.Smiling:
-                    return npcSmilingPortrait != null ? npcSmilingPortrait : npcPortrait;
-                default:
-                    return npcPortrait;
+                case VNExpression.Talking:  return npc2TalkingPortrait  != null ? npc2TalkingPortrait  : npc2Portrait;
+                case VNExpression.Thinking: return npc2ThinkingPortrait != null ? npc2ThinkingPortrait : npc2Portrait;
+                case VNExpression.Smiling:  return npc2SmilingPortrait  != null ? npc2SmilingPortrait  : npc2Portrait;
+                default: return npc2Portrait;
+            }
+        }
+        else // NPC atau Narrator
+        {
+            switch (mood)
+            {
+                case VNExpression.Talking:  return npcTalkingPortrait  != null ? npcTalkingPortrait  : npcPortrait;
+                case VNExpression.Thinking: return npcThinkingPortrait != null ? npcThinkingPortrait : npcPortrait;
+                case VNExpression.Smiling:  return npcSmilingPortrait  != null ? npcSmilingPortrait  : npcPortrait;
+                default: return npcPortrait;
             }
         }
     }

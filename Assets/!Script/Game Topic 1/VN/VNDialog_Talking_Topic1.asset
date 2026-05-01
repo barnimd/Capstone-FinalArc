@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
+  m_Name: VNDialog_Talking_Topic1
+  m_EditorClassIdentifier: 
+  playerName: Kamu
+  npcName: Rio
+  playerPortrait: {fileID: 21300000, guid: 91753b50188160e469f1596dd7b4e6be, type: 3}
+  playerTalkingPortrait: {fileID: 21300000, guid: 6f7b85b4da78fd74eb50431daa554c0f, type: 3}
+  playerThinkingPortrait: {fileID: 0}
+  playerSmilingPortrait: {fileID: 0}
+  npc2Name: Bagas
+  npcPortrait: {fileID: 21300000, guid: 8aad04948ca6d534dbdb5f3b12a33db0, type: 3}
+  npcTalkingPortrait: {fileID: 0}
+  npcThinkingPortrait: {fileID: 0}
+  npcSmilingPortrait: {fileID: 0}
+  npc2Portrait: {fileID: 21300000, guid: 8dc32b37f5869534d9d590054a3ec38d, type: 3}
+  npc2TalkingPortrait: {fileID: 0}
+  npc2ThinkingPortrait: {fileID: 0}
+  npc2SmilingPortrait: {fileID: 0}
+  background: {fileID: 21300000, guid: 409ebc58de7629d4ebfcf64e117104d5, type: 3}
+  lines:
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: Eh, kamu karyawan baru ya? Semangat pagi! Kok kayak kurang tidur gitu?
+  - speaker: 0
+    mood: 1
+    expression: {fileID: 0}
+    text: Hehe iya, masih adaptasi. Tadi juga nyasar dulu di lorong.
+  - speaker: 3
+    mood: 3
+    expression: {fileID: 0}
+    text: "Sini duduk dulu, minum kopi bro \u2014 biar melek!"
+  - speaker: 0
+    mood: 3
+    expression: {fileID: 0}
+    text: Wah makasih banyak!
+  - speaker: 1
+    mood: 2
+    expression: {fileID: 0}
+    text: "Ngomong-ngomong, kamu udah denger belum? Kemarin ada kasus phishing di
+      sini \u2014 ada orang nyamar jadi IT support."
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Serius? Terus gimana ngatasinnya?
+  - speaker: 3
+    mood: 2
+    expression: {fileID: 0}
+    text: "Makanya kalau ada yang ngaku IT support dan minta file, verifikasi dulu
+      \u2014 pastiin dia beneran karyawan sini."
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Iya, jangan langsung kasih file ke siapapun sebelum kamu yakin identitasnya.
+  - speaker: 3
+    mood: 0
+    expression: {fileID: 0}
+    text: "Satu lagi \u2014 jangan install aplikasi sembarangan di laptop kantor,
+      apalagi yang gaada lisensinya."
+  - speaker: 0
+    mood: 3
+    expression: {fileID: 0}
+    text: Oke, sip! Makasih infonya Rio, Bagas. Berguna banget nih buat hari pertama.
+  - speaker: 1
+    mood: 3
+    expression: {fileID: 0}
+    text: Sama-sama! Selamat kerja ya, stay safe!
+  hasChoice: 0
+  acceptText: Ya
+  rejectText: Tidak
+  dialogueIfAccepted: {fileID: 0}
+  dialogueIfRejected: {fileID: 0}
+  actionID: NPC_Talking1and2

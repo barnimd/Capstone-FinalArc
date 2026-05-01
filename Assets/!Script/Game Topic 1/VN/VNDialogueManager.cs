@@ -137,6 +137,9 @@ public class VNDialogueManager : MonoBehaviour
     private Color playerBaseColor = Color.white;
     private Color npcBaseColor = Color.white;
 
+    // Tracks siapa yang terakhir tampil di slot kanan (NPC atau NPC2).
+    private VNSpeaker lastRightSpeaker = VNSpeaker.NPC;
+
     // Tracks the currently typing line so FinishTyping can revert the active
     // speaker's portrait from Talking back to Default (auto mode only).
     private VNSpeaker currentLineSpeaker;
@@ -364,9 +367,24 @@ public class VNDialogueManager : MonoBehaviour
         Sprite playerSprite = (line.speaker == VNSpeaker.Player)
             ? activeSprite
             : current.GetExpressionSprite(VNSpeaker.Player, VNExpression.Default);
-        Sprite npcSprite = (line.speaker == VNSpeaker.NPC)
-            ? activeSprite
-            : current.GetExpressionSprite(VNSpeaker.NPC, VNExpression.Default);
+
+        // Slot kanan dipakai bersama NPC dan NPC2 — swap sprite tergantung siapa yang bicara.
+        Sprite npcSprite;
+        if (line.speaker == VNSpeaker.NPC || line.speaker == VNSpeaker.NPC2)
+        {
+            npcSprite = activeSprite;
+            lastRightSpeaker = line.speaker;
+            // Update base color sesuai siapa yang sekarang di slot kanan.
+            bool hasSprite = line.speaker == VNSpeaker.NPC2
+                ? current.npc2Portrait != null
+                : current.npcPortrait != null;
+            npcBaseColor = hasSprite ? Color.white : placeholderNpcColor;
+        }
+        else
+        {
+            // Player sedang bicara — slot kanan tetap tampilkan NPC terakhir dalam pose default.
+            npcSprite = current.GetExpressionSprite(lastRightSpeaker, VNExpression.Default);
+        }
 
         if (playerPortraitImage != null && playerSprite != null)
             playerPortraitImage.sprite = playerSprite;
@@ -382,7 +400,8 @@ public class VNDialogueManager : MonoBehaviour
             switch (line.speaker)
             {
                 case VNSpeaker.Player: speakerNameText.text = current.playerName; break;
-                case VNSpeaker.NPC: speakerNameText.text = current.npcName; break;
+                case VNSpeaker.NPC:    speakerNameText.text = current.npcName; break;
+                case VNSpeaker.NPC2:   speakerNameText.text = current.npc2Name; break;
                 default: speakerNameText.text = ""; break;
             }
         }
@@ -407,7 +426,8 @@ public class VNDialogueManager : MonoBehaviour
         }
         if (npcPortraitImage != null)
         {
-            bool active = (speaker == VNSpeaker.NPC);
+            // NPC dan NPC2 keduanya pakai slot kanan yang sama.
+            bool active = (speaker == VNSpeaker.NPC || speaker == VNSpeaker.NPC2);
             npcPortraitImage.color = ModulatePortrait(npcBaseColor, active);
         }
     }
@@ -457,7 +477,7 @@ public class VNDialogueManager : MonoBehaviour
             {
                 if (currentLineSpeaker == VNSpeaker.Player && playerPortraitImage != null)
                     playerPortraitImage.sprite = defaultSprite;
-                else if (currentLineSpeaker == VNSpeaker.NPC && npcPortraitImage != null)
+                else if ((currentLineSpeaker == VNSpeaker.NPC || currentLineSpeaker == VNSpeaker.NPC2) && npcPortraitImage != null)
                     npcPortraitImage.sprite = defaultSprite;
             }
         }

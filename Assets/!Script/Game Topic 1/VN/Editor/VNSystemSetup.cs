@@ -20,6 +20,9 @@ public static class VNSystemSetup
     private const string SAMPLE_DIALOGUE_PATH =
         "Assets/!Script/Game Topic 1/VN/VNDialog_Receptionist_Topic1.asset";
 
+    private const string TALKING_DIALOGUE_PATH =
+        "Assets/!Script/Game Topic 1/VN/VNDialog_Talking_Topic1.asset";
+
     // ------------------------------------------------------------------
     // 1. Build the entire VN Canvas hierarchy in the active scene
     // ------------------------------------------------------------------
@@ -246,11 +249,64 @@ public static class VNSystemSetup
     }
 
     // ------------------------------------------------------------------
+    // 3. Create sample NPC Talking dialogue (2 NPC, semua mood tersedia)
+    // ------------------------------------------------------------------
+    [MenuItem("Tools/VN System (Topic 1)/Create Sample NPC Talking Dialogue")]
+    public static void CreateTalkingDialogue()
+    {
+        VNDialogueData data = ScriptableObject.CreateInstance<VNDialogueData>();
+
+        // --- Identitas karakter (sprite diisi manual di Inspector) ---
+        data.playerName  = "Kamu";
+        data.npcName     = "Rio";    // NPC Talking 1 — slot kanan, speaker = NPC
+        data.npc2Name    = "Bagas";  // NPC Talking 2 — slot kanan (swap), speaker = NPC2
+        data.actionID    = "NPC_Talking1and2";
+        data.hasChoice   = false;
+        data.acceptText  = "Ya";
+        data.rejectText  = "Tidak";
+
+        data.lines = new VNLine[]
+        {
+            NewLine(VNSpeaker.NPC,    VNExpression.Default,  "Eh, kamu karyawan baru ya? Semangat pagi! Kok kayak kurang tidur gitu?"),
+            NewLine(VNSpeaker.Player, VNExpression.Default,  "Hehe iya, masih adaptasi. Tadi juga nyasar dulu di lorong."),
+            NewLine(VNSpeaker.NPC2,   VNExpression.Smiling,  "Sini duduk dulu, minum kopi bro — biar melek!"),
+            NewLine(VNSpeaker.Player, VNExpression.Smiling,  "Wah makasih banyak!"),
+            NewLine(VNSpeaker.NPC,    VNExpression.Thinking, "Ngomong-ngomong, kamu udah denger belum? Kemarin ada kasus phishing di sini — ada orang nyamar jadi IT support."),
+            NewLine(VNSpeaker.Player, VNExpression.Default,  "Serius? Terus gimana ngatasinnya?"),
+            NewLine(VNSpeaker.NPC2,   VNExpression.Thinking, "Makanya kalau ada yang ngaku IT support dan minta file, verifikasi dulu — pastiin dia beneran karyawan sini."),
+            NewLine(VNSpeaker.NPC,    VNExpression.Default,  "Iya, jangan langsung kasih file ke siapapun sebelum kamu yakin identitasnya."),
+            NewLine(VNSpeaker.NPC2,   VNExpression.Default,  "Satu lagi — jangan install aplikasi sembarangan di laptop kantor, apalagi yang gaada lisensinya."),
+            NewLine(VNSpeaker.Player, VNExpression.Smiling,  "Oke, sip! Makasih infonya Rio, Bagas. Berguna banget nih buat hari pertama."),
+            NewLine(VNSpeaker.NPC,    VNExpression.Smiling,  "Sama-sama! Selamat kerja ya, stay safe!"),
+        };
+
+        string folder = Path.GetDirectoryName(TALKING_DIALOGUE_PATH).Replace("\\", "/");
+        if (!AssetDatabase.IsValidFolder(folder))
+            Directory.CreateDirectory(folder);
+
+        string path = AssetDatabase.GenerateUniqueAssetPath(TALKING_DIALOGUE_PATH);
+        AssetDatabase.CreateAsset(data, path);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        EditorUtility.FocusProjectWindow();
+        Selection.activeObject = data;
+
+        Debug.Log("[VN System] NPC Talking dialogue created at: " + path +
+                  "\nTinggal isi sprite Background, PlayerPortrait, NpcPortrait (NPC1), Npc2Portrait (NPC2) di Inspector.");
+    }
+
+    // ------------------------------------------------------------------
     // helpers
     // ------------------------------------------------------------------
     private static VNLine NewLine(VNSpeaker speaker, string text)
     {
-        return new VNLine { speaker = speaker, text = text, expression = null };
+        return new VNLine { speaker = speaker, text = text, mood = VNExpression.Default };
+    }
+
+    private static VNLine NewLine(VNSpeaker speaker, VNExpression mood, string text)
+    {
+        return new VNLine { speaker = speaker, mood = mood, text = text };
     }
 
     private static GameObject NewUI(string name, Transform parent, bool withImage = false)
