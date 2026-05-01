@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65a98498b6265ad4c9f75676544601c5, type: 3}
+  m_Name: EvaluationData_Tp3
+  m_EditorClassIdentifier: 
+  questions:
+  - questionText: Apakah email phishing sering menyamar sebagai pihak resmi seperti
+      bank atau perusahaan?
+    choiceA: Ya
+    choiceB: Tidak
+    choiceC: 
+    choiceD: 
+    correctAnswerIndex: 0
+    explanation: Phishing sering menyamar agar terlihat terpercaya.
+  - questionText: Apakah semua email yang memiliki logo perusahaan pasti aman untuk
+      dibuka?
+    choiceA: Ya
+    choiceB: Tidak
+    choiceC: 
+    choiceD: 
+    correctAnswerIndex: 1
+    explanation: Logo bisa dipalsukan.
+  - questionText: Apakah link dalam email bisa mengarah ke website palsu meskipun
+      terlihat mirip aslinya?
+    choiceA: Ya
+    choiceB: Tidak
+    choiceC: 
+    choiceD: 
+    correctAnswerIndex: 0
+    explanation: Link bisa menuju website palsu.
+  - questionText: Apakah penting untuk memeriksa URL sebelum memasukkan data pribadi
+      di sebuah website?
+    choiceA: Ya
+    choiceB: Tidak
+    choiceC: 
+    choiceD: 
+    correctAnswerIndex: 0
+    explanation: URL membantu cek keaslian website.
+  - questionText: Apakah email yang meminta informasi sensitif secara mendesak perlu
+      diwaspadai?
+    choiceA: Ya
+    choiceB: Tidak
+    choiceC: 
+    choiceD: 
+    correctAnswerIndex: 0
+    explanation: Rasa mendesak sering jadi trik penipu.

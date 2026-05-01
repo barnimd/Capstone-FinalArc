@@ -19,7 +19,7 @@ public class ScoreManager : MonoBehaviour
             return;
         }
         instance = this;
-        score = 100;
+        score = 0;
         Debug.Log("[ScoreManager] Initialized. Score = " + score);
     }
 

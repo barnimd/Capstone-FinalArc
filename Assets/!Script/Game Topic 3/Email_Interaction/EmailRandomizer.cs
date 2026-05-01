@@ -81,15 +81,13 @@ public class EmailRandomizer : MonoBehaviour
         RefreshTampilanList();
         TutupDetailEmail();
 
-        // Cek apakah semua email sudah selesai
         if (_activeEmails.Count == 0)
         {
-            Debug.Log("[EmailRandomizer] Semua email selesai! Trigger FinishGame.");
-            GameplayManager gm = FindObjectOfType<GameplayManager>();
-            if (gm != null)
-                gm.FinishGame();
+            Debug.Log("[EmailRandomizer] Semua email selesai! Trigger Evaluation.");
+            if (EvaluationManager.Instance != null)
+                EvaluationManager.Instance.TriggerEvaluation();
             else
-                Debug.LogError("[EmailRandomizer] GameplayManager tidak ditemukan di scene!");
+                Debug.LogError("[EmailRandomizer] EvaluationManager tidak ditemukan di scene!");
         }
     }
 
