@@ -20,12 +20,15 @@ public class GameManager_Tp4 : MonoBehaviour
     public PopupData_Tp4 popupData;
 
     [Header("=== Score ===")]
-    public int scorePerCorrectLogin = 50;
-    public int scorePerCorrectPopup = 20;
-    public int penaltyPerWrongPopup = -10;
+    public int scorePerCorrectLogin = 30;
+    public int scorePerCorrectPopup = 15;
+    public int penaltyPerWrongPopup = -5;
 
     [Header("=== UI ===")]
     public ObjectiveUI_Tp4 objectiveUI;
+
+    [Header("=== Evaluation ===")]
+    public EvaluationManager_Tp4 evaluationManager;
 
     [Header("=== Summary ===")]
     public GameObject summaryCanvas;
@@ -116,6 +119,17 @@ public class GameManager_Tp4 : MonoBehaviour
         _totalScore += popupCorrect * scorePerCorrectPopup;
         _totalScore += (popupTotal - popupCorrect) * penaltyPerWrongPopup;
 
+        if (objectiveUI != null)
+            objectiveUI.gameObject.SetActive(false);
+
+        if (evaluationManager != null)
+            evaluationManager.TriggerEvaluation(OnEvaluationComplete);
+        else
+            EndGame(true);
+    }
+
+    private void OnEvaluationComplete()
+    {
         EndGame(true);
     }
 

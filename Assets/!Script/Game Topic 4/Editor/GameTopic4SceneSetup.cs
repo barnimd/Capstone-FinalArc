@@ -16,6 +16,7 @@ public static class GameTopic4SceneSetup
         SetupObjectiveUI();
         SetupWebsiteLoginUI();
         SetupDashboardUI();
+        SetupEvaluationUI();
         SetupGameManager();
         WireChromeButton();
         EnsureScoreManager();
@@ -24,9 +25,10 @@ public static class GameTopic4SceneSetup
         EditorUtility.DisplayDialog("Topic 4 Setup",
             "Scene Computer_Interaction siap!\n\n" +
             "Langkah berikutnya:\n" +
-            "1. Buat URLData_Tp4 asset (Create > Game > URL Data Tp4) + isi URL\n" +
-            "2. Buat PopupData_Tp4 asset (Create > Game > Popup Data Tp4) + isi Popup\n" +
-            "3. Assign ke GameManager_Tp4 di Inspector", "OK");
+            "1. Buat URLData_Tp4   (Create > Game > URL Data Tp4) + isi URL\n" +
+            "2. Buat PopupData_Tp4  (Create > Game > Popup Data Tp4) + isi Popup\n" +
+            "3. Buat EvaluationData_Tp4 (Create > Game > Evaluation Data Tp4) + isi 5 soal\n" +
+            "4. Assign ketiga asset ke GameManager_Tp4 di Inspector", "OK");
     }
 
     private static void FixURLInputField()
@@ -322,6 +324,55 @@ public static class GameTopic4SceneSetup
         Debug.Log("[Setup] DashboardUI siap.");
     }
 
+    // ===================== EVALUATION =====================
+
+    private static void SetupEvaluationUI()
+    {
+        Canvas evalCanvas = FindCanvas("evaluation");
+        if (evalCanvas == null) { Debug.LogWarning("[Setup] EvaluationCanvas tidak ditemukan."); return; }
+
+        Transform evalPanel = evalCanvas.transform.Find("EvaluationPanel");
+        if (evalPanel == null) { Debug.LogWarning("[Setup] EvaluationPanel tidak ditemukan."); return; }
+
+        EvaluationPanel_Tp4 ctrl = evalPanel.GetComponent<EvaluationPanel_Tp4>();
+        if (ctrl == null) ctrl = evalPanel.gameObject.AddComponent<EvaluationPanel_Tp4>();
+
+        ctrl.evaluationPanelRoot = evalPanel.gameObject;
+
+        Transform qp = evalPanel.Find("QuestionPanel");
+        if (qp != null)
+        {
+            ctrl.questionContainer = qp.gameObject;
+            ctrl.txtQuestionNum = qp.Find("TxtQuestionNum")?.GetComponent<TMP_Text>();
+            ctrl.txtQuestionText = qp.Find("TxtQuestionText")?.GetComponent<TMP_Text>();
+            ctrl.btnChoiceA = qp.Find("ButtonChoiceA")?.GetComponent<Button>();
+            ctrl.btnChoiceB = qp.Find("ButtonChoiceB")?.GetComponent<Button>();
+            ctrl.btnNext = qp.Find("BtnNext")?.GetComponent<Button>();
+        }
+
+        Transform rp = evalPanel.Find("ResultPanel");
+        if (rp != null)
+        {
+            ctrl.resultContainer = rp.gameObject;
+            ctrl.txtResultScore = rp.Find("TxtResultScore")?.GetComponent<TMP_Text>();
+            ctrl.txtResultDetail = rp.Find("TxtResultDetail")?.GetComponent<TMP_Text>();
+            ctrl.btnSelesai = rp.Find("ButtonSelesai")?.GetComponent<Button>();
+        }
+
+        GameObject evalMgrObj = GameObject.Find("EvaluationManager_Tp4");
+        EvaluationManager_Tp4 em = evalMgrObj?.GetComponent<EvaluationManager_Tp4>();
+        if (em == null)
+        {
+            evalMgrObj = new GameObject("EvaluationManager_Tp4");
+            em = evalMgrObj.AddComponent<EvaluationManager_Tp4>();
+        }
+
+        em.evaluationPanel = ctrl;
+        em.evaluationCanvas = evalCanvas.gameObject;
+
+        Debug.Log("[Setup] EvaluationUI siap.");
+    }
+
     // ===================== GAME MANAGER =====================
 
     private static void SetupGameManager()
@@ -336,6 +387,7 @@ public static class GameTopic4SceneSetup
         gm.desktopCanvas = FindCanvas("desktop")?.gameObject;
         gm.websiteCanvas = FindCanvas("website")?.gameObject;
         gm.objectiveUI = Object.FindObjectOfType<ObjectiveUI_Tp4>(true);
+        gm.evaluationManager = Object.FindObjectOfType<EvaluationManager_Tp4>(true);
 
         Canvas wc = FindCanvas("website");
         Canvas dc = FindCanvas("desktop");

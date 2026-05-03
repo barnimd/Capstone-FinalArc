@@ -2416,7 +2416,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -3005,7 +3005,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 38.999992}
+  m_AnchoredPosition: {x: 0, y: 140}
   m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &731509516
@@ -3721,6 +3721,30 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1501354087}
+        m_TargetAssemblyTypeName: GameManager_Tp4, Assembly-CSharp
+        m_MethodName: OnBrowserIconClicked
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1501354087}
+        m_TargetAssemblyTypeName: GameManager_Tp4, Assembly-CSharp
+        m_MethodName: OnBrowserIconClicked
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &776015365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3922,6 +3946,30 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 1501354087}
+        m_TargetAssemblyTypeName: GameManager_Tp4, Assembly-CSharp
+        m_MethodName: OnBrowserIconClicked
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1501354087}
+        m_TargetAssemblyTypeName: GameManager_Tp4, Assembly-CSharp
+        m_MethodName: OnBrowserIconClicked
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 1501354087}
         m_TargetAssemblyTypeName: GameManager_Tp4, Assembly-CSharp
         m_MethodName: OnBrowserIconClicked
@@ -4477,6 +4525,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 961036274}
   m_CullTransparentMesh: 1
+--- !u!1 &993597494
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 993597496}
+  - component: {fileID: 993597495}
+  m_Layer: 0
+  m_Name: EvaluationManager_Tp4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &993597495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993597494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5ecbc6f828ad8246b170351c3824031, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  evaluationData: {fileID: 11400000, guid: 8bcbdfc9b0a2b5e43baf359b466d99bc, type: 2}
+  evaluationPanel: {fileID: 2130400388}
+  evaluationCanvas: {fileID: 647173186}
+  summaryCanvas: {fileID: 1356547235}
+  scorePerCorrect: 2
+--- !u!4 &993597496
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993597494}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1071004002
 GameObject:
   m_ObjectHideFlags: 0
@@ -4494,7 +4591,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1071004003
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4876,7 +4973,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 127}
+  m_AnchoredPosition: {x: 0, y: 185}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1191252940
@@ -5381,7 +5478,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1231375344
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6592,6 +6689,7 @@ MonoBehaviour:
   scorePerCorrectPopup: 20
   penaltyPerWrongPopup: -10
   objectiveUI: {fileID: 303536212}
+  evaluationManager: {fileID: 993597495}
   summaryCanvas: {fileID: 1356547235}
 --- !u!4 &1501354088
 Transform:
@@ -7613,7 +7711,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: Selesai
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
@@ -9266,7 +9364,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Password...
+  m_text: https://
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
@@ -10314,7 +10412,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2094635331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10409,6 +10507,7 @@ GameObject:
   - component: {fileID: 2130400387}
   - component: {fileID: 2130400386}
   - component: {fileID: 2130400385}
+  - component: {fileID: 2130400388}
   m_Layer: 5
   m_Name: EvaluationPanel
   m_TagString: Untagged
@@ -10475,6 +10574,31 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 25, y: 14.064514}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2130400388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2130400383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 546fc128d30558f44900ed9eaeec05b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  evaluationPanelRoot: {fileID: 2130400383}
+  questionContainer: {fileID: 961036274}
+  txtQuestionNum: {fileID: 1519481179}
+  txtQuestionText: {fileID: 1146591536}
+  btnChoiceA: {fileID: 657340078}
+  btnChoiceB: {fileID: 1860042955}
+  btnNext: {fileID: 755036267}
+  resultContainer: {fileID: 1231375343}
+  txtResultScore: {fileID: 1191252941}
+  txtResultDetail: {fileID: 731509517}
+  btnSelesai: {fileID: 111514340}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 1, g: 0.76, b: 0.2, a: 1}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -10490,3 +10614,4 @@ SceneRoots:
   - {fileID: 306037910}
   - {fileID: 674688284}
   - {fileID: 647173190}
+  - {fileID: 993597496}
