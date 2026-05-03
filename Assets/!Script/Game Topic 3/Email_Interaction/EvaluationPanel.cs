@@ -6,7 +6,7 @@ public class EvaluationPanel : MonoBehaviour
 {
     [Header("=== Root Panel ===")]
     public GameObject evaluationPanelRoot;
-    public GameObject emailCanvas;
+    public GameObject desktopCanvas;
 
     [Header("=== Question UI ===")]
     public GameObject questionContainer;

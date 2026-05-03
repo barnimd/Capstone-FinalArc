@@ -24,6 +24,9 @@ public class GameManager_Tp4 : MonoBehaviour
     public int scorePerCorrectPopup = 20;
     public int penaltyPerWrongPopup = -10;
 
+    [Header("=== UI ===")]
+    public ObjectiveUI_Tp4 objectiveUI;
+
     [Header("=== Summary ===")]
     public GameObject summaryCanvas;
 
@@ -42,6 +45,9 @@ public class GameManager_Tp4 : MonoBehaviour
         desktopCanvas.SetActive(true);
         if (websiteCanvas != null) websiteCanvas.SetActive(false);
         if (summaryCanvas != null) summaryCanvas.SetActive(false);
+
+        if (objectiveUI != null)
+            objectiveUI.ShowObjective("Buka aplikasi chrome");
     }
 
     public void OnBrowserIconClicked()
@@ -53,6 +59,9 @@ public class GameManager_Tp4 : MonoBehaviour
 
         if (desktopCanvas != null) desktopCanvas.SetActive(false);
         if (websiteCanvas != null) websiteCanvas.SetActive(true);
+
+        if (objectiveUI != null)
+            objectiveUI.ShowObjective("Round 1 Pilih: lanjut login ke website ini atau hindari");
 
         websiteController.StartWebsiteSession(_currentRoundURLs, OnWebsiteRoundComplete);
     }
@@ -86,6 +95,10 @@ public class GameManager_Tp4 : MonoBehaviour
             if (websiteCanvas != null) websiteCanvas.SetActive(false);
 
             _currentState = Tp4State.Dashboard;
+
+            if (objectiveUI != null)
+                objectiveUI.ShowObjective("Round 2 Pilih: popup aman atau jebakan?");
+
             dashboardController.StartDashboardSession(OnDashboardComplete);
         }
         else
@@ -118,6 +131,7 @@ public class GameManager_Tp4 : MonoBehaviour
 
         if (desktopCanvas != null) desktopCanvas.SetActive(false);
         if (websiteCanvas != null) websiteCanvas.SetActive(false);
+        if (objectiveUI != null) objectiveUI.gameObject.SetActive(false);
 
         if (summaryCanvas != null)
             summaryCanvas.SetActive(true);
