@@ -38,6 +38,18 @@ public class VNNPCInteractable : MonoBehaviour
     [Tooltip("GameObject activated when player chooses Accept on a choice line.")]
     public GameObject activateOnAccept;
 
+    [Header("Auto Trigger")]
+    [Tooltip("Start dialogue automatically when player enters the trigger (no key press needed).")]
+    public bool autoTrigger = false;
+
+    [Header("Room Transition (fires while screen is black during VN fade-in)")]
+    [Tooltip("Teleport player here when screen is fully black. Leave empty to skip.")]
+    public Transform roomSpawnPoint;
+    public CameraFollow roomCameraFollow;
+    public Transform roomCameraSnapPoint;
+    public Vector2 roomMinBounds;
+    public Vector2 roomMaxBounds;
+
     [Header("State")]
     public bool isInteractable = true;
     public bool oneTimeOnly = false;
@@ -46,6 +58,7 @@ public class VNNPCInteractable : MonoBehaviour
     private bool playerNearby;
     private bool hasInteracted;
     private PlayerMovement playerMovement;
+    private Rigidbody2D playerRb;
 
     void Start()
     {
@@ -85,8 +98,41 @@ public class VNNPCInteractable : MonoBehaviour
 
         if (interactPrompt != null) interactPrompt.SetActive(false);
         if (playerMovement != null) playerMovement.movementLocked = true;
+        if (playerRb != null) { playerRb.bodyType = RigidbodyType2D.Kinematic; playerRb.velocity = Vector2.zero; }
 
         hasInteracted = true;
+    }
+
+    // Called by VNDialogueManager when screen is fully black during fade-in.
+    public void OnFadeToBlack()
+    {
+        if (roomSpawnPoint == null) return;
+
+        // Use the cached rb/playerMovement references (found via GetComponentInParent)
+        // so we move the correct root object, not a child collider.
+        if (playerRb != null)
+        {
+            playerRb.velocity = Vector2.zero;
+            playerRb.gameObject.transform.position = roomSpawnPoint.position;
+        }
+        else if (playerMovement != null)
+        {
+            playerMovement.transform.position = roomSpawnPoint.position;
+        }
+
+        if (roomCameraFollow != null)
+        {
+            // Snap to explicit snap point, or fall back to player spawn so the
+            // camera never drifts from the old room across the map.
+            Vector3 snapPos = roomCameraSnapPoint != null
+                ? roomCameraSnapPoint.position
+                : roomSpawnPoint.position;
+
+            float z = roomCameraFollow.transform.position.z;
+            roomCameraFollow.transform.position = new Vector3(snapPos.x, snapPos.y, z);
+            roomCameraFollow.minBounds = roomMinBounds;
+            roomCameraFollow.maxBounds = roomMaxBounds;
+        }
     }
 
     public void OnDialogueAccepted()
@@ -101,6 +147,7 @@ public class VNNPCInteractable : MonoBehaviour
 
     public void OnDialogueEnd()
     {
+        if (playerRb != null) { playerRb.velocity = Vector2.zero; playerRb.bodyType = RigidbodyType2D.Dynamic; }
         if (playerMovement != null) playerMovement.movementLocked = false;
 
         if (activateAfterDialogue != null) activateAfterDialogue.SetActive(true);
@@ -122,9 +169,17 @@ public class VNNPCInteractable : MonoBehaviour
         if (!collision.CompareTag("Player")) return;
 
         playerNearby = true;
-        playerMovement = collision.GetComponent<PlayerMovement>();
+        playerMovement = collision.GetComponentInParent<PlayerMovement>();
+        playerRb = collision.GetComponentInParent<Rigidbody2D>();
 
         if (!isInteractable || (oneTimeOnly && hasInteracted)) return;
+
+        if (autoTrigger)
+        {
+            OpenDialogue();
+            return;
+        }
+
         if (interactPrompt != null) interactPrompt.SetActive(true);
     }
 
@@ -134,6 +189,11 @@ public class VNNPCInteractable : MonoBehaviour
 
         playerNearby = false;
         if (interactPrompt != null) interactPrompt.SetActive(false);
-        if (playerMovement != null) playerMovement.movementLocked = false;
+
+        // autoTrigger: unlock is handled by VNDialogueManager.FinalizeEnd,
+        // not here — otherwise the teleport in OnFadeToBlack triggers an exit
+        // event that unlocks movement mid-dialogue and drops the player.
+        if (!autoTrigger && playerMovement != null)
+            playerMovement.movementLocked = false;
     }
 }

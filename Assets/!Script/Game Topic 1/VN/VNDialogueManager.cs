@@ -82,11 +82,11 @@ public class VNDialogueManager : MonoBehaviour
 
     [Tooltip("Seconds for one HALF of the fade-in (gameplay -> black, OR black -> VN). " +
              "Total fade-in time = 2 x this value.")]
-    [Range(0f, 2f)] public float fadeInDuration = 0.3f;
+    [Range(0f, 2f)] public float fadeInDuration = 0.5f;
 
     [Tooltip("Seconds for one HALF of the fade-out (VN -> black, OR black -> gameplay). " +
              "Total fade-out time = 2 x this value.")]
-    [Range(0f, 2f)] public float fadeOutDuration = 0.3f;
+    [Range(0f, 2f)] public float fadeOutDuration = 0.5f;
 
     [Header("Scoring")]
     [Tooltip("Score added on Accept. Set per-DialogueManager (e.g. -10 if Accept is unsafe).")]
@@ -217,7 +217,7 @@ public class VNDialogueManager : MonoBehaviour
         if (playerMovement == null)
         {
             GameObject p = GameObject.FindGameObjectWithTag("Player");
-            if (p != null) playerMovement = p.GetComponent<PlayerMovement>();
+            if (p != null) playerMovement = p.GetComponentInParent<PlayerMovement>() ?? p.GetComponent<PlayerMovement>();
         }
         if (playerMovement != null) playerMovement.movementLocked = true;
 
@@ -324,6 +324,9 @@ public class VNDialogueManager : MonoBehaviour
         // Phase 1: gameplay -> black
         SetOverlayActive(true);
         yield return FadeOverlayTo(1f, fadeInDuration);
+
+        // Screen is fully black — safe moment for room transitions (teleport is invisible).
+        if (activeNPC != null) activeNPC.OnFadeToBlack();
 
         // Setup VN content while the screen is fully black.
         ApplyDialogueData(data);
