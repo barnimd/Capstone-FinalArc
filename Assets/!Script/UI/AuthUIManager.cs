@@ -23,8 +23,8 @@ public class AuthUIManager : MonoBehaviour
 
     // ─── Scene Constants ─────────────────────────────────────────────────────
 
-    public static readonly string SCENE_LOGIN  = "LoginScene";
-    public static readonly string SCENE_SIGNUP = "SignUpScene";
+    public static readonly string SCENE_LOGIN  = "LoginScene(W password)";
+    public static readonly string SCENE_SIGNUP = "SignUpScene new";
     public static readonly string SCENE_GAME   = "All_Menu";
 
     // ─── Inspector References ─────────────────────────────────────────────────

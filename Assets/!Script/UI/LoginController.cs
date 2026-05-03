@@ -1,76 +1,70 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 public class LoginController : MonoBehaviour
 {
-    // ─── Inspector References ─────────────────────────────────────────────────
-    // These are auto-resolved by name in Awake if not set in the Inspector.
-
-    [Header("Input")]
+    [Header("Inputs")]
     [SerializeField] private TMP_InputField usernameInput;
+    [SerializeField] private TMP_InputField passwordInput;
 
-    [Header("Button")]
+    [Header("Buttons")]
     [SerializeField] private Button loginButton;
+    [SerializeField] private Button goToSignUpButton;
 
-    [Header("Feedback (optional)")]
+    [Header("Feedback")]
     [SerializeField] private TextMeshProUGUI errorText;
     [SerializeField] private GameObject loadingSpinner;
 
-    // ─── Lifecycle ────────────────────────────────────────────────────────────
-
     void Awake()
     {
-        // Auto-resolve references by GameObject name if not set in Inspector
-        if (usernameInput == null)
+        if (errorText == null)
         {
-            GameObject go = GameObject.Find("input username");
-            if (go != null) usernameInput = go.GetComponent<TMP_InputField>();
-        }
-        if (loginButton == null)
-        {
-            GameObject go = GameObject.Find("submit username btn");
-            if (go != null) loginButton = go.GetComponent<Button>();
+            GameObject go = GameObject.Find("Error");
+            if (go != null) errorText = go.GetComponent<TextMeshProUGUI>();
         }
     }
 
     void Start()
     {
-        if (loginButton != null)
-            loginButton.onClick.AddListener(OnLoginClicked);
+        if (loginButton    != null) loginButton.onClick.AddListener(OnLoginClicked);
+        if (goToSignUpButton != null) goToSignUpButton.onClick.AddListener(OnGoToSignUpClicked);
 
-        if (errorText != null)
-            errorText.gameObject.SetActive(false);
+        if (passwordInput != null)
+        {
+            passwordInput.contentType = TMP_InputField.ContentType.Password;
+            passwordInput.ForceLabelUpdate();
+        }
 
-        if (loadingSpinner != null)
-            loadingSpinner.SetActive(false);
+        HideError();
+        if (loadingSpinner != null) loadingSpinner.SetActive(false);
     }
-
-    // ─── Login ────────────────────────────────────────────────────────────────
 
     public void OnLoginClicked()
     {
-        if (usernameInput == null)
+        string username = usernameInput != null ? usernameInput.text.Trim() : "";
+        string password = passwordInput != null ? passwordInput.text         : "";
+
+        if (string.IsNullOrEmpty(username))
         {
-            Debug.LogError("[LoginController] usernameInput not found.");
+            ShowError("Username tidak boleh kosong");
             return;
         }
 
-        string username = usernameInput.text.Trim();
-
-        if (string.IsNullOrEmpty(username) || username.Length < 3)
+        if (string.IsNullOrEmpty(password))
         {
-            ShowError("Username minimal 3 karakter");
+            ShowError("Password tidak boleh kosong");
             return;
         }
 
         HideError();
         SetLoading(true);
 
-        FirebaseManager.Instance.SignInAsGuest(username, OnLoginResult);
+        FirebaseManager.Instance.SignInWithUsernameAndPassword(username, password, OnLoginResult);
     }
 
-    private void OnLoginResult(bool success, string errorMessage)
+    private void OnLoginResult(bool success, string errorResponse)
     {
         SetLoading(false);
 
@@ -80,15 +74,30 @@ public class LoginController : MonoBehaviour
         }
         else
         {
-            ShowError(errorMessage ?? "Gagal terhubung. Coba lagi.");
+            ShowError(ParseError(errorResponse));
         }
     }
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
+    private string ParseError(string error)
+    {
+        if (string.IsNullOrEmpty(error))                    return "Terjadi kesalahan, coba lagi";
+        if (error.Contains("tidak ditemukan"))              return error;
+        if (error.Contains("Gagal"))                        return error;
+        if (error.Contains("INVALID_PASSWORD"))             return "Password salah";
+        if (error.Contains("INVALID_LOGIN_CREDENTIALS"))   return "Username atau password salah";
+        if (error.Contains("USER_DISABLED"))                return "Akun dinonaktifkan";
+        if (error.Contains("TOO_MANY_ATTEMPTS"))            return "Terlalu banyak percobaan, coba lagi nanti";
+        return "Username atau password salah";
+    }
+
+    public void OnGoToSignUpClicked()
+    {
+        AuthUIManager.Instance.TransitionToScene(AuthUIManager.SCENE_SIGNUP);
+    }
 
     private void SetLoading(bool isLoading)
     {
-        if (loginButton != null)    loginButton.interactable = !isLoading;
+        if (loginButton    != null) loginButton.interactable = !isLoading;
         if (loadingSpinner != null) loadingSpinner.SetActive(isLoading);
     }
 

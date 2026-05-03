@@ -456,6 +456,118 @@ public class FirebaseManager : MonoBehaviour
         _username = "";
     }
 
+    public void SignInWithUsernameAndPassword(string username, string password, Action<bool, string> callback)
+    {
+        StartCoroutine(SignInWithUsernameAndPasswordCoroutine(username, password, callback));
+    }
+
+    private IEnumerator SignInWithUsernameAndPasswordCoroutine(string username, string password, Action<bool, string> callback)
+    {
+        // Step 1: anonymous sign-in to get a token for Firestore query
+        bool anonDone = false;
+        bool anonOk   = false;
+        SignInAnonymous(result => { anonOk = result; anonDone = true; });
+        yield return new WaitUntil(() => anonDone);
+
+        if (!anonOk)
+        {
+            callback?.Invoke(false, "Gagal terhubung ke server. Coba lagi.");
+            yield break;
+        }
+
+        // Step 2: find email by username in Firestore
+        string foundEmail = null;
+        bool   queryDone  = false;
+        GetEmailByUsername(username, result => { foundEmail = result; queryDone = true; });
+        yield return new WaitUntil(() => queryDone);
+
+        if (string.IsNullOrEmpty(foundEmail))
+        {
+            idToken = "";
+            localId = "";
+            callback?.Invoke(false, "Username tidak ditemukan");
+            yield break;
+        }
+
+        // Step 3: sign in with email + password
+        string url  = authBase + "/accounts:signInWithPassword?key=" + apiKey;
+        string body = "{\"email\":\"" + foundEmail + "\",\"password\":\"" + password + "\",\"returnSecureToken\":true}";
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
+            request.uploadHandler   = new UploadHandlerRaw(bodyBytes);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                ParseAuthResponse(request.downloadHandler.text);
+                _username = username;
+                callback?.Invoke(true, null);
+            }
+            else
+            {
+                Debug.LogWarning("[FirebaseManager] SignInWithUsernameAndPassword failed: " + request.downloadHandler.text);
+                idToken = "";
+                localId = "";
+                callback?.Invoke(false, request.downloadHandler.text);
+            }
+        }
+    }
+
+    private void GetEmailByUsername(string username, Action<string> callback)
+    {
+        StartCoroutine(GetEmailByUsernameCoroutine(username, callback));
+    }
+
+    private IEnumerator GetEmailByUsernameCoroutine(string username, Action<string> callback)
+    {
+        string url  = firestoreBase + ":runQuery";
+        string body =
+            "{\"structuredQuery\":{" +
+                "\"from\":[{\"collectionId\":\"players\"}]," +
+                "\"where\":{\"fieldFilter\":{\"field\":{\"fieldPath\":\"username\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"" + username + "\"}}}," +
+                "\"limit\":1" +
+            "}}";
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
+            request.uploadHandler   = new UploadHandlerRaw(bodyBytes);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            if (!string.IsNullOrEmpty(idToken))
+                request.SetRequestHeader("Authorization", "Bearer " + idToken);
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogWarning("[FirebaseManager] GetEmailByUsername failed: " + request.downloadHandler.text);
+                callback?.Invoke(null);
+                yield break;
+            }
+
+            string json = request.downloadHandler.text;
+            Debug.Log("[FirebaseManager] GetEmailByUsername response: " + json);
+
+            if (!json.Contains("\"document\""))
+            {
+                Debug.LogWarning("[FirebaseManager] GetEmailByUsername: no document found for username=" + username);
+                callback?.Invoke(null);
+                yield break;
+            }
+
+            int fieldsIndex = json.IndexOf("\"fields\"", StringComparison.Ordinal);
+            string email    = fieldsIndex >= 0 ? ExtractFirestoreString(json, fieldsIndex, "email") : null;
+            Debug.Log("[FirebaseManager] GetEmailByUsername: username=" + username + " email=" + email);
+            callback?.Invoke(string.IsNullOrEmpty(email) ? null : email);
+        }
+    }
+
     private IEnumerator SendAuthRequest(string url, string jsonBody, Action<bool, string> callback)
     {
         using (UnityWebRequest request = new UnityWebRequest(url, "POST"))

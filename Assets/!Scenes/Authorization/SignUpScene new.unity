@@ -3583,7 +3583,7 @@ GameObject:
   - component: {fileID: 2010562465}
   - component: {fileID: 2010562467}
   m_Layer: 5
-  m_Name: LoginPanel
+  m_Name: SignUp Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3661,11 +3661,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 2010562463}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0803937b49951b41b6c253139bf7725, type: 3}
+  m_Script: {fileID: 11500000, guid: 59d158236798f3a4e89625dbe96dd969, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usernameInput: {fileID: 1607113673}
-  loginButton: {fileID: 1894587715}
+  emailInput: {fileID: 1436511863}
+  usernameInput: {fileID: 662749282}
+  passwordInput: {fileID: 1607113673}
+  confirmPasswordInput: {fileID: 470549922}
+  signUpButton: {fileID: 1894587715}
+  goToLoginButton: {fileID: 985242166}
+  showHidePasswordButton: {fileID: 0}
+  showHideConfirmPasswordButton: {fileID: 0}
+  passwordEyeIcon: {fileID: 0}
+  confirmPasswordEyeIcon: {fileID: 0}
+  eyeOpenSprite: {fileID: 0}
+  eyeClosedSprite: {fileID: 0}
   errorText: {fileID: 1162108462}
   loadingSpinner: {fileID: 0}
 --- !u!1 &2108970810
