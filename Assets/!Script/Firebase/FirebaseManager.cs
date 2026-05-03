@@ -177,12 +177,12 @@ public class FirebaseManager : MonoBehaviour
         localId = ExtractJsonField(json, "localId");
     }
 
-    public void SignUpWithEmail(string email, string password, string username, Action<bool> callback)
+    public void SignUpWithEmail(string email, string password, string username, Action<bool, string> callback)
     {
         StartCoroutine(SignUpWithEmailCoroutine(email, password, username, callback));
     }
 
-    private IEnumerator SignUpWithEmailCoroutine(string email, string password, string username, Action<bool> callback)
+    private IEnumerator SignUpWithEmailCoroutine(string email, string password, string username, Action<bool, string> callback)
     {
         string url  = authBase + "/accounts:signUp?key=" + apiKey;
         string body = "{\"email\":\"" + email + "\",\"password\":\"" + password + "\",\"returnSecureToken\":true}";
@@ -199,15 +199,56 @@ public class FirebaseManager : MonoBehaviour
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogWarning("[FirebaseManager] SignUpWithEmail failed: " + request.downloadHandler.text);
-                callback?.Invoke(false);
+                callback?.Invoke(false, request.downloadHandler.text);
                 yield break;
             }
 
             ParseAuthResponse(request.downloadHandler.text);
         }
 
-        // Auth succeeded — save username to Firestore
-        SaveUsername(localId, username, callback);
+        // Auth succeeded — save full user profile to Firestore
+        SaveUserProfile(localId, username, email, callback);
+    }
+
+    public void SaveUserProfile(string userId, string username, string email, Action<bool, string> callback)
+    {
+        StartCoroutine(SaveUserProfileCoroutine(userId, username, email, callback));
+    }
+
+    private IEnumerator SaveUserProfileCoroutine(string userId, string username, string email, Action<bool, string> callback)
+    {
+        string url         = firestoreBase + "/players/" + userId;
+        string createdAt   = DateTime.UtcNow.ToString("o");
+        string createdDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+        string body =
+            "{\"fields\":{" +
+                "\"username\":{\"stringValue\":\"" + username + "\"}," +
+                "\"email\":{\"stringValue\":\"" + email + "\"}," +
+                "\"createdAt\":{\"stringValue\":\"" + createdAt + "\"}," +
+                "\"createdDate\":{\"stringValue\":\"" + createdDate + "\"}" +
+            "}}";
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "PATCH"))
+        {
+            byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
+            request.uploadHandler   = new UploadHandlerRaw(bodyBytes);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            if (!string.IsNullOrEmpty(idToken))
+                request.SetRequestHeader("Authorization", "Bearer " + idToken);
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                callback?.Invoke(true, null);
+            }
+            else
+            {
+                Debug.LogWarning("[FirebaseManager] SaveUserProfile failed: " + request.downloadHandler.text);
+                callback?.Invoke(false, request.downloadHandler.text);
+            }
+        }
     }
 
     public void SaveUsername(string userId, string username, Action<bool> callback)

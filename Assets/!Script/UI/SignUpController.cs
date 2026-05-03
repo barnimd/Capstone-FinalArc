@@ -142,7 +142,7 @@ public class SignUpController : MonoBehaviour
         );
     }
 
-    private void OnSignUpResult(bool success)
+    private void OnSignUpResult(bool success, string errorResponse)
     {
         AuthUIManager.Instance.ShowLoading(false);
 
@@ -153,8 +153,20 @@ public class SignUpController : MonoBehaviour
         }
         else
         {
-            AuthUIManager.Instance.ShowError("Email sudah terdaftar atau terjadi kesalahan");
+            ShowError(ParseFirebaseError(errorResponse));
         }
+    }
+
+    private string ParseFirebaseError(string errorResponse)
+    {
+        if (string.IsNullOrEmpty(errorResponse))       return "Terjadi kesalahan, coba lagi";
+        if (errorResponse.Contains("EMAIL_EXISTS"))    return "Email sudah terdaftar";
+        if (errorResponse.Contains("INVALID_EMAIL"))   return "Format email tidak valid";
+        if (errorResponse.Contains("WEAK_PASSWORD"))   return "Password terlalu lemah";
+        if (errorResponse.Contains("TOO_MANY_ATTEMPTS")) return "Terlalu banyak percobaan, coba lagi nanti";
+        if (errorResponse.Contains("OPERATION_NOT_ALLOWED")) return "Pendaftaran tidak diizinkan";
+        if (errorResponse.Contains("Gagal"))           return errorResponse;
+        return "Terjadi kesalahan, coba lagi";
     }
 
     private IEnumerator DelayedTransition(string sceneName, float delay)
