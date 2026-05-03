@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8e6fdfcbc66b1347becb1d5101fa564, type: 3}
+  m_Name: PopupData_Tp4
+  m_EditorClassIdentifier: 
+  phishingPopups:
+  - title: Warning - Virus Terdeteksi
+    message: 'Komputer Anda terinfeksi 5 virus berbahaya!
+
+      Klik tombol di bawah
+      untuk membersihkan sekarang.
+
+      Abaikan? Data Anda akan hilang dalam 24
+      jam.'
+    isPhishing: 1
+    correctActionLabel: Tutup
+    wrongActionLabel: Bersihkan Sekarang
+    explanation: 'Ini popup phishing. System warning asli tidak akan meminta kamu
+      klik tombol "Bersihkan" dari browser. '
+  - title: Critical Browser Update Required
+    message: 'Chrome versi Anda sudah kadaluarsa!
+
+      Download update terbaru
+      sekarang untuk melanjutkan browsing dengan aman.
+
+      Versi: 132.0.xxxx'
+    isPhishing: 1
+    correctActionLabel: Tutup
+    wrongActionLabel: Download Update
+    explanation: 'Ini popup phishing. Chrome mengupdate otomatis di background tanpa
+      popup seperti ini. '
+  - title: SELAMAT! Anda Pemenang!
+    message: 'Anda terpilih sebagai pemenang iPhone 15!
+
+      Klik "Klaim" dan isi
+      data diri Anda untuk menerima hadiah. Promo terbatas!'
+    isPhishing: 1
+    correctActionLabel: Tutup
+    wrongActionLabel: Klaim Hadiah
+    explanation: Ini popup phishing. Giveaway asli tidak muncul tiba-tiba lewat popup
+      browser.
+  - title: Microsoft Security Alert
+    message: 'Akun Microsoft Anda telah dibobol dari lokasi asing!
+
+      Hubungi
+      segera: 1-800-555-0199
+
+      Teknisi kami siap membantu memulihkan akun Anda.'
+    isPhishing: 1
+    correctActionLabel: Tutup
+    wrongActionLabel: Hubungi Sekarang
+    explanation: Ini popup phishing. Microsoft tidak akan menampilkan nomor telepon
+      lewat popup browser.
+  legitimatePopups:
+  - title: Windows Update
+    message: 'Update penting tersedia untuk perangkat Anda.
+
+      Windows perlu
+      restart untuk menyelesaikan instalasi.
+
+      Anda dapat menjadwalkan restart
+      nanti.'
+    isPhishing: 0
+    correctActionLabel: Restart Sekarang
+    wrongActionLabel: Tolak
+    explanation: 'Ini popup system yang legitimate. Windows secara berkala mengirim
+      update keamanan. '
+  - title: Penyimpanan Hampir Penuh
+    message: 'Ruang disk Anda tersisa kurang dari 5 GB.
+
+      Beberapa aplikasi
+      mungkin tidak berfungsi dengan baik.
+
+      Gunakan Disk Cleanup untuk mengosongkan
+      ruang.'
+    isPhishing: 0
+    correctActionLabel: Bersihkan
+    wrongActionLabel: Abaikan
+    explanation: 'Ini notifikasi system asli. Windows akan memberi tahu ketika penyimpanan
+      menipis. '
+  - title: Windows Firewall
+    message: 'Beberapa fitur aplikasi ini diblokir oleh Windows Firewall.
+
+      Nama:
+      Java Runtime Environment
+
+      Publisher: Oracle Corporation
+
+      Path:
+      C:\Program Files\Java\...'
+    isPhishing: 0
+    correctActionLabel: Izinkan
+    wrongActionLabel: Blokir
+    explanation: Ini popup system asli. Firewall Windows akan meminta izin saat aplikasi
+      mencoba mengakses jaringan.

@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1427b283502496d459116ad799ff9ca8, type: 3}
+  m_Name: URLData_Tp4
+  m_EditorClassIdentifier: 
+  phishingURLs:
+  - url: https://go0gle.com/login
+    siteName: Google
+    isPhishing: 1
+    explanation: 
+  - url: http://microsoft/login
+    siteName: Microsoft
+    isPhishing: 1
+    explanation: 
+  - url: http://secure-bank.tk.com
+    siteName: Bank
+    isPhishing: 1
+    explanation: 
+  - url: http://paypa1.com
+    siteName: Paypa1
+    isPhishing: 1
+    explanation: 
+  - url: http://faceb00k.com
+    siteName: Faceb00k
+    isPhishing: 1
+    explanation: 
+  legitimateURLs:
+  - url: https://google.com
+    siteName: Google
+    isPhishing: 0
+    explanation: 
+  - url: https://github.com
+    siteName: Github
+    isPhishing: 0
+    explanation: 
+  - url: https://microsoft.com
+    siteName: Microsoft
+    isPhishing: 0
+    explanation: 
