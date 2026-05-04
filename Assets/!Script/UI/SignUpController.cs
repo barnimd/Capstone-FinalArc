@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -18,6 +19,7 @@ public class SignUpController : MonoBehaviour
     [SerializeField] private Button goToLoginButton;
     [SerializeField] private Button showHidePasswordButton;
     [SerializeField] private Button showHideConfirmPasswordButton;
+    [SerializeField] private Button googleSignInButton;
 
     [Header("Password Visibility Icons")]
     [SerializeField] private Image passwordEyeIcon;
@@ -28,6 +30,17 @@ public class SignUpController : MonoBehaviour
     [Header("Feedback")]
     [SerializeField] private TextMeshProUGUI errorText;
     [SerializeField] private GameObject loadingSpinner;
+
+    // ─── Google Client ID ─────────────────────────────────────────────────────
+
+    private const string GoogleClientId = "211220332327-0o4c2mi8drpum0crjfvt8uosord5s65r.apps.googleusercontent.com";
+
+    // ─── JS Bridge (WebGL only) ───────────────────────────────────────────────
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [DllImport("__Internal")] private static extern void GoogleAuth_Init(string clientId);
+    [DllImport("__Internal")] private static extern void GoogleAuth_SignIn(string gameObjectName);
+#endif
 
     // ─── State ────────────────────────────────────────────────────────────────
 
@@ -42,6 +55,11 @@ public class SignUpController : MonoBehaviour
         goToLoginButton.onClick.AddListener(OnGoToLoginClicked);
         showHidePasswordButton.onClick.AddListener(TogglePasswordVisibility);
         showHideConfirmPasswordButton.onClick.AddListener(ToggleConfirmPasswordVisibility);
+        if (googleSignInButton != null) googleSignInButton.onClick.AddListener(OnGoogleSignInClicked);
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        GoogleAuth_Init(GoogleClientId);
+#endif
 
         // Start both fields hidden
         passwordInput.contentType        = TMP_InputField.ContentType.Password;
@@ -195,5 +213,60 @@ public class SignUpController : MonoBehaviour
     {
         if (errorText != null)
             errorText.gameObject.SetActive(false);
+    }
+
+    // ─── Google Sign-In ───────────────────────────────────────────────────────
+
+    public void OnGoogleSignInClicked()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        HideError();
+        AuthUIManager.Instance.ShowLoading(true);
+        GoogleAuth_SignIn(gameObject.name);
+#else
+        ShowError("Google Sign-In hanya tersedia di WebGL build");
+#endif
+    }
+
+    // Called by JS via SendMessage
+    public void OnGoogleSignInSuccess(string json)
+    {
+        string idToken      = ExtractJsonField(json, "idToken");
+        string email        = ExtractJsonField(json, "email");
+        string displayName  = ExtractJsonField(json, "name");
+
+        FirebaseManager.Instance.SignInWithGoogle(idToken, email, displayName, (success, error) =>
+        {
+            AuthUIManager.Instance.ShowLoading(false);
+            if (success)
+            {
+                AuthUIManager.Instance.ShowSuccess("Login berhasil!");
+                StartCoroutine(DelayedTransition(AuthUIManager.SCENE_GAME, 1.5f));
+            }
+            else
+            {
+                ShowError("Login Google gagal. Coba lagi.");
+                Debug.LogWarning("[SignUpController] Google sign-in Firebase error: " + error);
+            }
+        });
+    }
+
+    // Called by JS via SendMessage
+    public void OnGoogleSignInFailed(string error)
+    {
+        AuthUIManager.Instance.ShowLoading(false);
+        if (error != "Sign-in dismissed" && error != "Dismissed")
+            ShowError("Login Google gagal. Coba lagi.");
+        Debug.LogWarning("[SignUpController] Google sign-in JS error: " + error);
+    }
+
+    private string ExtractJsonField(string json, string key)
+    {
+        string search = "\"" + key + "\":\"";
+        int start = json.IndexOf(search);
+        if (start < 0) return "";
+        start += search.Length;
+        int end = json.IndexOf("\"", start);
+        return end < 0 ? "" : json.Substring(start, end - start);
     }
 }

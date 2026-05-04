@@ -337,6 +337,66 @@ public class FirebaseManager : MonoBehaviour
         yield return SendAuthRequest(url, body, callback);
     }
 
+    // ─── Google Sign-In ──────────────────────────────────────────────────────
+
+    public void SignInWithGoogle(string googleIdToken, string email, string displayName, Action<bool, string> callback)
+    {
+        StartCoroutine(SignInWithGoogleCoroutine(googleIdToken, email, displayName, callback));
+    }
+
+    private IEnumerator SignInWithGoogleCoroutine(string googleIdToken, string email, string displayName, Action<bool, string> callback)
+    {
+        string url      = authBase + "/accounts:signInWithIdp?key=" + apiKey;
+        string postBody = "id_token=" + Uri.EscapeDataString(googleIdToken) + "&providerId=google.com";
+        string body     =
+            "{\"requestUri\":\"http://localhost\"," +
+            "\"postBody\":\"" + postBody + "\"," +
+            "\"returnSecureToken\":true," +
+            "\"returnIdpCredential\":true}";
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
+            request.uploadHandler   = new UploadHandlerRaw(bodyBytes);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogWarning("[FirebaseManager] SignInWithGoogle failed: " + request.downloadHandler.text);
+                callback?.Invoke(false, request.downloadHandler.text);
+                yield break;
+            }
+
+            string json = request.downloadHandler.text;
+            ParseAuthResponse(json);
+
+            bool isNewUser = json.Contains("\"isNewUser\":true");
+
+            if (isNewUser)
+            {
+                string username = string.IsNullOrEmpty(displayName)
+                    ? email.Split('@')[0]
+                    : displayName.Replace(" ", "").ToLower();
+                _username = username;
+                SaveUserProfile(localId, username, email, callback);
+            }
+            else
+            {
+                bool done = false;
+                GetUsername(localId, username =>
+                {
+                    _username = !string.IsNullOrEmpty(username) ? username : email.Split('@')[0];
+                    done = true;
+                });
+                yield return new WaitUntil(() => done);
+                callback?.Invoke(true, null);
+            }
+        }
+    }
+
     // ─── Guest Sign-In (anonymous + username) ────────────────────────────────
 
     /// <summary>
