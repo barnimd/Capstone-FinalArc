@@ -339,15 +339,15 @@ public class FirebaseManager : MonoBehaviour
 
     // ─── Google Sign-In ──────────────────────────────────────────────────────
 
-    public void SignInWithGoogle(string googleIdToken, string email, string displayName, Action<bool, string> callback)
+    public void SignInWithGoogle(string accessToken, Action<bool, string> callback)
     {
-        StartCoroutine(SignInWithGoogleCoroutine(googleIdToken, email, displayName, callback));
+        StartCoroutine(SignInWithGoogleCoroutine(accessToken, callback));
     }
 
-    private IEnumerator SignInWithGoogleCoroutine(string googleIdToken, string email, string displayName, Action<bool, string> callback)
+    private IEnumerator SignInWithGoogleCoroutine(string accessToken, Action<bool, string> callback)
     {
         string url      = authBase + "/accounts:signInWithIdp?key=" + apiKey;
-        string postBody = "id_token=" + UnityWebRequest.EscapeURL(googleIdToken) + "&providerId=google.com";
+        string postBody = "access_token=" + UnityWebRequest.EscapeURL(accessToken) + "&providerId=google.com";
         string body     =
             "{\"requestUri\":\"http://localhost\"," +
             "\"postBody\":\"" + postBody + "\"," +
@@ -370,15 +370,17 @@ public class FirebaseManager : MonoBehaviour
                 yield break;
             }
 
-            string json = request.downloadHandler.text;
+            string json        = request.downloadHandler.text;
             ParseAuthResponse(json);
 
-            bool isNewUser = json.Contains("\"isNewUser\":true");
+            string email       = ExtractJsonField(json, "email");
+            string displayName = ExtractJsonField(json, "displayName");
+            bool   isNewUser   = json.Contains("\"isNewUser\":true");
 
             if (isNewUser)
             {
                 string username = string.IsNullOrEmpty(displayName)
-                    ? email.Split('@')[0]
+                    ? (!string.IsNullOrEmpty(email) ? email.Split('@')[0] : "user")
                     : displayName.Replace(" ", "").ToLower();
                 _username = username;
                 SaveUserProfile(localId, username, email, callback);
@@ -386,9 +388,10 @@ public class FirebaseManager : MonoBehaviour
             else
             {
                 bool done = false;
-                GetUsername(localId, username =>
+                GetUsername(localId, u =>
                 {
-                    _username = !string.IsNullOrEmpty(username) ? username : email.Split('@')[0];
+                    _username = !string.IsNullOrEmpty(u) ? u
+                        : (!string.IsNullOrEmpty(email) ? email.Split('@')[0] : "user");
                     done = true;
                 });
                 yield return new WaitUntil(() => done);

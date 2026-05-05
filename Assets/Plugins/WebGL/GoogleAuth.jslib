@@ -3,66 +3,56 @@ mergeInto(LibraryManager.library, {
     GoogleAuth_Init: function (clientIdPtr) {
         var clientId = UTF8ToString(clientIdPtr);
         window.__googleClientId = clientId;
+        window.__googleGoName   = null;
+        window.__googleClient   = null;
 
         if (document.getElementById('gsi-script')) return;
 
-        var script    = document.createElement('script');
-        script.id     = 'gsi-script';
-        script.src    = 'https://accounts.google.com/gsi/client';
-        script.async  = true;
+        var script   = document.createElement('script');
+        script.id    = 'gsi-script';
+        script.src   = 'https://accounts.google.com/gsi/client';
+        script.async = true;
         document.head.appendChild(script);
+
+        // Pre-init token client saat library selesai load
+        var attempts = 0;
+        var interval = setInterval(function () {
+            attempts++;
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+                clearInterval(interval);
+                window.__googleClient = google.accounts.oauth2.initTokenClient({
+                    client_id    : window.__googleClientId,
+                    scope        : 'openid email profile',
+                    callback     : function (tokenResponse) {
+                        var goName = window.__googleGoName;
+                        if (!goName) return;
+                        if (tokenResponse.error) {
+                            SendMessage(goName, 'OnGoogleSignInFailed', tokenResponse.error);
+                            return;
+                        }
+                        var data = JSON.stringify({ accessToken: tokenResponse.access_token });
+                        SendMessage(goName, 'OnGoogleSignInSuccess', data);
+                    },
+                    error_callback: function (err) {
+                        var goName = window.__googleGoName;
+                        if (goName && err.type !== 'popup_closed') {
+                            SendMessage(goName, 'OnGoogleSignInFailed', err.type || 'Unknown error');
+                        }
+                    }
+                });
+            } else if (attempts > 50) {
+                clearInterval(interval);
+            }
+        }, 200);
     },
 
     GoogleAuth_SignIn: function (gameObjectNamePtr) {
-        var goName = UTF8ToString(gameObjectNamePtr);
+        window.__googleGoName = UTF8ToString(gameObjectNamePtr);
 
-        function run() {
-            google.accounts.id.initialize({
-                client_id            : window.__googleClientId,
-                callback             : function (response) {
-                    if (!response.credential) {
-                        SendMessage(goName, 'OnGoogleSignInFailed', 'No credential received');
-                        return;
-                    }
-                    try {
-                        var parts   = response.credential.split('.');
-                        var payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
-                        var data    = JSON.stringify({
-                            idToken : response.credential,
-                            email   : payload.email || '',
-                            name    : payload.name  || ''
-                        });
-                        SendMessage(goName, 'OnGoogleSignInSuccess', data);
-                    } catch (e) {
-                        SendMessage(goName, 'OnGoogleSignInFailed', 'Parse error: ' + e.message);
-                    }
-                },
-                ux_mode              : 'popup',
-                auto_select          : false,
-                cancel_on_tap_outside: true
-            });
-
-            google.accounts.id.prompt(function (notification) {
-                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                    SendMessage(goName, 'OnGoogleSignInFailed', 'Sign-in dismissed');
-                }
-            });
-        }
-
-        if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-            run();
+        if (window.__googleClient) {
+            window.__googleClient.requestAccessToken({ prompt: 'select_account' });
         } else {
-            var attempts = 0;
-            var interval = setInterval(function () {
-                attempts++;
-                if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-                    clearInterval(interval);
-                    run();
-                } else if (attempts > 50) {
-                    clearInterval(interval);
-                    SendMessage(goName, 'OnGoogleSignInFailed', 'Google library failed to load');
-                }
-            }, 200);
+            SendMessage(window.__googleGoName, 'OnGoogleSignInFailed', 'Google Sign-In not ready');
         }
     }
 

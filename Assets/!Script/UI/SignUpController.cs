@@ -231,11 +231,9 @@ public class SignUpController : MonoBehaviour
     // Called by JS via SendMessage
     public void OnGoogleSignInSuccess(string json)
     {
-        string idToken      = ExtractJsonField(json, "idToken");
-        string email        = ExtractJsonField(json, "email");
-        string displayName  = ExtractJsonField(json, "name");
+        string accessToken = ExtractJsonField(json, "accessToken");
 
-        FirebaseManager.Instance.SignInWithGoogle(idToken, email, displayName, (success, error) =>
+        FirebaseManager.Instance.SignInWithGoogle(accessToken, (success, error) =>
         {
             AuthUIManager.Instance.ShowLoading(false);
             if (success)
