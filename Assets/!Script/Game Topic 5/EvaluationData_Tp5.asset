@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f76e054056e6e2643b3c7b7cdbb177d0, type: 3}
+  m_Name: EvaluationData_Tp5
+  m_EditorClassIdentifier: 
+  questions:
+  - questionText: Apakah Wi-Fi publik berisiko digunakan untuk mengakses data sensitif
+      (seperti login atau transaksi)?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 0
+    explanation: Jaringan publik bisa disadap oleh pihak lain.
+  - questionText: Apakah semua Wi-Fi publik yang memakai password otomatis aman?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 1
+    explanation: Password tidak menjamin jaringan bebas dari pemantauan atau serangan.
+  - questionText: Apakah data yang dikirim melalui Wi-Fi publik bisa diakses oleh
+      orang lain jika tidak terenkripsi?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 0
+    explanation: "Tanpa enkripsi, data bisa \u201Cdibaca\u201D oleh pihak yang tidak
+      berwenang."
+  - questionText: "Apakah nama Wi-Fi yang terlihat resmi (misalnya \u201CFree Airport
+      WiFi\u201D) selalu dapat dipercaya?"
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 1
+    explanation: Penyerang bisa membuat jaringan palsu dengan nama yang meyakinkan.
+  - questionText: Apakah penggunaan perlindungan tambahan (seperti VPN atau koneksi
+      aman) penting saat memakai Wi-Fi publik?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 0
+    explanation: Perlindungan tambahan membantu menjaga data tetap aman.

@@ -15,6 +15,7 @@ public static class GameTopic5SceneSetup
         CleanupOldTopic4Scripts();
         SetupWifiSelector();
         SetupWebsiteSecurity();
+        SetupEvaluation();
         SetupGameManager();
         EnsureScoreManager();
         WireObjectiveUI();
@@ -23,7 +24,12 @@ public static class GameTopic5SceneSetup
         EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
         AssetDatabase.SaveAssets();
         EditorUtility.DisplayDialog("Topic 5 Setup",
-            "Scene Computer_Interaction siap!\n\nTidak perlu asset tambahan. Play langsung.", "OK");
+            "Scene Computer_Interaction siap!\n\n" +
+            "Langkah berikutnya:\n" +
+            "1. Buat EvaluationData_Tp5.asset (Create > Game > Evaluation Data Tp4)\n" +
+            "2. Isi 5 soal tentang VPN, Wi-Fi, MITM\n" +
+            "3. Drag ke EvaluationManager_Tp4 > evaluationData\n" +
+            "4. Play", "OK");
     }
 
     private static void FixAllCanvasScales()
@@ -54,6 +60,25 @@ public static class GameTopic5SceneSetup
         }
     }
 
+    // ===================== EVALUATION =====================
+
+    private static void SetupEvaluation()
+    {
+        GameObject evalMgr = GameObject.Find("EvaluationManager_Tp4");
+        EvaluationManager_Tp4 em = evalMgr?.GetComponent<EvaluationManager_Tp4>();
+
+        if (em == null)
+        {
+            evalMgr = new GameObject("EvaluationManager_Tp4");
+            em = evalMgr.AddComponent<EvaluationManager_Tp4>();
+        }
+
+        em.evaluationCanvas = FindCanvas("evaluation")?.gameObject;
+        em.evaluationPanel = Object.FindObjectOfType<EvaluationPanel_Tp4>(true);
+
+        Debug.Log("[Setup] EvaluationManager_Tp4 wired.");
+    }
+
     // ===================== GAME MANAGER =====================
 
     private static void SetupGameManager()
@@ -67,6 +92,7 @@ public static class GameTopic5SceneSetup
         gm.objectiveUI = Object.FindObjectOfType<ObjectiveUI_Tp4>(true);
         gm.wifiController = Object.FindObjectOfType<WifiSelectorController>(true);
         gm.websiteController = Object.FindObjectOfType<WebsiteSecurityController>(true);
+        gm.evaluationManager = Object.FindObjectOfType<EvaluationManager_Tp4>(true);
 
         Debug.Log("[Setup] GameManager_Tp5 wired.");
     }
@@ -172,8 +198,8 @@ public static class GameTopic5SceneSetup
             Transform row = popup.Find("ActionButtonRow");
             if (row != null)
             {
-                ctrl.btnActivate = row.Find("BtnActionB")?.GetComponent<Button>();
-                ctrl.btnClose = row.Find("BtnActionA")?.GetComponent<Button>();
+                ctrl.btnActivate = row.Find("BtnActionA")?.GetComponent<Button>();
+                ctrl.btnClose = row.Find("BtnActionB")?.GetComponent<Button>();
             }
         }
 

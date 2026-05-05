@@ -15,11 +15,14 @@ public class GameManager_Tp5 : MonoBehaviour
     [Header("=== UI ===")]
     public ObjectiveUI_Tp4 objectiveUI;
 
+    [Header("=== Evaluation ===")]
+    public EvaluationManager_Tp4 evaluationManager;
+
     [Header("=== Summary ===")]
     public GameObject summaryCanvas;
 
     [Header("=== Score ===")]
-    public int scoreOnSuccess = 100;
+    public int scoreOnSuccess = 90;
 
     private bool _wifiDone;
     private bool _websiteDone;
@@ -65,20 +68,23 @@ public class GameManager_Tp5 : MonoBehaviour
     private void OnWebsiteComplete(bool success)
     {
         _websiteDone = success;
-        EndGame(success);
+
+        if (evaluationManager != null)
+            evaluationManager.TriggerEvaluation(() => EndGame(success));
+        else
+            EndGame(success);
     }
 
     private void EndGame(bool isSuccess)
     {
         if (objectiveUI != null) objectiveUI.gameObject.SetActive(false);
-
         if (desktopCanvas != null) desktopCanvas.SetActive(false);
         if (websiteCanvas != null) websiteCanvas.SetActive(false);
 
         if (isSuccess && ScoreManager.instance != null)
             ScoreManager.instance.AddScore(scoreOnSuccess);
 
-        Debug.Log($"[GameManager_Tp5] {(isSuccess ? "COMPLETED" : "FAILED")}");
+        Debug.Log($"[GameManager_Tp5] {(isSuccess ? "COMPLETED" : "FAILED")} | Score={ScoreManager.instance?.score}");
 
         if (summaryCanvas != null)
             summaryCanvas.SetActive(true);

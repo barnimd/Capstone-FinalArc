@@ -1725,6 +1725,7 @@ MonoBehaviour:
   wifiController: {fileID: 395656102}
   websiteController: {fileID: 1253874773}
   objectiveUI: {fileID: 1893718059}
+  evaluationManager: {fileID: 1573492334}
   summaryCanvas: {fileID: 1312784121}
   scoreOnSuccess: 100
 --- !u!4 &162997705
@@ -3454,9 +3455,9 @@ MonoBehaviour:
   confirmationPanel: {fileID: 228339857}
   feedbackPanel: {fileID: 1225899870}
   feedbackCanvas: {fileID: 1181723323}
-  txtListWifiDetail_0: {fileID: 346297026}
-  txtListWifiDetail_1: {fileID: 1387189746}
-  txtListWifiDetail_2: {fileID: 96578459}
+  txtListWifiDetail_0: {fileID: 0}
+  txtListWifiDetail_1: {fileID: 0}
+  txtListWifiDetail_2: {fileID: 0}
   btnClose: {fileID: 816735730}
   btnConnect: {fileID: 45254643}
   btnAccept: {fileID: 2093300731}
@@ -8845,7 +8846,7 @@ RectTransform:
   m_GameObject: {fileID: 1181723323}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1225899871}
@@ -11756,6 +11757,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1532967977}
   m_CullTransparentMesh: 1
+--- !u!1 &1573492333
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1573492335}
+  - component: {fileID: 1573492334}
+  m_Layer: 0
+  m_Name: EvaluationManager_Tp4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1573492334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573492333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5ecbc6f828ad8246b170351c3824031, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  evaluationData: {fileID: 11400000, guid: f633fcce2f9447c4ba7dd8c9d58b72e8, type: 2}
+  evaluationPanel: {fileID: 25409150}
+  evaluationCanvas: {fileID: 858394863}
+  summaryCanvas: {fileID: 1312784121}
+  scorePerCorrect: 2
+--- !u!4 &1573492335
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573492333}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1596831137
 GameObject:
   m_ObjectHideFlags: 0
@@ -15516,7 +15566,7 @@ RectTransform:
   m_GameObject: {fileID: 2087846184}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1253874769}
@@ -15937,3 +15987,4 @@ SceneRoots:
   - {fileID: 1395512146}
   - {fileID: 1312784120}
   - {fileID: 162997705}
+  - {fileID: 1573492335}
