@@ -347,7 +347,7 @@ public class FirebaseManager : MonoBehaviour
     private IEnumerator SignInWithGoogleCoroutine(string googleIdToken, string email, string displayName, Action<bool, string> callback)
     {
         string url      = authBase + "/accounts:signInWithIdp?key=" + apiKey;
-        string postBody = "id_token=" + Uri.EscapeDataString(googleIdToken) + "&providerId=google.com";
+        string postBody = "id_token=" + UnityWebRequest.EscapeURL(googleIdToken) + "&providerId=google.com";
         string body     =
             "{\"requestUri\":\"http://localhost\"," +
             "\"postBody\":\"" + postBody + "\"," +

@@ -57,9 +57,10 @@ public class SignUpController : MonoBehaviour
         showHideConfirmPasswordButton.onClick.AddListener(ToggleConfirmPasswordVisibility);
         if (googleSignInButton != null) googleSignInButton.onClick.AddListener(OnGoogleSignInClicked);
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-        GoogleAuth_Init(GoogleClientId);
-#endif
+        // COMMENT INI DULU:
+        // #if UNITY_WEBGL && !UNITY_EDITOR
+        //     GoogleAuth_Init(GoogleClientId);
+        // #endif
 
         // Start both fields hidden
         passwordInput.contentType        = TMP_InputField.ContentType.Password;
