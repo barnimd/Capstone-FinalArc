@@ -50,6 +50,19 @@ public class VNNPCInteractable : MonoBehaviour
     public Vector2 roomMinBounds;
     public Vector2 roomMaxBounds;
 
+    [Header("Objective & Follow Arrow (optional)")]
+    [Tooltip("Objective UI panel to display after this dialogue ends.")]
+    public ObjectiveUI_Tp1 objectiveUI;
+
+    [Tooltip("Text to show in the objective panel after this dialogue ends.")]
+    public string objectiveTextOnEnd;
+
+    [Tooltip("Follow-arrow to activate after this dialogue ends.")]
+    public FollowArrow_Tp1 followArrow;
+
+    [Tooltip("World-space target the follow-arrow should point toward (e.g. RightWallTrigger).")]
+    public Transform followArrowTarget;
+
     [Header("State")]
     public bool isInteractable = true;
     public bool oneTimeOnly = false;
@@ -162,6 +175,17 @@ public class VNNPCInteractable : MonoBehaviour
         }
 
         if (oneTimeOnly && interactPrompt != null) interactPrompt.SetActive(false);
+
+        if (objectiveUI != null && !string.IsNullOrEmpty(objectiveTextOnEnd))
+            objectiveUI.ShowObjective(objectiveTextOnEnd);
+
+        if (followArrow != null)
+        {
+            if (followArrowTarget != null)
+                followArrow.Show(followArrowTarget);
+            else
+                followArrow.Show();
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)

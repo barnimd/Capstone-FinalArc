@@ -32,50 +32,60 @@ MonoBehaviour:
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
-    text: Eh, kamu karyawan baru ya? Semangat pagi! Kok kayak kurang tidur gitu?
+    text: "Eh, muka lo kayak orang nyasar! \nAnak baru IT Support ya? Haha."
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
-    text: Hehe iya, masih adaptasi. Tadi juga nyasar dulu di lorong.
+    text: Ketahuan ya... hampir masuk ruang server tadi.
   - speaker: 3
     mood: 3
     expression: {fileID: 0}
-    text: "Sini duduk dulu, minum kopi bro \u2014 biar melek!"
+    text: "Hahaha klasik! Sini duduk dulu, \nminum kopi biar ga keliatan panik."
   - speaker: 0
-    mood: 3
+    mood: 1
     expression: {fileID: 0}
-    text: Wah makasih banyak!
+    text: Wah makasih! Kalian baik banget.
   - speaker: 1
     mood: 2
     expression: {fileID: 0}
-    text: "Ngomong-ngomong, kamu udah denger belum? Kemarin ada kasus phishing di
-      sini \u2014 ada orang nyamar jadi IT support."
+    text: "Ngomong-ngomong... kamu IT Support kan? \nAda insiden yang perlu lo tahu."
   - speaker: 0
-    mood: 0
+    mood: 1
     expression: {fileID: 0}
-    text: Serius? Terus gimana ngatasinnya?
+    text: Insiden apa?
   - speaker: 3
     mood: 2
     expression: {fileID: 0}
-    text: "Makanya kalau ada yang ngaku IT support dan minta file, verifikasi dulu
-      \u2014 pastiin dia beneran karyawan sini."
-  - speaker: 1
-    mood: 0
-    expression: {fileID: 0}
-    text: Iya, jangan langsung kasih file ke siapapun sebelum kamu yakin identitasnya.
+    text: "Kemarin ada orang masuk ngaku dari vendor, \nminta install 'update' di
+      komputer HRD."
   - speaker: 3
     mood: 0
     expression: {fileID: 0}
-    text: "Satu lagi \u2014 jangan install aplikasi sembarangan di laptop kantor,
-      apalagi yang gaada lisensinya."
+    text: "File kepegawaian nyaris kekirim keluar. \nTernyata orang itu bukan vendor
+      sama sekali."
   - speaker: 0
-    mood: 3
+    mood: 1
     expression: {fileID: 0}
-    text: Oke, sip! Makasih infonya Rio, Bagas. Berguna banget nih buat hari pertama.
+    text: Itu social engineering... Gila.
   - speaker: 1
-    mood: 3
+    mood: 1
     expression: {fileID: 0}
-    text: Sama-sama! Selamat kerja ya, stay safe!
+    text: "Nah. Jadi kalau ada yang minta kamu install sesuatu \natau minta akses,
+      sekecil apapun tanya dulu ke supervisor."
+  - speaker: 3
+    mood: 1
+    expression: {fileID: 0}
+    text: Dan kalau ada yang ngaku IT Support tapi lo ga pernah lihat sebelumnya,
+      verifikasi dulu identitasnya lewat HR.
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: Oke serius dulu tadi. Sekarang santai!  Welcome to the team, bro.
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Thanks Rio, Bagas. Berguna banget nih  buat hari pertama. Aku traktir kopi
+      besok!
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak
