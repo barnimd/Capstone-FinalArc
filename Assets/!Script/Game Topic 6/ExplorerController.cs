@@ -98,11 +98,11 @@ public class ExplorerController : MonoBehaviour
 
     void UpdateLabels()
     {
-        if (labelWork) labelWork.text = "📁 Work Files (" + FileSystemManager.Instance.GetFilesAt(FileLocation.WorkFiles).Count + ")";
-        if (labelPersonal) labelPersonal.text = "📁 Personal (" + FileSystemManager.Instance.GetFilesAt(FileLocation.Personal).Count + ")";
-        if (labelDownloads) labelDownloads.text = "📁 Downloads (" + FileSystemManager.Instance.GetFilesAt(FileLocation.Downloads).Count + ")";
-        if (labelImp) labelImp.text = "⚠ Important_Project";
-        if (labelTrash) labelTrash.text = "🗑 Trash (" + FileSystemManager.Instance.GetDeletedFiles().Count + ")";
+        if (labelWork) labelWork.text = "Work Files (" + FileSystemManager.Instance.GetFilesAt(FileLocation.WorkFiles).Count + ")";
+        if (labelPersonal) labelPersonal.text = "Personal (" + FileSystemManager.Instance.GetFilesAt(FileLocation.Personal).Count + ")";
+        if (labelDownloads) labelDownloads.text = "Downloads (" + FileSystemManager.Instance.GetFilesAt(FileLocation.Downloads).Count + ")";
+        if (labelImp) labelImp.text = "Important_Project";
+        if (labelTrash) labelTrash.text = "Trash (" + FileSystemManager.Instance.GetDeletedFiles().Count + ")";
     }
 
     void OnImportantLost()

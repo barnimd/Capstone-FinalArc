@@ -17,6 +17,9 @@ public class GameFlowManager : MonoBehaviour
     public Slider progressBar;
     public TMP_Text statusText;
 
+    [Header("Crash Animation")]
+    public CrashOverlayController_Tp1 crash;
+
     public GameObject mainCanvas;      // Tarik Canvas kamu ke sini
     public Image blackBackground;      // Tarik Image Background Hitam ke sini
     public GameObject contentPanel;
@@ -26,13 +29,19 @@ public class GameFlowManager : MonoBehaviour
     {
         CloseAllPanels();
 
-        mainCanvas.SetActive(false);
-        contentPanel.SetActive(false);
+        // Guard: hanya jalankan jika field sudah di-assign dan BUKAN DesktopCanvas
+        if (mainCanvas != null && mainCanvas != desktopCanvas)
+            mainCanvas.SetActive(false);
 
-        Color c = blackBackground.color;
-        c.a = 0f;
-        blackBackground.color = c;
+        if (contentPanel != null)
+            contentPanel.SetActive(false);
 
+        if (blackBackground != null)
+        {
+            Color c = blackBackground.color;
+            c.a = 0f;
+            blackBackground.color = c;
+        }
     }
 
     public void OpenUIWithTransition()
@@ -140,7 +149,17 @@ public class GameFlowManager : MonoBehaviour
 
         InstallationPanel.SetActive(false);
         ChatPanel.SetActive(false);
-        SecurityAlertPanel.SetActive(true);
+
+        if (crash != null)
+        {
+            // FIX: Scale crashCanvas ter-set (0,0,0) di scene, paksa ke (1,1,1)
+            if (crash.crashCanvas != null)
+                crash.crashCanvas.transform.localScale = Vector3.one;
+
+            crash.PlayCrash(() => SecurityAlertPanel.SetActive(true));
+        }
+        else
+            SecurityAlertPanel.SetActive(true);
     }
 
     public void CloseSecurityPopup()
