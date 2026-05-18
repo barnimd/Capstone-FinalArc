@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: VNDialog_Receptionist_Topic1
   m_EditorClassIdentifier: 
   playerName: Kamu
-  npcName: Resepsionis
+  npcName: Kak Rani
   playerPortrait: {fileID: 21300000, guid: 91753b50188160e469f1596dd7b4e6be, type: 3}
   playerTalkingPortrait: {fileID: 21300000, guid: 6f7b85b4da78fd74eb50431daa554c0f, type: 3}
   playerThinkingPortrait: {fileID: 0}
@@ -32,28 +32,53 @@ MonoBehaviour:
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
-    text: Selamat datang di kantor! Apakah ini hari pertamamu?
+    text: "Hei! Kamu yang anak IT Support magang baru ya? \nAku Rani, resepsionis
+      di sini."
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
-    text: Iya, hari pertama. Saya masih bingung harus mulai dari mana.
+    text: "Iya Kak, Ini hari pertama saya... \nmasih agak grogi hehe."
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
-    text: Tenang, saya bantu. Meja kerjamu ada di lantai 2, sebelah kiri tangga.
-  - speaker: 1
+    text: "Santai saja. Meja kamu di lantai 2, sebelah kiri tangga. \nBadge ID-nya
+      sudah diterima dari HRD?"
+  - speaker: 0
     mood: 0
     expression: {fileID: 0}
-    text: "Sebelum mulai \u2014 jangan asal klik link di email atau pasang aplikasi
-      sembarangan, ya."
+    text: Em... saya belum dapat badge Bu.
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: "Coba cek email, harusnya ada instruksi dari HRD pagi ini. \nKalau belum
+      masuk, langsung ke lantai 3."
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: "Oh iya ada kejadian kemarin yang perlu kamu tahu. \nSeseorang masuk dan
+      ngaku sebagai teknisi IT dari vendor."
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
-    text: Baik, saya akan hati-hati.
+    text: Terus?
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
-    text: Bagus. Selamat bekerja!
+    text: "Minta akses ke komputer Pak Hendra di Finance. \nUntung Pak Hendra curiga
+      dan lapor dulu ke Security."
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: "Hari-hari ini harus hati-hati. Siapapun yang minta akses \natau minta
+      file \u2014 verifikasi dulu lewat jalur resmi, ya."
+  - speaker: 0
+    mood: 1
+    expression: {fileID: 0}
+    text: Siap Kak, makasih infonya!
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: Semangat hari pertamanya! Jangan segan tanya kalau bingung.
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak

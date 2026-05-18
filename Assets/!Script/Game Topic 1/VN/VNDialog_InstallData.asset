@@ -32,34 +32,50 @@ MonoBehaviour:
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
-    text: Hei kamu yang disana! Anak baru ya?
+    text: Hei kamu! IT Support yang baru ya?
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
-    text: I-iya pak, Saya baru masuk sebagai IT Support
+    text: Iya Pak, saya Andi.
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
-    text: IT Support? Wah pas banget nih, boleh minta tolong install data ini ga?
+    text: "Pas banget nih. Ini ada email masuk \u2014 katanya update software akuntansi
+      baru."
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: Tolong install di laptop aku ya. Divisi Finance semua sudah pakai versi
+      ini katanya.
+  - speaker: 0
+    mood: 2
+    expression: {fileID: 0}
+    text: "(Software akuntansi dikirim lewat email? \nItu bukan prosedur standar...)"
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
-    text: Eh oke pak, saya usahakan
-  - speaker: 0
+    text: "Pak, biasanya update software resmi itu \ntidak dikirim lewat email \u2014
+      harus lewat jalur IT."
+  - speaker: 1
     mood: 0
     expression: {fileID: 0}
-    text: Oke semangat kerja hari pertamanya
-  - speaker: 0
-    mood: 1
+    text: "Ih, kamu terlalu ribet. \nIni dari teman aku di Finance, aman kok."
+  - speaker: 1
+    mood: 0
     expression: {fileID: 0}
-    text: Baik Pak!
+    text: "Aku mau meeting sebentar lagi. \nCepet ya \u2014 5 menit aja."
   - speaker: 2
     mood: 0
     expression: {fileID: 0}
-    text: (Terima Misi?)
+    text: "(File dari email tidak dikenal, dikirim bukan lewat \nsistem IT resmi,
+      dengan tekanan waktu.)"
+  - speaker: 2
+    mood: 0
+    expression: {fileID: 0}
+    text: (Install file ini, atau tolak dan lapor ke supervisor?)
   hasChoice: 1
-  acceptText: Ya
-  rejectText: Tidak
+  acceptText: Oke Pak, saya install.
+  rejectText: Maaf Pak, saya harus verifikasi dulu.
   dialogueIfAccepted: {fileID: 0}
   dialogueIfRejected: {fileID: 0}
   actionID: VN_Receptionist_Topic1

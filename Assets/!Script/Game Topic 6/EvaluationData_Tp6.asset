@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f76e054056e6e2643b3c7b7cdbb177d0, type: 3}
+  m_Name: EvaluationData_Tp6
+  m_EditorClassIdentifier: 
+  questions:
+  - questionText: Apakah backup data dapat membantu mengembalikan file yang hilang
+      atau rusak?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 0
+    explanation: Backup menyimpan salinan data.
+  - questionText: Apakah menghapus file penting tanpa backup tetap aman dilakukan?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 1
+    explanation: Jika file terhapus tanpa cadangan, data bisa sulit atau bahkan tidak
+      dapat dikembalikan.
+  - questionText: Apakah virus atau ransomware dapat menyebabkan data tidak bisa
+      diakses?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 0
+    explanation: Malware tertentu dapat merusak, mengenkripsi, atau mengunci file
+      pengguna.
+  - questionText: Apakah menyimpan password di file sembarangan tanpa perlindungan
+      termasuk cara backup yang aman?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 1
+    explanation: Data penting perlu disimpan dengan aman agar tidak mudah dicuri.
+  - questionText: Apakah cloud storage dapat digunakan sebagai salah satu metode
+      backup data?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 0
+    explanation: Cloud storage memungkinkan data disimpan secara online sehingga
+      tetap aman.

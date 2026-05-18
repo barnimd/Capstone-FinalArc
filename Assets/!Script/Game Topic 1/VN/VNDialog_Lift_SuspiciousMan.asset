@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
   m_Name: VNDialog_Lift_SuspiciousMan
   m_EditorClassIdentifier: 
-  playerName: You
-  npcName: Karwayan(?)
+  playerName: Kamu
+  npcName: Rizal(?)
   playerPortrait: {fileID: 21300000, guid: 91753b50188160e469f1596dd7b4e6be, type: 3}
   playerTalkingPortrait: {fileID: 21300000, guid: 6f7b85b4da78fd74eb50431daa554c0f, type: 3}
   playerThinkingPortrait: {fileID: 0}
@@ -29,31 +29,62 @@ MonoBehaviour:
   npc2SmilingPortrait: {fileID: 0}
   background: {fileID: 21300000, guid: d42e18970fada554fa2e1a4a29563b7b, type: 3}
   lines:
+  - speaker: 2
+    mood: 0
+    expression: {fileID: 0}
+    text: "Kamu memasuki lift sendirian. \nSesaat kemudian, seseorang masuk \u2014
+      tampak terburu-buru."
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
-    text: Psstt, eh kamu boleh bagi file keuangan finance ga nanti? share aja lewat
-      message nanti ya
+    text: "Eh hei! Kamu yang anak IT Support baru kan? \nKebetulan banget ketemu
+      di sini."
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
-    text: Eh? tapi saya baru hari pertama disini, saya belum tau apa apa
+    text: Eh, iya. Maaf, kita pernah ketemu?
   - speaker: 1
-    mood: 0
-    expression: {fileID: 0}
-    text: Udah, nanti di komputer mu langsung aja kirim file ke saya, Urgent ini
-      untuk kebutuhan kantor
-  - speaker: 0
     mood: 1
     expression: {fileID: 0}
-    text: Saya pikirkan terlebih dahulu
+    text: "Aku Rizal, divisi Finance \u2014 lantai 3. \nLo pasti belum hapal muka
+      semua orang haha."
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: "(Kamu sama sekali tidak ingat pernah melihat \norang ini di briefing hari
+      ini.)"
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
-    text: Jangan lama-lama mikir nya
-  hasChoice: 0
-  acceptText: Ya
-  rejectText: Tidak
+    text: "Dengerin, aku butuh bantuan urgent banget nih. \nBos aku minta laporan
+      Q3 Finance sebelum jam 3."
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: "Sistem gue error, ga bisa akses foldernya sendiri. \nBisa kirimin file
+      dari komputer lo? Folder Finance Q3."
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: "Eh... tapi itu folder keuangan. \nAku baru hari pertama, aku belum tahu
+      prosedurnya."
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: "Lho, IT Support kan punya akses ke semua folder. \nCepet aja, 5 menit.
+      Ini urgent buat direktur."
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: "(Tunggu. Orang ini tahu kamu IT Support tapi baru \nketemu kamu barusan.
+      Dan minta file keuangan... lewat lift?)"
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: "Jangan lama-lama mikir. \nDirektur lagi nunggu ini."
+  hasChoice: 1
+  acceptText: Oke, aku usahakan...
+  rejectText: Maaf, aku tidak bisa.
   dialogueIfAccepted: {fileID: 0}
   dialogueIfRejected: {fileID: 0}
   actionID: VN_Receptionist_Topic1
