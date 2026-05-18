@@ -30,6 +30,9 @@ public class GameManager_Tp4 : MonoBehaviour
     [Header("=== Evaluation ===")]
     public EvaluationManager_Tp4 evaluationManager;
 
+    [Header("=== Crash ===")]
+    public CrashOverlayController_Tp4 crashOverlay;
+
     [Header("=== Summary ===")]
     public GameObject summaryCanvas;
 
@@ -147,8 +150,17 @@ public class GameManager_Tp4 : MonoBehaviour
         if (websiteCanvas != null) websiteCanvas.SetActive(false);
         if (objectiveUI != null) objectiveUI.gameObject.SetActive(false);
 
-        if (summaryCanvas != null)
-            summaryCanvas.SetActive(true);
+        if (!isSuccess && crashOverlay != null)
+        {
+            crashOverlay.PlayCrash(() =>
+            {
+                if (summaryCanvas != null) summaryCanvas.SetActive(true);
+            });
+        }
+        else
+        {
+            if (summaryCanvas != null) summaryCanvas.SetActive(true);
+        }
     }
 
     private static void Acak<T>(List<T> list)

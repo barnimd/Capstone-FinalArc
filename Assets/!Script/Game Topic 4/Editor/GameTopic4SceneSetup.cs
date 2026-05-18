@@ -388,6 +388,7 @@ public static class GameTopic4SceneSetup
         gm.websiteCanvas = FindCanvas("website")?.gameObject;
         gm.objectiveUI = Object.FindObjectOfType<ObjectiveUI_Tp4>(true);
         gm.evaluationManager = Object.FindObjectOfType<EvaluationManager_Tp4>(true);
+        gm.crashOverlay = Object.FindObjectOfType<CrashOverlayController_Tp4>(true);
 
         Canvas wc = FindCanvas("website");
         Canvas dc = FindCanvas("desktop");

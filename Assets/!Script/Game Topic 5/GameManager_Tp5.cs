@@ -18,6 +18,9 @@ public class GameManager_Tp5 : MonoBehaviour
     [Header("=== Evaluation ===")]
     public EvaluationManager_Tp4 evaluationManager;
 
+    [Header("=== Crash ===")]
+    public CrashOverlayController_Tp5 crashOverlay;
+
     [Header("=== Summary ===")]
     public GameObject summaryCanvas;
 
@@ -49,7 +52,10 @@ public class GameManager_Tp5 : MonoBehaviour
     {
         if (!success)
         {
-            EndGame(false);
+            if (crashOverlay != null)
+                crashOverlay.PlayCrash(() => EndGame(false));
+            else
+                EndGame(false);
             return;
         }
 
@@ -69,22 +75,32 @@ public class GameManager_Tp5 : MonoBehaviour
     {
         _websiteDone = success;
 
+        if (!success)
+        {
+            if (crashOverlay != null)
+                crashOverlay.PlayCrash(() => EndGame(false));
+            else
+                EndGame(false);
+            return;
+        }
+
         if (evaluationManager != null)
-            evaluationManager.TriggerEvaluation(() => EndGame(success));
+            evaluationManager.TriggerEvaluation(() => EndGame(true));
         else
-            EndGame(success);
+            EndGame(true);
     }
 
     private void EndGame(bool isSuccess)
     {
+        if (crashOverlay != null && crashOverlay.crashCanvas != null)
+            crashOverlay.crashCanvas.SetActive(false);
+
         if (objectiveUI != null) objectiveUI.gameObject.SetActive(false);
         if (desktopCanvas != null) desktopCanvas.SetActive(false);
         if (websiteCanvas != null) websiteCanvas.SetActive(false);
 
         if (isSuccess && ScoreManager.instance != null)
             ScoreManager.instance.AddScore(scoreOnSuccess);
-
-        Debug.Log($"[GameManager_Tp5] {(isSuccess ? "COMPLETED" : "FAILED")} | Score={ScoreManager.instance?.score}");
 
         if (summaryCanvas != null)
             summaryCanvas.SetActive(true);
