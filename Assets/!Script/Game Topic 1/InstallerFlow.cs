@@ -17,6 +17,9 @@ public class InstallerFlow : MonoBehaviour
     [System.Obsolete("Use ScoreManager.instance instead")]
     public int score = 0;
 
+    [Header("Crash Animation")]
+    public CrashOverlayController_Tp1_Installer crash;
+
     // Tambahan untuk konfirmasi cancel
     public GameObject confirmationPanel;
     public Button backButton;
@@ -68,7 +71,10 @@ public class InstallerFlow : MonoBehaviour
             ScoreManager.instance.AddScore(-25);
         Debug.Log("Data Bocor! Score: " + (ScoreManager.instance != null ? ScoreManager.instance.score : score));
 
-        securityPopup.SetActive(true);
+        if (crash != null)
+            crash.PlayCrash(() => securityPopup.SetActive(true));
+        else
+            securityPopup.SetActive(true);
     }
 
     // Update CancelInstall supaya tampil konfirmasi dulu

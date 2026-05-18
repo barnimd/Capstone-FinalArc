@@ -1512,6 +1512,7 @@ MonoBehaviour:
   progressBar: {fileID: 2029328632}
   statusText: {fileID: 1993965751}
   score: 0
+  crash: {fileID: 1722225219}
   confirmationPanel: {fileID: 1718807899}
   backButton: {fileID: 1121258143}
   cancelButton: {fileID: 1709960221}
@@ -2107,7 +2108,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!224 &1124362833
 RectTransform:
@@ -3724,7 +3725,7 @@ GameObject:
   - component: {fileID: 1722225217}
   - component: {fileID: 1722225216}
   - component: {fileID: 1722225215}
-  - component: {fileID: 1722225214}
+  - component: {fileID: 1722225219}
   m_Layer: 5
   m_Name: CrashOverlayCanvas
   m_TagString: Untagged
@@ -3732,27 +3733,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1722225214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1722225213}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3db3ce2aebed15f45906da269a7d5eae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  crashCanvas: {fileID: 1722225213}
-  mainBg: {fileID: 1440747055}
-  mainText: {fileID: 422495116}
-  warningIcon: {fileID: 0}
-  warningImg: {fileID: 0}
-  fadeDarkDuration: 0.5
-  warningScaleDuration: 0.8
-  bsodDuration: 2
-  fadeBlackDuration: 0.5
 --- !u!114 &1722225215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3836,6 +3816,36 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1722225219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1722225213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c84930aa1ff79142acb0156c74116b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  crashCanvas: {fileID: 1722225213}
+  mainBg: {fileID: 1440747055}
+  mainText: {fileID: 422495116}
+  redFlash: {fileID: 0}
+  alertText: {fileID: 0}
+  terminalLines:
+  - initializing connection...
+  - bypassing firewall... OK
+  - injecting payload... OK
+  - gaining root access... OK
+  - ACCESS GRANTED
+  - deploying ransomware module...
+  - encrypting system files...
+  fadeInDuration: 0.8
+  charTypingDelay: 0.03
+  lineDelay: 0.25
+  redFlashDuration: 0.5
+  fadeOutDuration: 0.8
 --- !u!1 &1744721587
 GameObject:
   m_ObjectHideFlags: 0
