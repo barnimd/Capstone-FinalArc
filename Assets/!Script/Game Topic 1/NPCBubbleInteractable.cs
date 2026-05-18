@@ -43,6 +43,14 @@ public class NPCBubbleInteractable : MonoBehaviour
     [Tooltip("If true, NPC can only be interacted with once")]
     public bool oneTimeOnly = false;
 
+    [Header("Objective")]
+    public ObjectiveUI_Tp4 objectiveUI;
+    public string objectiveTextOnEnd;
+
+    [Header("Follow Arrow")]
+    public FollowArrow_Tp1 followArrow;
+    public Transform followArrowTarget;
+
     // Internal state
     private bool playerNearby = false;
     private bool hasInteracted = false;
@@ -139,6 +147,17 @@ public class NPCBubbleInteractable : MonoBehaviour
 
         if (oneTimeOnly && interactPrompt != null)
             interactPrompt.SetActive(false);
+
+        if (objectiveUI != null && !string.IsNullOrEmpty(objectiveTextOnEnd))
+            objectiveUI.ShowObjective(objectiveTextOnEnd);
+
+        if (followArrow != null)
+        {
+            if (followArrowTarget != null)
+                followArrow.Show(followArrowTarget);
+            else
+                followArrow.Show();
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
