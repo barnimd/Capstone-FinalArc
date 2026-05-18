@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -12,6 +13,18 @@ public class LoginController : MonoBehaviour
     [Header("Buttons")]
     [SerializeField] private Button loginButton;
     [SerializeField] private Button goToSignUpButton;
+    [SerializeField] private Button googleSignInButton;
+
+    // ─── Google Client ID ─────────────────────────────────────────────────────
+
+    private const string GoogleClientId = "211220332327-0o4c2mi8drpum0crjfvt8uosord5s65r.apps.googleusercontent.com";
+
+    // ─── JS Bridge (WebGL only) ───────────────────────────────────────────────
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [DllImport("__Internal")] private static extern void GoogleAuth_Init(string clientId);
+    [DllImport("__Internal")] private static extern void GoogleAuth_SignIn(string gameObjectName);
+#endif
 
     [Header("Feedback")]
     [SerializeField] private TextMeshProUGUI errorText;
@@ -28,8 +41,13 @@ public class LoginController : MonoBehaviour
 
     void Start()
     {
-        if (loginButton    != null) loginButton.onClick.AddListener(OnLoginClicked);
+        if (loginButton      != null) loginButton.onClick.AddListener(OnLoginClicked);
         if (goToSignUpButton != null) goToSignUpButton.onClick.AddListener(OnGoToSignUpClicked);
+        if (googleSignInButton != null) googleSignInButton.onClick.AddListener(OnGoogleSignInClicked);
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        GoogleAuth_Init(GoogleClientId);
+#endif
 
         if (passwordInput != null)
         {
@@ -112,5 +130,64 @@ public class LoginController : MonoBehaviour
     {
         if (errorText != null)
             errorText.gameObject.SetActive(false);
+    }
+
+    // ─── Google Sign-In ───────────────────────────────────────────────────────
+
+    public void OnGoogleSignInClicked()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        HideError();
+        AuthUIManager.Instance.ShowLoading(true);
+        GoogleAuth_SignIn(gameObject.name);
+#else
+        ShowError("Google Sign-In hanya tersedia di WebGL build");
+#endif
+    }
+
+    // Called by JS via SendMessage
+    public void OnGoogleSignInSuccess(string json)
+    {
+        string accessToken = ExtractJsonField(json, "accessToken");
+
+        FirebaseManager.Instance.SignInWithGoogle(accessToken, (success, error) =>
+        {
+            AuthUIManager.Instance.ShowLoading(false);
+            if (success)
+            {
+                AuthUIManager.Instance.ShowSuccess("Login berhasil!");
+                StartCoroutine(DelayedTransition(AuthUIManager.SCENE_GAME, 1.5f));
+            }
+            else
+            {
+                ShowError("Login Google gagal. Coba lagi.");
+                Debug.LogWarning("[LoginController] Google sign-in Firebase error: " + error);
+            }
+        });
+    }
+
+    // Called by JS via SendMessage
+    public void OnGoogleSignInFailed(string error)
+    {
+        AuthUIManager.Instance.ShowLoading(false);
+        if (error != "Sign-in dismissed" && error != "Dismissed")
+            ShowError("Login Google gagal. Coba lagi.");
+        Debug.LogWarning("[LoginController] Google sign-in JS error: " + error);
+    }
+
+    private IEnumerator DelayedTransition(string sceneName, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        AuthUIManager.Instance.TransitionToScene(sceneName);
+    }
+
+    private string ExtractJsonField(string json, string key)
+    {
+        string search = "\"" + key + "\":\"";
+        int start = json.IndexOf(search);
+        if (start < 0) return "";
+        start += search.Length;
+        int end = json.IndexOf("\"", start);
+        return end < 0 ? "" : json.Substring(start, end - start);
     }
 }
