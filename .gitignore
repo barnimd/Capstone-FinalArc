@@ -97,3 +97,14 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Node / Vercel
+node_modules/
+.env
+.env.local
+.vercel
+
+# Specifically for Docs folder
+docs/node_modules/
+docs/.env
+docs/.env.local
