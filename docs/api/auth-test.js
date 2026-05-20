@@ -1,5 +1,7 @@
 import admin from 'firebase-admin';
 
+let initError = null;
+
 if (!admin.apps.length) {
   try {
     admin.initializeApp({
@@ -10,35 +12,35 @@ if (!admin.apps.length) {
       }),
     });
   } catch (err) {
-    console.error('Firebase init error:', err);
+    initError = {
+      message: err.message,
+      code: err.code,
+      stack: err.stack?.split('\n').slice(0, 3).join('\n')
+    };
   }
 }
 
 export default async function handler(req, res) {
-  try {
-    // Cek env vars
-    const hasProjectId = !!process.env.FIREBASE_PROJECT_ID;
-    const hasClientEmail = !!process.env.FIREBASE_CLIENT_EMAIL;
-    const hasPrivateKey = !!process.env.FIREBASE_PRIVATE_KEY;
-    
-    // Cek Firebase Admin initialized
-    const isInitialized = admin.apps.length > 0;
-    
-    res.status(200).json({
-      success: true,
-      env: {
-        FIREBASE_PROJECT_ID: hasProjectId ? '✅ set' : '❌ missing',
-        FIREBASE_CLIENT_EMAIL: hasClientEmail ? '✅ set' : '❌ missing',
-        FIREBASE_PRIVATE_KEY: hasPrivateKey ? '✅ set' : '❌ missing',
-      },
-      firebaseAdmin: isInitialized ? '✅ initialized' : '❌ not initialized',
-      projectId: process.env.FIREBASE_PROJECT_ID || null,
-    });
-  } catch (err) {
-    res.status(500).json({ 
-      success: false, 
-      error: err.message,
-      stack: err.stack
-    });
-  }
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY || '';
+  const processedKey = privateKey.replace(/\\n/g, '\n');
+  
+  res.status(200).json({
+    success: !initError,
+    env: {
+      FIREBASE_PROJECT_ID: !!process.env.FIREBASE_PROJECT_ID ? '✅ set' : '❌ missing',
+      FIREBASE_CLIENT_EMAIL: !!process.env.FIREBASE_CLIENT_EMAIL ? '✅ set' : '❌ missing',
+      FIREBASE_PRIVATE_KEY: !!process.env.FIREBASE_PRIVATE_KEY ? '✅ set' : '❌ missing',
+    },
+    firebaseAdmin: admin.apps.length > 0 ? '✅ initialized' : '❌ not initialized',
+    projectId: process.env.FIREBASE_PROJECT_ID || null,
+    debug: {
+      privateKeyLength: privateKey.length,
+      privateKeyStartsWith: privateKey.substring(0, 40),
+      privateKeyEndsWith: privateKey.substring(privateKey.length - 30),
+      hasLiteralBackslashN: privateKey.includes('\\n'),
+      hasRealNewline: privateKey.includes('\n'),
+      processedKeyStartsCorrectly: processedKey.startsWith('-----BEGIN PRIVATE KEY-----'),
+    },
+    initError: initError,
+  });
 }
