@@ -52,7 +52,7 @@ public class VNNPCInteractable : MonoBehaviour
 
     [Header("Objective & Follow Arrow (optional)")]
     [Tooltip("Objective UI panel to display after this dialogue ends.")]
-    public ObjectiveUI_Tp4 objectiveUI;
+    public ObjectiveUI_Tp1 objectiveUI;
 
     [Tooltip("Text to show in the objective panel after this dialogue ends.")]
     public string objectiveTextOnEnd;
