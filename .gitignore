@@ -97,3 +97,25 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Node / Vercel
+node_modules/
+.env
+.env.local
+.vercel
+
+# Specifically for Docs folder
+docs/node_modules/
+docs/.env
+docs/.env.local
+
+# Firebase service account
+*-firebase-adminsdk-*.json
+firebase-adminsdk-*.json
+serviceAccountKey.json
+*.serviceaccount.json
+
+# Env files (jaga-jaga)
+.env
+.env.local
+.env.production
