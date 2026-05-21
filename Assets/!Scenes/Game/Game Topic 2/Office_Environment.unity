@@ -372,6 +372,7 @@ GameObject:
   m_Component:
   - component: {fileID: 19516264}
   - component: {fileID: 19516263}
+  - component: {fileID: 19516265}
   m_Layer: 0
   m_Name: EvaluationManager_Tp2
   m_TagString: Untagged
@@ -395,7 +396,7 @@ MonoBehaviour:
   evaluationPanel: {fileID: 271313919}
   evaluationCanvas: {fileID: 1964880144}
   summaryCanvas: {fileID: 185069567}
-  scorePerCorrect: 2
+  scorePerCorrect: 0
 --- !u!4 &19516264
 Transform:
   m_ObjectHideFlags: 0
@@ -411,6 +412,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &19516265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19516262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 931a485ae481b1c4bbfb9e3b071ac1a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &22677107
 GameObject:
   m_ObjectHideFlags: 0
@@ -1525,7 +1538,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &96242445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2294,7 +2307,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &184876218
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2359,7 +2372,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 184876217}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ecda8668a77d8244ade7d23b54b734c, type: 3}
   m_Name: 
@@ -3655,8 +3668,8 @@ MonoBehaviour:
   roomMaxBounds: {x: 0, y: 0}
   objectiveUI: {fileID: 295141568}
   objectiveTextOnEnd: Sapa pekerja lain di kantor
-  followArrow: {fileID: 184876221}
-  followArrowTarget: {fileID: 945652317}
+  followArrow: {fileID: 0}
+  followArrowTarget: {fileID: 0}
   isInteractable: 1
   oneTimeOnly: 0
 --- !u!114 &289519265
@@ -3682,8 +3695,6 @@ MonoBehaviour:
   oneTimeOnly: 1
   objectiveUI: {fileID: 0}
   objectiveTextOnEnd: 
-  followArrow: {fileID: 0}
-  followArrowTarget: {fileID: 0}
 --- !u!61 &289519266
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -10360,6 +10371,7 @@ GameObject:
   - component: {fileID: 567085276}
   - component: {fileID: 567085275}
   - component: {fileID: 567085279}
+  - component: {fileID: 567085280}
   m_Layer: 5
   m_Name: DesktopCanvas
   m_TagString: Untagged
@@ -10464,6 +10476,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 583c66058d28ab14ba75a24bd9e6ff80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &567085280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 567085274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94e2e6312b182f947b88824117044321, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &580316897
@@ -15208,8 +15232,6 @@ MonoBehaviour:
   oneTimeOnly: 1
   objectiveUI: {fileID: 0}
   objectiveTextOnEnd: 
-  followArrow: {fileID: 0}
-  followArrowTarget: {fileID: 0}
 --- !u!61 &945652315
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -15351,8 +15373,8 @@ MonoBehaviour:
   roomMaxBounds: {x: 0, y: 0}
   objectiveUI: {fileID: 295141568}
   objectiveTextOnEnd: Temukan komputer dan perbarui password Anda
-  followArrow: {fileID: 184876221}
-  followArrowTarget: {fileID: 25591200}
+  followArrow: {fileID: 0}
+  followArrowTarget: {fileID: 0}
   isInteractable: 1
   oneTimeOnly: 0
 --- !u!1 &971375416
