@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
+  m_Name: VNDialog_Talking_Topic1 1
+  m_EditorClassIdentifier: 
+  playerName: Joji
+  npcName: Arunika
+  playerPortrait: {fileID: 21300000, guid: 8dcbb50836ed18e499a0f77d4c54949d, type: 3}
+  playerTalkingPortrait: {fileID: 0}
+  playerThinkingPortrait: {fileID: 0}
+  playerSmilingPortrait: {fileID: 0}
+  npc2Name: Bagas
+  npcPortrait: {fileID: 21300000, guid: bf6e39962e9012a49afda18797a83373, type: 3}
+  npcTalkingPortrait: {fileID: 0}
+  npcThinkingPortrait: {fileID: 0}
+  npcSmilingPortrait: {fileID: 0}
+  npc2Portrait: {fileID: 0}
+  npc2TalkingPortrait: {fileID: 0}
+  npc2ThinkingPortrait: {fileID: 0}
+  npc2SmilingPortrait: {fileID: 0}
+  background: {fileID: 21300000, guid: 740be369371e16d4791c7930a2e94a97, type: 3}
+  lines:
+  - speaker: 0
+    mood: 1
+    expression: {fileID: 0}
+    text: Permisi... eh, halo! Kamu Arunika kan? Aku Joji, baru mulai hari ini.
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: Oh! Joji! Iya aku Arunika, seneng ketemu kamu. Selamat datang di tim!
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: Oh iya, tadi ada email masuk ke inbox kamu. Katanya dari IT Department,
+      minta klik link buat verifikasi akun.
+  - speaker: 0
+    mood: 1
+    expression: {fileID: 0}
+    text: Wah serius? Baru hari pertama udah ada email penting. Langsung aku klik
+      aja kali ya?
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: Eh tunggu dulu! Jangan buru-buru. Aku curiga itu bukan email dari kantor
+      kita.
+  - speaker: 0
+    mood: 1
+    expression: {fileID: 0}
+    text: Hah? Emangnya kenapa? Kan katanya dari IT Department...
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: Coba pastiin dulu isi email nya. Takut nya terjadi hal yang tidak di inginkan.
+  - speaker: 0
+    mood: 1
+    expression: {fileID: 0}
+    text: Oh... iya ya, aku nggak kepikiran sampai sana. Ada tips cara bedainnya?
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: Lihat isi pesannya. Kalau pakai kata-kata kayak 'SEGERA!', 'akun kamu akan
+      diblokir' bisa jadi taktik urgency. Sengaja dibuat panik biar kamu nggak mikir
+      panjang.
+  - speaker: 0
+    mood: 1
+    expression: {fileID: 0}
+    text: Wah bahaya juga ya. Berarti aku nggak boleh klik link-nya?
+  - speaker: 1
+    mood: 1
+    expression: {fileID: 0}
+    text: Tepat. Jangan pernah klik link di email yang nggak kamu minta, apalagi
+      kalau minta password atau data pribadi.
+  - speaker: 0
+    mood: 1
+    expression: {fileID: 0}
+    text: Oke oke, aku ngerti sekarang. Makasih banyak ya Arunika, untung kamu ingetin!
+  - speaker: 0
+    mood: 1
+    expression: {fileID: 0}
+    text: Sama-sama! Yaudah, sekarang coba cek sendiri emailnya di meja operator
+      kamu. Lihat apakah kamu bisa bedain mana yang asli dan mana yang phishing!
+  hasChoice: 0
+  acceptText: Ya
+  rejectText: Tidak
+  dialogueIfAccepted: {fileID: 0}
+  dialogueIfRejected: {fileID: 0}
+  actionID: NPC_Talking1and2
