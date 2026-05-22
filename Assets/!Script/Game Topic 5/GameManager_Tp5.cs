@@ -105,6 +105,10 @@ public class GameManager_Tp5 : MonoBehaviour
             return;
         }
 
+        // Failsafe: ensure crash canvas is closed
+        if (crashOverlay != null && crashOverlay.crashCanvas != null)
+            crashOverlay.crashCanvas.SetActive(false);
+
         // Show evaluation directly, btnSelesai already wired in Start()
         if (_evalCanvas != null && _evalPanel != null && evaluationManager.evaluationData != null)
         {
