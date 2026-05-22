@@ -43,8 +43,14 @@ public class EvaluationManager_Tp6 : MonoBehaviour
         Debug.Log($"[EvaluationManager_Tp6] Eval done! Correct={correct}");
 
         if (evaluationCanvas) evaluationCanvas.SetActive(false);
+
         if (ScoreManager.instance != null)
+        {
             ScoreManager.instance.AddScore(correct * 2);
+
+            ScoreManager.instance.score =
+                Mathf.Clamp(ScoreManager.instance.score, 0, 100);
+        }
 
         _onComplete?.Invoke();
     }

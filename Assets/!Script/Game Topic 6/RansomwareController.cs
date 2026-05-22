@@ -31,7 +31,7 @@ public class RansomwareController : MonoBehaviour
     {
         _done = false;
         _onDone = onDone;
-        if (txtTitle) txtTitle.text = "⚠ YOUR FILES HAVE BEEN ENCRYPTED! ⚠";
+        if (txtTitle) txtTitle.text = "YOUR FILES HAVE BEEN ENCRYPTED!";
         if (txtDetail) txtDetail.text = "Ransomware telah mengenkripsi semua file.\n\nSemua dokumen dan folder tidak dapat diakses.\n\nHanya backup yang bisa menyelamatkan data kamu.";
         ransomwarePanel.SetActive(true);
         ransomwarePanel.transform.SetAsLastSibling();
