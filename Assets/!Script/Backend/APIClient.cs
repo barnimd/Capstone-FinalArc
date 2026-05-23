@@ -67,6 +67,9 @@ public class APIClient : MonoBehaviour
     public void GetLeaderboard(string stageId, int limit, Action<bool, LeaderboardResponse, string> cb)
         => Get($"{SecMindAPI.Paths.Leaderboard}?stageId={UnityWebRequest.EscapeURL(stageId)}&limit={limit}", cb);
 
+    public void GetGlobalLeaderboard(int limit, Action<bool, GlobalLeaderboardResponse, string> cb)
+        => Get($"{SecMindAPI.Paths.LeaderboardGlobal}?limit={limit}", cb);
+
     // ── Core ────────────────────────────────────────────────────────────────
 
     private IEnumerator SendRequest<TBody, TResp>(string method, string path, TBody body, Action<bool, TResp, string> callback)

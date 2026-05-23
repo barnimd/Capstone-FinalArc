@@ -18,7 +18,8 @@ public static class SecMindAPI
         public const string StageComplete    = "/api/stage/complete";
         public const string StageRestart     = "/api/stage/restart";
         public const string ScoreSubmit      = "/api/score/submit";
-        public const string Leaderboard      = "/api/leaderboard";
+        public const string Leaderboard       = "/api/leaderboard";
+        public const string LeaderboardGlobal = "/api/leaderboard/global";
     }
 }
 
@@ -147,6 +148,24 @@ public class LeaderboardResponse
     public bool                  success;
     public string                stageId;
     public LeaderboardEntryDTO[] leaderboard;
+}
+
+[Serializable]
+public class GlobalLeaderboardEntryDTO
+{
+    public int    rank;
+    public string userId;
+    public string displayName;
+    public string bestStageId;
+    public string bestStageName;
+    public int    score;
+}
+
+[Serializable]
+public class GlobalLeaderboardResponse
+{
+    public bool                        success;
+    public GlobalLeaderboardEntryDTO[] leaderboard;
 }
 
 [Serializable]

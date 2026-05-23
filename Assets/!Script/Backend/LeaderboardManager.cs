@@ -9,8 +9,10 @@ public class LeaderboardManager : MonoBehaviour
 {
     public static LeaderboardManager Instance { get; private set; }
 
-    public event Action<string, LeaderboardEntryDTO[]> OnLeaderboardLoaded; // (stageId, entries)
-    public event Action<string, string>                 OnLeaderboardFailed; // (stageId, error)
+    public event Action<string, LeaderboardEntryDTO[]>     OnLeaderboardLoaded; // (stageId, entries)
+    public event Action<string, string>                     OnLeaderboardFailed; // (stageId, error)
+    public event Action<GlobalLeaderboardEntryDTO[]>        OnGlobalLeaderboardLoaded;
+    public event Action<string>                             OnGlobalLeaderboardFailed;
 
     void Awake()
     {
@@ -51,6 +53,34 @@ public class LeaderboardManager : MonoBehaviour
             LeaderboardEntryDTO[] entries = resp.leaderboard ?? Array.Empty<LeaderboardEntryDTO>();
             callback?.Invoke(true, entries);
             OnLeaderboardLoaded?.Invoke(stageId, entries);
+        });
+    }
+
+    /// <summary>
+    /// Fetch the global leaderboard — one row per user showing their best stage.
+    /// </summary>
+    public void FetchGlobal(int limit = 10, Action<bool, GlobalLeaderboardEntryDTO[]> callback = null)
+    {
+        if (APIClient.Instance == null)
+        {
+            callback?.Invoke(false, null);
+            OnGlobalLeaderboardFailed?.Invoke("APIClient not in scene");
+            return;
+        }
+
+        APIClient.Instance.GetGlobalLeaderboard(limit, (ok, resp, raw) =>
+        {
+            if (!ok || resp == null || !resp.success)
+            {
+                Debug.LogWarning($"[LeaderboardManager] Global fetch failed: {raw}");
+                callback?.Invoke(false, null);
+                OnGlobalLeaderboardFailed?.Invoke(raw);
+                return;
+            }
+
+            GlobalLeaderboardEntryDTO[] entries = resp.leaderboard ?? Array.Empty<GlobalLeaderboardEntryDTO>();
+            callback?.Invoke(true, entries);
+            OnGlobalLeaderboardLoaded?.Invoke(entries);
         });
     }
 }
