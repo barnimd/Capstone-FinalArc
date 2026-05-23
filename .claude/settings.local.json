@@ -34,7 +34,25 @@
       "mcp__ai-game-developer__scene-get-data",
       "mcp__ai-game-developer__script-execute",
       "mcp__ai-game-developer__gameobject-find",
-      "mcp__ai-game-developer__screenshot-isolated"
+      "mcp__ai-game-developer__screenshot-isolated",
+      "Skill(scene-list-opened)",
+      "PowerShell(unity-mcp-cli run-tool *)",
+      "PowerShell(npx unity-mcp-cli run-tool scene-list-opened --input '{}')",
+      "PowerShell(npx unity-mcp-cli --url http://127.0.0.1:8080/mcp run-tool scene-list-opened --input '{}')",
+      "PowerShell(npx unity-mcp-cli --help)",
+      "PowerShell(npx unity-mcp-cli run-tool --help)",
+      "PowerShell(npx unity-mcp-cli status)",
+      "PowerShell(npx unity-mcp-cli run-tool scene-list-opened --url http://127.0.0.1:8080/mcp --input '{}')",
+      "Skill(gameobject-find)",
+      "Skill(gameobject-find:*)",
+      "mcp__coplay-mcp__get_unity_editor_state",
+      "mcp__coplay-mcp__list_unity_project_roots",
+      "mcp__unityMCP__manage_scene",
+      "mcp__d6381eb7-4e55-4c3d-a339-681810791a7e__notion-fetch",
+      "Bash(curl -s -w \"\\\\nHTTP: %{http_code}\\\\n\" https://secmind.vercel.app/api/stages)",
+      "Bash(curl -s -w \"\\\\nHTTP: %{http_code}\\\\n\" \"https://secmind.vercel.app/api/leaderboard?stageId=phishing\")",
+      "Bash(curl -s -w \"\\\\nHTTP: %{http_code}\\\\n\" \"https://secmind.vercel.app/api/checkpoint/load?stageId=phishing\")",
+      "Bash(curl -s -w \"\\\\nHTTP: %{http_code}\\\\n\" \"https://secmind.vercel.app/api/stage/restart\")"
     ]
   },
   "enabledMcpjsonServers": [
