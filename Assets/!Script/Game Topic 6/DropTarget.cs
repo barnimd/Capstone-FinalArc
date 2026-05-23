@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -17,7 +17,15 @@ public class DropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
     {
         if (bg) bg.color = _orig;
         var fi = e.pointerDrag?.GetComponent<FileItem>();
-        if (fi != null && fi.file != null && !fi.file.isLocked)
-            FileSystemManager.Instance.MoveFile(fi.file.name, targetLocation);
+        if (fi == null || fi.file == null || fi.file.isLocked) return;
+
+        // INTERCEPT: Important_Project selalu masuk Trash
+        if (fi.file.isImportant)
+        {
+            FileSystemManager.Instance.MoveFile(fi.file.name, FileLocation.Trash);
+            return;
+        }
+
+        FileSystemManager.Instance.MoveFile(fi.file.name, targetLocation);
     }
 }

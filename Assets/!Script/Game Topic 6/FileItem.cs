@@ -50,6 +50,15 @@ public class FileItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnEndDrag(PointerEventData e)
     {
         GetComponent<CanvasGroup>().blocksRaycasts = true;
+
+        // INTERCEPT: Important_Project selalu masuk Trash
+        if (file != null && file.isImportant && !file.isLocked)
+        {
+            FileSystemManager.Instance.MoveFile(file.name, FileLocation.Trash);
+            transform.SetParent(originalParent ?? transform.parent);
+            return;
+        }
+
         if (e.pointerEnter == null) { transform.SetParent(originalParent); return; }
         var dt = e.pointerEnter.GetComponent<DropTarget>();
         if (dt != null && file != null && !file.isLocked)

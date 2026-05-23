@@ -69,6 +69,9 @@ namespace GameTopic2
         [Tooltip("How long to display the outcome panel before auto-hiding (0 = never auto-hide)")]
         public float autoHideDelay = 0f;
 
+        [Header("Evaluation Hook")]
+        public System.Action onBeforeSummary;
+
         // ─────────────────────── PUBLIC API (wire to UnityEvents) ───────────────────────
 
         /// <summary>
@@ -127,7 +130,7 @@ namespace GameTopic2
                 yield return new WaitForSeconds(autoHideDelay);
                 successPanel.SetActive(false);
             }
-            SummaryManager.instance.TriggerSummary();
+            TriggerEndSequence();
         }
 
         private IEnumerator BruteforceRoutine()
@@ -194,7 +197,7 @@ namespace GameTopic2
                 yield return new WaitForSeconds(autoHideDelay);
                 bruteforcePanel.SetActive(false);
             }
-            SummaryManager.instance.TriggerSummary();
+            TriggerEndSequence();
         }
 
         private IEnumerator InstantHackRoutine()
@@ -229,10 +232,18 @@ namespace GameTopic2
                 yield return new WaitForSeconds(autoHideDelay);
                 instantHackPanel.SetActive(false);
             }
-            SummaryManager.instance.TriggerSummary();
+            TriggerEndSequence();
         }
 
         // ─────────────────────── UTILITY HELPERS ───────────────────────
+
+        private void TriggerEndSequence()
+        {
+            if (onBeforeSummary != null)
+                onBeforeSummary.Invoke();
+            else
+                SummaryManager.instance.TriggerSummary();
+        }
 
         private void HideAllPanels()
         {

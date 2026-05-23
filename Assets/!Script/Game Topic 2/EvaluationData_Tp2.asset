@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f76e054056e6e2643b3c7b7cdbb177d0, type: 3}
+  m_Name: EvaluationData_Tp2
+  m_EditorClassIdentifier: 
+  questions:
+  - questionText: 'Apakah URL yang terlihat mirip (contoh: go0gle.com) bisa menjadi
+      tanda situs phishing?'
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 0
+    explanation: Penyerang sering menggunakan domain yang hampir sama untuk menipu
+      pengguna.
+  - questionText: Apakah semua website dengan tampilan profesional pasti aman untuk
+      login?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 1
+    explanation: Tampilan bisa ditiru, tapi keamanan tidak bisa dilihat dari desain
+      saja.
+  - questionText: "Apakah \u201Chttps://\u201D menjamin sebuah website 100% aman
+      dari penipuan?"
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 1
+    explanation: HTTPS hanya mengamankan koneksi, bukan menjamin keaslian website.
+  - questionText: Apakah link dari iklan atau pesan bisa mengarah ke situs palsu
+      meskipun terlihat normal?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 0
+    explanation: Banyak phishing menggunakan link yang disamarkan agar terlihat terpercaya.
+  - questionText: Apakah mengecek domain utama (misalnya .go.id, .com) penting sebelum
+      login?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 0
+    explanation: Domain resmi membantu memastikan keaslian website.

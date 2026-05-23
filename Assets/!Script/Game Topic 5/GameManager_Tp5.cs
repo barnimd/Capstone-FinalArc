@@ -17,6 +17,8 @@ public class GameManager_Tp5 : MonoBehaviour
 
     [Header("=== Evaluation ===")]
     public EvaluationManager_Tp4 evaluationManager;
+    private EvaluationPanel_Tp4 _evalPanel;
+    private GameObject _evalCanvas;
 
     [Header("=== Crash ===")]
     public CrashOverlayController_Tp5 crashOverlay;
@@ -46,6 +48,25 @@ public class GameManager_Tp5 : MonoBehaviour
 
         if (wifiController != null)
             wifiController.StartWifiPhase(OnWifiComplete);
+
+        // Wire evaluation Selesai button directly
+        if (evaluationManager != null)
+        {
+            _evalCanvas = evaluationManager.evaluationCanvas;
+            _evalPanel = evaluationManager.evaluationPanel;
+            if (_evalPanel != null && _evalPanel.btnSelesai != null)
+            {
+                _evalPanel.btnSelesai.onClick.RemoveAllListeners();
+                _evalPanel.btnSelesai.onClick.AddListener(OnEvalSelesai);
+            }
+        }
+    }
+
+    private void OnEvalSelesai()
+    {
+        _evalPanel.evaluationPanelRoot.SetActive(false);
+        if (_evalCanvas != null) _evalCanvas.SetActive(false);
+        EndGame(true);
     }
 
     private void OnWifiComplete(bool success)
@@ -84,10 +105,20 @@ public class GameManager_Tp5 : MonoBehaviour
             return;
         }
 
-        if (evaluationManager != null)
-            evaluationManager.TriggerEvaluation(() => EndGame(true));
+        // Failsafe: ensure crash canvas is closed
+        if (crashOverlay != null && crashOverlay.crashCanvas != null)
+            crashOverlay.crashCanvas.SetActive(false);
+
+        // Show evaluation directly, btnSelesai already wired in Start()
+        if (_evalCanvas != null && _evalPanel != null && evaluationManager.evaluationData != null)
+        {
+            _evalCanvas.SetActive(true);
+            _evalPanel.MulaiEvaluasi(evaluationManager.evaluationData);
+        }
         else
+        {
             EndGame(true);
+        }
     }
 
     private void EndGame(bool isSuccess)
@@ -100,7 +131,9 @@ public class GameManager_Tp5 : MonoBehaviour
         if (websiteCanvas != null) websiteCanvas.SetActive(false);
 
         if (isSuccess && ScoreManager.instance != null)
-            ScoreManager.instance.AddScore(scoreOnSuccess);
+            ScoreManager.instance.score = 90;
+        else if (ScoreManager.instance != null)
+            ScoreManager.instance.score = 0;
 
         if (summaryCanvas != null)
             summaryCanvas.SetActive(true);

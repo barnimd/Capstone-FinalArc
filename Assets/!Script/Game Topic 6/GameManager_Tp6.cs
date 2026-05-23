@@ -34,8 +34,8 @@ public class GameManager_Tp6 : MonoBehaviour
     public ObjectiveUI_Tp4 objectiveUI;
 
     [Header("=== Score ===")]
-    public int scoreOrganize = 15, scoreRecovery = 10, scoreBackupYes = 15,
-               scoreRestore = 20, scoreSetup = 20, scoreEval = 20;
+    public int scoreOrganize = 15, scoreRecovery = 15, scoreBackupYes = 20,
+               scoreRestore = 20, scoreSetup = 20;
 
     [Header("=== Timing ===")]
     public float fbDuration = 2.5f;
@@ -81,6 +81,7 @@ public class GameManager_Tp6 : MonoBehaviour
 
     public void GoToState(Tp6State s)
     {
+        Debug.Log($"[Tp6] GoToState({s}) — _score saat ini = {_score}");
         _state = s;
         switch (s)
         {
@@ -157,7 +158,9 @@ public class GameManager_Tp6 : MonoBehaviour
 
             // ── Final: Success ──────────────────────────────────────────
             case Tp6State.Success:
+                Debug.Log($"[Tp6] GoToState(Success) dipanggil! _score sebelum Add = {_score}");
                 Add(scoreSetup);
+                Debug.Log($"[Tp6] _score setelah Add = {_score}");
                 StartCoroutine(FinalRoutine());
                 break;
 
@@ -180,9 +183,9 @@ public class GameManager_Tp6 : MonoBehaviour
         FileSystemManager.Instance.RestoreAllFiles();
         explorer.RefreshUI();
         // FIX R6: tampilkan animasi restore progress sebentar sebelum ke setup
-        ShowFB("🔄 Restoring Backup...", "Memulihkan data dari backup...", autoClose: false);
+        ShowFB("Restoring Backup...", "Memulihkan data dari backup...", autoClose: false);
         yield return new WaitForSeconds(1.5f);
-        ShowFB("✅ Backup Restored!", "Data berhasil dipulihkan.\nSekarang atur jadwal backup rutin.", autoClose: false);
+        ShowFB("Backup Restored!", "Data berhasil dipulihkan.\nSekarang atur jadwal backup rutin.", autoClose: false);
         yield return new WaitForSeconds(fbDuration);
         HideFB();
         backup.ShowBackupSetup();
@@ -193,7 +196,7 @@ public class GameManager_Tp6 : MonoBehaviour
     IEnumerator SimulationRoutine()
     {
         SetObj("Menjalankan simulasi backup...");
-        ShowFB("⚙ Running Simulation", "Sistem sedang menguji konfigurasi backup kamu...", autoClose: false);
+        ShowFB("Running Simulation", "Sistem sedang menguji konfigurasi backup kamu...", autoClose: false);
         yield return new WaitForSeconds(2f);
 
         // Lakukan "simulasi serangan" — kunci file lagi sebentar sebagai efek visual
@@ -206,48 +209,63 @@ public class GameManager_Tp6 : MonoBehaviour
             // Config benar: restore berhasil
             FileSystemManager.Instance.RestoreAllFiles();
             explorer.RefreshUI();
-            ShowFB("✅ Simulation Passed", "Backup kamu berhasil memulihkan semua data!", autoClose: false);
+            ShowFB("Simulation Passed", "Backup kamu berhasil memulihkan semua data!", autoClose: false);
             yield return new WaitForSeconds(fbDuration);
             HideFB();
             GoToState(Tp6State.Success);
         }
         else
         {
-            ShowFB("❌ Your backup is not reliable", "External Drive + Daily schedule = safe.", autoClose: false);
+            ShowFB("Your backup is not reliable", "External Drive + Daily schedule = safe.", autoClose: false);
             yield return new WaitForSeconds(fbDuration);
             HideFB();
             GoToState(Tp6State.Failed);
         }
     }
 
+    public void SyncScoreToManager()
+    {
+        if (ScoreManager.instance != null)
+        {
+            Debug.Log($"[Tp6] SyncScoreToManager → _score = {_score}"); 
+            ScoreManager.instance.score = _score;
+        }
+    }
+
+
     // ── Final: berhasil ─────────────────────────────────────────────────────────────
     IEnumerator FinalRoutine()
     {
         FileSystemManager.Instance.RestoreAllFiles();
         explorer.RefreshUI();
-        ShowFB("🎉 One backup can save everything", "Desktop kembali normal.", autoClose: false);
+
+        ShowFB("One backup can save everything", "Desktop kembali normal.", autoClose: false);
         yield return new WaitForSeconds(fbDuration);
         HideFB();
 
-        if (ScoreManager.instance != null)
-            ScoreManager.instance.score = _score;
+        // Sync game score (90) ke ScoreManager sebelum evaluation menambahkan +10
+        SyncScoreToManager();
 
         if (evaluation != null)
+        {
             evaluation.TriggerEvaluation(() =>
             {
-                Add(scoreEval);
                 if (objectiveUI) objectiveUI.gameObject.SetActive(false);
                 if (desktopCanvas) desktopCanvas.SetActive(false);
                 if (summaryCanvas) summaryCanvas.SetActive(true);
-                if (ScoreManager.instance != null) ScoreManager.instance.AddScore(scoreEval);
+
+                if (ScoreManager.instance != null)
+                    ScoreManager.instance.score = Mathf.Clamp(ScoreManager.instance.score, 0, 100);
             });
+        }
         else
         {
-            Add(scoreEval);
             if (objectiveUI) objectiveUI.gameObject.SetActive(false);
             if (desktopCanvas) desktopCanvas.SetActive(false);
             if (summaryCanvas) summaryCanvas.SetActive(true);
-            if (ScoreManager.instance != null) ScoreManager.instance.score = _score;
+
+            if (ScoreManager.instance != null)
+                ScoreManager.instance.score = Mathf.Clamp(_score, 0, 100);
         }
     }
 
@@ -269,7 +287,7 @@ public class GameManager_Tp6 : MonoBehaviour
     // FIX R5: ShowFB sekarang punya parameter autoClose untuk mengontrol tombol OK
     public void OnBackupQuestionNo()
     {
-        ShowFB("💀 Data cannot be recovered", "Tanpa backup, semua data hilang permanen!", autoClose: true);
+        ShowFB("Data cannot be recovered", "Tanpa backup, semua data hilang permanen!", autoClose: true);
         Invoke(nameof(DoneFail), fbDuration);
     }
 
