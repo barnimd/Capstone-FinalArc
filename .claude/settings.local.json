@@ -52,7 +52,14 @@
       "Bash(curl -s -w \"\\\\nHTTP: %{http_code}\\\\n\" https://secmind.vercel.app/api/stages)",
       "Bash(curl -s -w \"\\\\nHTTP: %{http_code}\\\\n\" \"https://secmind.vercel.app/api/leaderboard?stageId=phishing\")",
       "Bash(curl -s -w \"\\\\nHTTP: %{http_code}\\\\n\" \"https://secmind.vercel.app/api/checkpoint/load?stageId=phishing\")",
-      "Bash(curl -s -w \"\\\\nHTTP: %{http_code}\\\\n\" \"https://secmind.vercel.app/api/stage/restart\")"
+      "Bash(curl -s -w \"\\\\nHTTP: %{http_code}\\\\n\" \"https://secmind.vercel.app/api/stage/restart\")",
+      "Bash(curl -sS -X POST \"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAA6At3-U0H_If-SBum3xn9U9Jyg1ZR-oU\" -H \"Content-Type: application/json\" -d '{\"email\":\"admintest@secmind.local\",\"password\":\"admintest\",\"returnSecureToken\":true}')",
+      "Bash(curl -sS -X POST https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAA6At3-U0H_If-SBum3xn9U9Jyg1ZR-oU -H 'Content-Type: application/json' -d '{\"email\":\"admintest@secmind.local\",\"password\":\"admintest\",\"returnSecureToken\":true}')",
+      "mcp__unityMCP__manage_packages",
+      "mcp__unityMCP__read_console",
+      "mcp__unityMCP__manage_gameobject",
+      "mcp__unityMCP__manage_components",
+      "mcp__unityMCP__find_gameobjects"
     ]
   },
   "enabledMcpjsonServers": [

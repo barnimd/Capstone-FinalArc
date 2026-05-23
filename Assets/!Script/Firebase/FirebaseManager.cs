@@ -17,12 +17,14 @@ public class FirebaseManager : MonoBehaviour
 
     private string measurementId = "G-5BHQNWRTMY";
 
-    private string idToken   = "";
-    private string localId   = "";
-    private string _username = "";
+    private string idToken      = "";
+    private string refreshToken = "";
+    private string localId      = "";
+    private string _username    = "";
 
     public bool   IsAuthenticated => !string.IsNullOrEmpty(idToken);
     public string IdToken         => idToken;
+    public string RefreshToken    => refreshToken;
     public string LocalId         => localId;
     public string Username        => _username;
 
@@ -173,8 +175,66 @@ public class FirebaseManager : MonoBehaviour
 
     private void ParseAuthResponse(string json)
     {
-        idToken = ExtractJsonField(json, "idToken");
-        localId = ExtractJsonField(json, "localId");
+        idToken      = ExtractJsonField(json, "idToken");
+        localId      = ExtractJsonField(json, "localId");
+        refreshToken = ExtractJsonField(json, "refreshToken");
+    }
+
+    // ── Token Refresh ───────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Exchanges the stored refresh token for a fresh idToken via Google Secure Token API.
+    /// Required because Firebase idTokens expire after 1 hour; the API server returns 401.
+    /// </summary>
+    public void RefreshIdToken(Action<bool> callback)
+    {
+        StartCoroutine(RefreshIdTokenCoroutine(callback));
+    }
+
+    private IEnumerator RefreshIdTokenCoroutine(Action<bool> callback)
+    {
+        if (string.IsNullOrEmpty(refreshToken) || string.IsNullOrEmpty(apiKey))
+        {
+            callback?.Invoke(false);
+            yield break;
+        }
+
+        string url  = "https://securetoken.googleapis.com/v1/token?key=" + apiKey;
+        string body = "grant_type=refresh_token&refresh_token=" + UnityWebRequest.EscapeURL(refreshToken);
+
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
+            request.uploadHandler   = new UploadHandlerRaw(bodyBytes);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogWarning("[FirebaseManager] RefreshIdToken failed: " + request.downloadHandler.text);
+                callback?.Invoke(false);
+                yield break;
+            }
+
+            // Google secure-token response uses snake_case: id_token, refresh_token, user_id
+            string json    = request.downloadHandler.text;
+            string newId   = ExtractJsonField(json, "id_token");
+            string newRefr = ExtractJsonField(json, "refresh_token");
+
+            if (string.IsNullOrEmpty(newId))
+            {
+                Debug.LogWarning("[FirebaseManager] RefreshIdToken: empty id_token in response: " + json);
+                callback?.Invoke(false);
+                yield break;
+            }
+
+            idToken = newId;
+            if (!string.IsNullOrEmpty(newRefr)) refreshToken = newRefr;
+            Debug.Log("[FirebaseManager] RefreshIdToken OK");
+            callback?.Invoke(true);
+        }
     }
 
     public void SignUpWithEmail(string email, string password, string username, Action<bool, string> callback)
@@ -514,9 +574,10 @@ public class FirebaseManager : MonoBehaviour
 
     public void SignOut()
     {
-        idToken   = "";
-        localId   = "";
-        _username = "";
+        idToken      = "";
+        refreshToken = "";
+        localId      = "";
+        _username    = "";
     }
 
     public void SignInWithUsernameAndPassword(string username, string password, Action<bool, string> callback)
@@ -645,8 +706,7 @@ public class FirebaseManager : MonoBehaviour
             if (request.result == UnityWebRequest.Result.Success)
             {
                 string response = request.downloadHandler.text;
-                idToken = ExtractJsonField(response, "idToken");
-                localId = ExtractJsonField(response, "localId");
+                ParseAuthResponse(response);
                 callback?.Invoke(true, response);
             }
             else
