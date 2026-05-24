@@ -38,7 +38,7 @@ Button {
 .menu-root {
     flex-grow: 1;
     flex-direction: row;
-    /* transparent — lets unmigrated uGUI canvases show through */
+    background-color: rgb(20, 17, 14);
 }
 
 /* ── Sidebar ──────────────────────────────────────────────── */
@@ -122,6 +122,7 @@ Button {
 .main-area {
     flex-grow: 1;
     flex-direction: column;
+    background-color: rgb(20, 17, 14);
 }
 
 .navbar {
@@ -159,6 +160,7 @@ Button {
 .content {
     flex-grow: 1;
     padding: 24px 40px 40px 40px;
+    background-color: rgb(20, 17, 14);
 }
 
 .page {
@@ -491,4 +493,234 @@ Button {
     color: rgb(240, 230, 210);
     font-size: 12px;
     -unity-font-style: bold;
+}
+
+/* ── Profile page ────────────────────────────────────────── */
+
+.profile-page {
+    flex-grow: 1;
+    background-color: rgb(26, 22, 18);
+    border-radius: 24px;
+    padding: 32px 40px;
+}
+
+.profile-header {
+    margin-bottom: 24px;
+}
+
+.profile-identity {
+    flex-direction: row;
+    align-items: center;
+    padding-bottom: 24px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(58, 51, 40);
+}
+
+.profile-avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 42px;
+    background-color: rgb(232, 120, 38);
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+}
+
+.profile-avatar-text {
+    color: rgb(240, 230, 210);
+    font-size: 36px;
+    -unity-font-style: bold;
+}
+
+.profile-identity-text {
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.profile-name {
+    color: rgb(240, 230, 210);
+    -unity-font-style: bold;
+    font-size: 28px;
+    margin-top: 2px;
+}
+
+.profile-meta {
+    color: rgb(107, 93, 82);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.profile-edit-btn {
+    background-color: rgb(42, 36, 25);
+    color: rgb(240, 230, 210);
+    border-radius: 12px;
+    padding: 10px 16px;
+    border-width: 0;
+}
+
+.profile-edit-btn:hover {
+    background-color: rgb(58, 51, 40);
+}
+
+.profile-edit-btn-label {
+    color: rgb(240, 230, 210);
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+.profile-stats {
+    flex-direction: row;
+    padding: 24px 0;
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(58, 51, 40);
+}
+
+.profile-stat-card {
+    flex-grow: 1;
+    flex-basis: 0;
+    padding: 0 24px;
+    border-right-width: 1px;
+    border-right-color: rgb(58, 51, 40);
+}
+
+.profile-stat-card-last {
+    border-right-width: 0;
+}
+
+.profile-progress-row {
+    flex-direction: row;
+    margin-top: 28px;
+}
+
+.profile-progress-col {
+    flex-grow: 1;
+    flex-basis: 0;
+    padding-right: 32px;
+}
+
+.progress-section-title {
+    color: rgb(240, 230, 210);
+    -unity-font-style: bold;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.progress-list {
+    flex-direction: column;
+}
+
+.progress-item {
+    margin-bottom: 14px;
+}
+
+.progress-item-header {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.progress-item-name {
+    color: rgb(240, 230, 210);
+    font-size: 12px;
+    flex-grow: 1;
+}
+
+.progress-item-percent {
+    color: rgb(232, 120, 38);
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+.progress-bar-bg {
+    height: 3px;
+    background-color: rgb(58, 51, 40);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 3px;
+    background-color: rgb(232, 120, 38);
+    border-radius: 2px;
+}
+
+/* ── Dashboard page ──────────────────────────────────────── */
+
+.dashboard-page {
+    flex-grow: 1;
+    background-color: rgb(26, 22, 18);
+    border-radius: 24px;
+    padding: 32px 40px;
+}
+
+.dashboard-header {
+    margin-bottom: 20px;
+}
+
+.slideshow-frame {
+    flex-grow: 1;
+    border-radius: 16px;
+    overflow: hidden;
+    background-color: rgb(20, 17, 14);
+}
+
+.slideshow-image {
+    flex-grow: 1;
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: rgb(20, 17, 14);
+}
+
+.slideshow-arrow {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+    background-color: rgba(26, 22, 18, 0.75);
+    color: rgb(240, 230, 210);
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    top: 50%;
+    margin-top: -24px;
+}
+
+.slideshow-arrow:hover {
+    background-color: rgba(232, 120, 38, 0.85);
+}
+
+.slideshow-arrow-left {
+    left: 20px;
+}
+
+.slideshow-arrow-right {
+    right: 20px;
+}
+
+.slideshow-arrow-text {
+    color: rgb(240, 230, 210);
+    font-size: 28px;
+    -unity-font-style: bold;
+}
+
+.slideshow-dots {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.slideshow-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background-color: rgba(240, 230, 210, 0.4);
+    margin: 0 4px;
+}
+
+.slideshow-dot.active {
+    background-color: rgb(232, 120, 38);
+    width: 24px;
 }

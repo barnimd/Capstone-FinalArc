@@ -28,12 +28,15 @@ public class MainMenuController : MonoBehaviour
     public int leaderboardLimit = 10;
 
     [Header("Page migration flags (toggle when each page is ported)")]
-    public bool dashboardMigrated   = false;
+    public bool dashboardMigrated   = true;
     public bool classMigrated       = true;
-    public bool profileMigrated     = false;
+    public bool profileMigrated     = true;
     public bool leaderboardMigrated = true;
     public bool settingsMigrated    = false;
     public bool helpMigrated        = false;
+
+    [Header("Dashboard slides (drag banners or auto-loaded)")]
+    public Sprite[] dashboardSlides;
 
     private UIDocument _document;
     private VisualElement _root;
@@ -59,6 +62,27 @@ public class MainMenuController : MonoBehaviour
     private VisualElement _unlockedGrid;
     private VisualElement _lockedGrid;
     private bool          _classCardsBuilt;
+
+    // Dashboard page
+    private VisualElement _slideshowImage;
+    private Button        _slideshowPrev;
+    private Button        _slideshowNext;
+    private VisualElement _slideshowDots;
+    private int           _slideIndex;
+    private bool          _dashboardWired;
+
+    // Profile page
+    private Label         _profileGreeting;
+    private Label         _profileAvatarText;
+    private Label         _profileName;
+    private Label         _profileMeta;
+    private Label         _profileLevelCleared;
+    private Label         _profileAchievements;
+    private Label         _profilePlaytime;
+    private Label         _profileRank;
+    private VisualElement _courseProgressList;
+    private VisualElement _gameProgressList;
+    private bool          _profilePopulated;
 
     private string _currentPage = "dashboard";
 
@@ -105,9 +129,29 @@ public class MainMenuController : MonoBehaviour
         _navbarGreeting    = _root.Q<Label>("navbar-greeting");
         _navbarProfileText = _root.Q<Label>("navbar-profile-text");
 
+        // Dashboard slideshow refs
+        _slideshowImage = _root.Q<VisualElement>("slideshow-image");
+        _slideshowPrev  = _root.Q<Button>("slideshow-prev");
+        _slideshowNext  = _root.Q<Button>("slideshow-next");
+        _slideshowDots  = _root.Q<VisualElement>("slideshow-dots");
+        if (_slideshowPrev != null) _slideshowPrev.clicked += PrevSlide;
+        if (_slideshowNext != null) _slideshowNext.clicked += NextSlide;
+
         // Class page grids
         _unlockedGrid = _root.Q<VisualElement>("unlocked-grid");
         _lockedGrid   = _root.Q<VisualElement>("locked-grid");
+
+        // Profile page refs
+        _profileGreeting     = _root.Q<Label>("profile-greeting");
+        _profileAvatarText   = _root.Q<Label>("profile-avatar-text");
+        _profileName         = _root.Q<Label>("profile-name");
+        _profileMeta         = _root.Q<Label>("profile-meta");
+        _profileLevelCleared = _root.Q<Label>("profile-level-cleared");
+        _profileAchievements = _root.Q<Label>("profile-achievements");
+        _profilePlaytime     = _root.Q<Label>("profile-playtime");
+        _profileRank         = _root.Q<Label>("profile-rank");
+        _courseProgressList  = _root.Q<VisualElement>("course-progress-list");
+        _gameProgressList    = _root.Q<VisualElement>("game-progress-list");
 
         // Wire button clicks
         if (_btnDashboard   != null) _btnDashboard.clicked   += () => ShowPage("dashboard");
@@ -172,9 +216,13 @@ public class MainMenuController : MonoBehaviour
         switch (pageName)
         {
             case "dashboard":
-                if (dashboardMigrated) ShowElement(_pageDashboard);
+                if (dashboardMigrated)
+                {
+                    ShowElement(_pageDashboard);
+                    SetupDashboardIfNeeded();
+                }
                 else if (canvasDashboard != null) canvasDashboard.SetActive(true);
-                else ShowElement(_pageDashboard); // placeholder
+                else ShowElement(_pageDashboard);
                 break;
             case "class":
                 if (classMigrated)
@@ -186,7 +234,11 @@ public class MainMenuController : MonoBehaviour
                 else ShowElement(_pageClass);
                 break;
             case "profile":
-                if (profileMigrated) ShowElement(_pageProfile);
+                if (profileMigrated)
+                {
+                    ShowElement(_pageProfile);
+                    PopulateProfileIfNeeded();
+                }
                 else if (canvasProfile != null) canvasProfile.SetActive(true);
                 else ShowElement(_pageProfile);
                 break;
@@ -289,6 +341,183 @@ public class MainMenuController : MonoBehaviour
 
         foreach (GlobalLeaderboardEntryDTO e in entries)
             _rowList.Add(BuildRow(e, isYou: e.userId == myUid));
+    }
+
+    // ── Dashboard slideshow ─────────────────────────────────────────────────
+
+    private void SetupDashboardIfNeeded()
+    {
+        if (_dashboardWired) return;
+        if (_slideshowImage == null) return;
+        if (dashboardSlides == null || dashboardSlides.Length == 0)
+        {
+            Debug.LogWarning("[MainMenuController] dashboardSlides is empty — assign banner sprites in Inspector");
+            return;
+        }
+
+        // Build dots
+        if (_slideshowDots != null)
+        {
+            _slideshowDots.Clear();
+            for (int i = 0; i < dashboardSlides.Length; i++)
+            {
+                VisualElement dot = new VisualElement();
+                dot.AddToClassList("slideshow-dot");
+                _slideshowDots.Add(dot);
+            }
+        }
+
+        _slideIndex = 0;
+        UpdateSlide();
+        _dashboardWired = true;
+    }
+
+    private void NextSlide()
+    {
+        if (dashboardSlides == null || dashboardSlides.Length == 0) return;
+        _slideIndex = (_slideIndex + 1) % dashboardSlides.Length;
+        UpdateSlide();
+    }
+
+    private void PrevSlide()
+    {
+        if (dashboardSlides == null || dashboardSlides.Length == 0) return;
+        _slideIndex = (_slideIndex - 1 + dashboardSlides.Length) % dashboardSlides.Length;
+        UpdateSlide();
+    }
+
+    private void UpdateSlide()
+    {
+        if (_slideshowImage == null || dashboardSlides == null || dashboardSlides.Length == 0) return;
+        Sprite slide = dashboardSlides[_slideIndex];
+        if (slide != null)
+            _slideshowImage.style.backgroundImage = new StyleBackground(slide);
+
+        // Update dot active state
+        if (_slideshowDots != null)
+        {
+            for (int i = 0; i < _slideshowDots.childCount; i++)
+            {
+                VisualElement dot = _slideshowDots[i];
+                if (i == _slideIndex) dot.AddToClassList("active");
+                else                  dot.RemoveFromClassList("active");
+            }
+        }
+    }
+
+    // ── Profile page ────────────────────────────────────────────────────────
+
+    private void PopulateProfileIfNeeded()
+    {
+        // Always refresh (in case Username changed after login)
+        string raw = FirebaseManager.Instance != null && !string.IsNullOrEmpty(FirebaseManager.Instance.Username)
+            ? FirebaseManager.Instance.Username
+            : "Player";
+        string display = CapitalizeFirst(raw);
+
+        if (_profileGreeting   != null) _profileGreeting.text   = $"Hi, {display}";
+        if (_profileName       != null) _profileName.text       = display;
+        if (_profileAvatarText != null) _profileAvatarText.text = string.IsNullOrEmpty(display) ? "?" : display.Substring(0, 1).ToUpper();
+
+        // Build course progress (from LessonData)
+        if (_courseProgressList != null)
+        {
+            _courseProgressList.Clear();
+            LessonData[] lessons = Resources.LoadAll<LessonData>("Lessons");
+            System.Array.Sort(lessons, (a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
+            int shown = 0;
+            foreach (LessonData l in lessons)
+            {
+                if (l == null) continue;
+                if (!l.isUnlocked) continue; // hanya unlocked yang muncul di progress
+                int pct = 100; // TODO: real per-stage progress from backend
+                _courseProgressList.Add(BuildProgressItem(l.title, pct));
+                shown++;
+                if (shown >= 4) break;
+            }
+        }
+
+        // Build game progress (placeholder for now)
+        if (_gameProgressList != null)
+        {
+            _gameProgressList.Clear();
+            _gameProgressList.Add(BuildProgressItem("Part 1", 85));
+            _gameProgressList.Add(BuildProgressItem("Part 2", 45));
+            _gameProgressList.Add(BuildProgressItem("Part 3", 0));
+        }
+
+        // Placeholders untuk stat strip (sampai backend tersedia)
+        if (_profileLevelCleared != null) _profileLevelCleared.text = "— / 6";
+        if (_profileAchievements != null) _profileAchievements.text = "—";
+        if (_profilePlaytime     != null) _profilePlaytime.text     = "—";
+        if (_profileRank         != null) _profileRank.text         = "—";
+        if (_profileMeta         != null) _profileMeta.text         = $"Joined 2026 · Rank — globally";
+
+        // Fetch real rank + level cleared from global leaderboard
+        if (LeaderboardManager.Instance != null)
+        {
+            LeaderboardManager.Instance.FetchGlobal(100, OnProfileLeaderboardLoaded);
+        }
+
+        _profilePopulated = true;
+    }
+
+    private void OnProfileLeaderboardLoaded(bool ok, GlobalLeaderboardEntryDTO[] entries)
+    {
+        if (!ok || entries == null) return;
+
+        string myUid = FirebaseManager.Instance != null ? FirebaseManager.Instance.LocalId : null;
+        if (string.IsNullOrEmpty(myUid)) return;
+
+        GlobalLeaderboardEntryDTO mine = entries.FirstOrDefault(e => e.userId == myUid);
+        if (mine != null)
+        {
+            if (_profileRank != null) _profileRank.text = "#" + mine.rank;
+            if (_profileMeta != null)
+            {
+                string display = CapitalizeFirst(mine.displayName);
+                _profileMeta.text = $"Joined 2026 · Rank #{mine.rank} globally";
+            }
+        }
+        else
+        {
+            if (_profileRank != null) _profileRank.text = "Unranked";
+        }
+
+        // Count completed stages (unique stage IDs the user appears in leaderboard for)
+        // Global leaderboard returns one row per user with their best stage, so this is "1+" not full count.
+        // For now, hardcoded — real count needs new endpoint.
+    }
+
+    private VisualElement BuildProgressItem(string name, int percent)
+    {
+        VisualElement item = new VisualElement();
+        item.AddToClassList("progress-item");
+
+        VisualElement header = new VisualElement();
+        header.AddToClassList("progress-item-header");
+
+        Label nameLabel = new Label(name);
+        nameLabel.AddToClassList("progress-item-name");
+        header.Add(nameLabel);
+
+        Label pct = new Label(percent + "%");
+        pct.AddToClassList("progress-item-percent");
+        header.Add(pct);
+
+        item.Add(header);
+
+        VisualElement bg = new VisualElement();
+        bg.AddToClassList("progress-bar-bg");
+
+        VisualElement fill = new VisualElement();
+        fill.AddToClassList("progress-bar-fill");
+        fill.style.width = new Length(Mathf.Clamp(percent, 0, 100), LengthUnit.Percent);
+
+        bg.Add(fill);
+        item.Add(bg);
+
+        return item;
     }
 
     // ── Class page ──────────────────────────────────────────────────────────

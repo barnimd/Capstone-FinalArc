@@ -52,8 +52,22 @@
             <engine:VisualElement class="content">
 
                 <!-- Placeholder pages (fallback to uGUI for now) -->
-                <engine:VisualElement name="page-dashboard" class="page page-placeholder">
-                    <engine:Label text="(Dashboard page belum dimigrate — masih pakai uGUI canvas lama)" class="page-placeholder-text" />
+                <engine:VisualElement name="page-dashboard" class="page dashboard-page">
+                    <engine:VisualElement class="dashboard-header">
+                        <engine:Label text="DASHBOARD" class="label-eyebrow" />
+                        <engine:Label text="Welcome Back" class="title" />
+                    </engine:VisualElement>
+
+                    <engine:VisualElement class="slideshow-frame">
+                        <engine:VisualElement name="slideshow-image" class="slideshow-image" />
+                        <engine:Button name="slideshow-prev" class="slideshow-arrow slideshow-arrow-left">
+                            <engine:Label text="‹" class="slideshow-arrow-text" />
+                        </engine:Button>
+                        <engine:Button name="slideshow-next" class="slideshow-arrow slideshow-arrow-right">
+                            <engine:Label text="›" class="slideshow-arrow-text" />
+                        </engine:Button>
+                        <engine:VisualElement name="slideshow-dots" class="slideshow-dots" />
+                    </engine:VisualElement>
                 </engine:VisualElement>
 
                 <engine:VisualElement name="page-class" class="page class-page hidden">
@@ -69,8 +83,55 @@
                     </engine:ScrollView>
                 </engine:VisualElement>
 
-                <engine:VisualElement name="page-profile" class="page page-placeholder hidden">
-                    <engine:Label text="(Profile page belum dimigrate)" class="page-placeholder-text" />
+                <engine:VisualElement name="page-profile" class="page profile-page hidden">
+                    <engine:VisualElement class="profile-header">
+                        <engine:Label text="PROFILE" class="label-eyebrow" />
+                        <engine:Label text="Hi, Player" class="title" name="profile-greeting" />
+                    </engine:VisualElement>
+
+                    <engine:VisualElement class="profile-identity">
+                        <engine:VisualElement class="profile-avatar">
+                            <engine:Label text="P" class="profile-avatar-text" name="profile-avatar-text" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="profile-identity-text">
+                            <engine:Label text="PLAYER" class="label-eyebrow" />
+                            <engine:Label text="Player Name" class="profile-name" name="profile-name" />
+                            <engine:Label text="Joined 2026 · Rank — globally" class="profile-meta" name="profile-meta" />
+                        </engine:VisualElement>
+                        <engine:Button class="profile-edit-btn" name="btn-edit-profile">
+                            <engine:Label text="✎ Edit profile" class="profile-edit-btn-label" />
+                        </engine:Button>
+                    </engine:VisualElement>
+
+                    <engine:VisualElement class="profile-stats">
+                        <engine:VisualElement class="profile-stat-card">
+                            <engine:Label text="LEVEL CLEARED" class="stat-label" />
+                            <engine:Label text="— / 6" class="stat-value" name="profile-level-cleared" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="profile-stat-card">
+                            <engine:Label text="ACHIEVEMENTS" class="stat-label" />
+                            <engine:Label text="0" class="stat-value" name="profile-achievements" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="profile-stat-card">
+                            <engine:Label text="PLAYTIME" class="stat-label" />
+                            <engine:Label text="—" class="stat-value" name="profile-playtime" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="profile-stat-card profile-stat-card-last">
+                            <engine:Label text="GLOBAL RANK" class="stat-label" />
+                            <engine:Label text="—" class="stat-value" name="profile-rank" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+
+                    <engine:VisualElement class="profile-progress-row">
+                        <engine:VisualElement class="profile-progress-col">
+                            <engine:Label text="Course Progress" class="progress-section-title" />
+                            <engine:VisualElement name="course-progress-list" class="progress-list" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="profile-progress-col">
+                            <engine:Label text="Game Progress" class="progress-section-title" />
+                            <engine:VisualElement name="game-progress-list" class="progress-list" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
                 </engine:VisualElement>
 
                 <!-- LEADERBOARD page (fully migrated) -->
