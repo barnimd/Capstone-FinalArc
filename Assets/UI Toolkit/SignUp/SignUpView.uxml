@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements">
+    <engine:Style src="project://database/Assets/UI%20Toolkit/SignUp/SignUpStyles.uss" />
+
+    <engine:VisualElement class="signup-root">
+
+        <!-- Top bar -->
+        <engine:VisualElement class="signup-topbar">
+            <engine:Label text="SECMIND." class="brand" />
+            <engine:VisualElement class="topbar-help">
+                <engine:Label text="Already a player?" class="topbar-help-text" />
+                <engine:Label text="Sign in" name="signin-link" class="topbar-help-link" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- Body 2-col -->
+        <engine:VisualElement class="signup-body">
+
+            <!-- LEFT: Hero -->
+            <engine:VisualElement class="hero-panel">
+                <engine:VisualElement class="hero-content">
+                    <engine:Label text="JOIN SECMIND" class="hero-eyebrow" />
+                    <engine:Label text="Learn cyber" class="hero-title" />
+                    <engine:VisualElement style="flex-direction: row;">
+                        <engine:Label text="safety like a " class="hero-title" />
+                        <engine:Label text="game." class="hero-title hero-title-accent" />
+                    </engine:VisualElement>
+
+                    <engine:VisualElement class="feature-list">
+                        <engine:VisualElement class="feature-item">
+                            <engine:VisualElement class="feature-check">
+                                <engine:Label text="✓" class="feature-check-text" />
+                            </engine:VisualElement>
+                            <engine:VisualElement class="feature-text-block">
+                                <engine:Label text="6 hands-on modules" class="feature-title" />
+                                <engine:Label text="Phishing, passwords, Wi-Fi, privacy, and more." class="feature-subtitle" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:VisualElement class="feature-item">
+                            <engine:VisualElement class="feature-check">
+                                <engine:Label text="✓" class="feature-check-text" />
+                            </engine:VisualElement>
+                            <engine:VisualElement class="feature-text-block">
+                                <engine:Label text="Climb the leaderboard" class="feature-title" />
+                                <engine:Label text="Compete with 184 players nationwide." class="feature-subtitle" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                        <engine:VisualElement class="feature-item">
+                            <engine:VisualElement class="feature-check">
+                                <engine:Label text="✓" class="feature-check-text" />
+                            </engine:VisualElement>
+                            <engine:VisualElement class="feature-text-block">
+                                <engine:Label text="Save your progress" class="feature-title" />
+                                <engine:Label text="Pick up where you left off on any device." class="feature-subtitle" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <!-- RIGHT: SignUp card -->
+            <engine:VisualElement class="signup-panel">
+                <engine:VisualElement class="signup-card">
+                    <engine:VisualElement class="signup-logo" />
+                    <engine:Label text="CREATE YOUR ACCOUNT" class="signup-eyebrow" />
+
+                    <engine:Label text="EMAIL" class="field-label" />
+                    <engine:TextField name="email-input" class="input" />
+
+                    <engine:Label text="NICKNAME" class="field-label" />
+                    <engine:TextField name="nickname-input" class="input" />
+
+                    <engine:Label text="PASSWORD" class="field-label" />
+                    <engine:TextField name="password-input" class="input" password="true" />
+
+                    <engine:VisualElement class="strength-meter">
+                        <engine:VisualElement name="strength-seg-1" class="strength-segment" />
+                        <engine:VisualElement name="strength-seg-2" class="strength-segment" />
+                        <engine:VisualElement name="strength-seg-3" class="strength-segment" />
+                        <engine:VisualElement name="strength-seg-4" class="strength-segment strength-segment-last" />
+                    </engine:VisualElement>
+                    <engine:Label text="" name="strength-label" class="strength-label none" />
+
+                    <engine:Label text="CONFIRM PASSWORD" class="field-label" />
+                    <engine:TextField name="confirm-input" class="input" password="true" />
+
+                    <engine:VisualElement style="height: 18px;" />
+
+                    <engine:Button text="Create account" name="signup-button" class="button-primary" />
+
+                    <engine:VisualElement class="divider">
+                        <engine:VisualElement class="divider-line" />
+                        <engine:Label text="OR" class="divider-text" />
+                        <engine:VisualElement class="divider-line" />
+                    </engine:VisualElement>
+
+                    <engine:Button name="google-button" class="button-google">
+                        <engine:VisualElement class="google-icon" />
+                        <engine:Label text="Sign up with Google" class="google-label" />
+                    </engine:Button>
+
+                    <engine:Label text="" name="signup-error" class="error" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+        </engine:VisualElement>
+
+        <engine:Label text="© 2026 SecMind · Cyber Security Awareness Game" class="signup-footer" />
+    </engine:VisualElement>
+</engine:UXML>

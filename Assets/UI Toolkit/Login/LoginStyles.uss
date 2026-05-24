@@ -1,0 +1,315 @@
+/* ============================================================
+   SecMind Login — UI Toolkit styles
+   Palette:
+     Midnight Cocoa #1E1612 — bg, chrome
+     Bone           #F0E6D2 — cards, body text
+     Ember          #E87826 — primary action, accent
+     Ash            #6B5D52 — locked, muted, dividers
+   ============================================================ */
+
+/* ── Default overrides ──────────────────────────────────── */
+
+ScrollView,
+.unity-scroll-view,
+.unity-scroll-view__viewport,
+.unity-scroll-view__content-viewport {
+    background-color: transparent;
+    border-width: 0;
+}
+
+Button:focus, .unity-button:focus {
+    border-color: transparent;
+    border-width: 0;
+}
+
+Button { border-width: 0; }
+
+/* ── Root ──────────────────────────────────────────────── */
+
+.login-root {
+    flex-grow: 1;
+    flex-direction: column;
+    background-color: rgb(30, 22, 18);
+}
+
+/* ── Full-width top bar ──────────────────────────────── */
+
+.login-topbar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32px 60px 0 60px;
+}
+
+.login-body {
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+/* ── Hero panel (LEFT half) ───────────────────────────── */
+
+.hero-panel {
+    flex-grow: 1;
+    flex-basis: 0;
+    padding: 40px 60px 32px 60px;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hero-brand {
+    color: rgb(240, 230, 210);
+    font-size: 18px;
+    -unity-font-style: bold;
+    letter-spacing: 3px;
+}
+
+.hero-help {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hero-help-text {
+    color: rgb(107, 93, 82);
+    font-size: 13px;
+    margin-right: 6px;
+}
+
+.hero-help-link {
+    color: rgb(232, 120, 38);
+    font-size: 13px;
+    -unity-font-style: bold;
+}
+
+.hero-content {
+    flex-grow: 1;
+    justify-content: center;
+    max-width: 520px;
+}
+
+.hero-eyebrow {
+    color: rgb(232, 120, 38);
+    font-size: 13px;
+    -unity-font-style: bold;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+}
+
+.hero-title {
+    color: rgb(240, 230, 210);
+    font-size: 64px;
+    -unity-font-style: bold;
+}
+
+.hero-title-accent {
+    color: rgb(232, 120, 38);
+}
+
+.hero-subtitle {
+    color: rgb(180, 165, 150);
+    font-size: 14px;
+    margin-top: 22px;
+    max-width: 420px;
+    white-space: normal;
+}
+
+.hero-stats {
+    flex-direction: row;
+    margin-top: 48px;
+}
+
+.hero-stat {
+    margin-right: 48px;
+}
+
+.hero-stat-number {
+    color: rgb(240, 230, 210);
+    font-size: 32px;
+    -unity-font-style: bold;
+}
+
+.hero-stat-label {
+    color: rgb(107, 93, 82);
+    font-size: 11px;
+    letter-spacing: 2px;
+    -unity-font-style: bold;
+    margin-top: 2px;
+}
+
+.hero-footer {
+    color: rgb(107, 93, 82);
+    font-size: 11px;
+    -unity-text-align: middle-center;
+    padding: 24px 0 24px 0;
+}
+
+/* ── Login panel (RIGHT half) ─────────────────────────── */
+
+.login-panel {
+    flex-grow: 1;
+    flex-basis: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.login-card {
+    width: 420px;
+    background-color: rgb(20, 14, 12);
+    border-radius: 24px;
+    padding: 40px 36px;
+    flex-direction: column;
+    border-width: 1px;
+    border-color: rgb(45, 35, 30);
+}
+
+.login-logo {
+    height: 80px;
+    -unity-background-scale-mode: scale-to-fit;
+    background-image: url("project://database/Assets/Asset%20game/Icon/Secmind%20white.png");
+}
+
+.login-eyebrow {
+    color: rgb(107, 93, 82);
+    font-size: 11px;
+    letter-spacing: 3px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    margin-bottom: 24px;
+    margin-top: 4px;
+}
+
+.login-field-label {
+    color: rgb(107, 93, 82);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    -unity-font-style: bold;
+    margin-bottom: 6px;
+    margin-top: 14px;
+}
+
+.login-input {
+    background-color: rgb(42, 30, 25);
+    border-radius: 12px;
+    border-width: 0;
+    margin-bottom: 0;
+}
+
+.login-input > .unity-base-text-field__input {
+    background-color: rgb(42, 30, 25);
+    color: rgb(240, 230, 210);
+    border-radius: 12px;
+    padding: 12px 16px;
+    border-width: 0;
+    font-size: 14px;
+    -unity-font-style: normal;
+}
+
+.login-input:focus > .unity-base-text-field__input,
+.login-input > .unity-base-text-field__input:focus {
+    border-width: 1px;
+    border-color: rgb(232, 120, 38);
+}
+
+.login-row {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 12px;
+    margin-bottom: 18px;
+}
+
+.login-link {
+    color: rgb(232, 120, 38);
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+.login-button-primary {
+    background-color: rgb(232, 120, 38);
+    color: rgb(240, 230, 210);
+    border-radius: 14px;
+    padding: 14px;
+    -unity-font-style: bold;
+    font-size: 14px;
+    margin-bottom: 16px;
+    -unity-text-align: middle-center;
+}
+
+.login-button-primary:hover {
+    background-color: rgb(212, 100, 28);
+}
+
+.login-divider {
+    flex-direction: row;
+    align-items: center;
+    margin: 6px 0 16px 0;
+}
+
+.login-divider-line {
+    flex-grow: 1;
+    height: 1px;
+    background-color: rgb(58, 51, 40);
+}
+
+.login-divider-text {
+    color: rgb(107, 93, 82);
+    font-size: 11px;
+    margin: 0 12px;
+    letter-spacing: 2px;
+    -unity-font-style: bold;
+}
+
+.login-button-google {
+    background-color: rgb(240, 230, 210);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 20px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-button-google:hover {
+    background-color: rgb(220, 210, 190);
+}
+
+.google-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    -unity-background-scale-mode: scale-to-fit;
+    /* TODO: drop a google logo PNG here, e.g.: */
+    /* background-image: url("project://database/Assets/Asset%20game/Icon/google_logo.png"); */
+    background-color: rgb(66, 133, 244);
+    border-radius: 9px;
+}
+
+.google-label {
+    color: rgb(30, 22, 18);
+    -unity-font-style: bold;
+    font-size: 14px;
+}
+
+.login-bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-bottom-text {
+    color: rgb(107, 93, 82);
+    font-size: 12px;
+    margin-right: 6px;
+}
+
+.login-error {
+    color: rgb(255, 100, 80);
+    font-size: 12px;
+    -unity-text-align: middle-center;
+    margin-top: 10px;
+    display: none;
+}
+
+.login-error.visible {
+    display: flex;
+}
