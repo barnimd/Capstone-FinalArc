@@ -1,0 +1,346 @@
+/* ============================================================
+   SecMind Main Menu — UI Toolkit shell + page styles
+   Palette: bg-deep #1A1612 · bg-card #2A2419 · bg-elevated #3A3328
+            bone #F0E6D2 · ember #E87826 · ash #6B5D52
+   ============================================================ */
+
+/* ── Root layout ──────────────────────────────────────────── */
+
+.menu-root {
+    flex-grow: 1;
+    flex-direction: row;
+    background-color: rgb(26, 22, 18);
+}
+
+/* ── Sidebar ──────────────────────────────────────────────── */
+
+.sidebar {
+    width: 280px;
+    background-color: rgb(20, 17, 14);
+    padding: 24px 16px;
+    flex-direction: column;
+}
+
+.sidebar-logo {
+    height: 100px;
+    -unity-background-scale-mode: scale-to-fit;
+    margin-bottom: 32px;
+}
+
+.sidebar-btn {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgb(42, 36, 25);
+    color: rgb(240, 230, 210);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    border-width: 0;
+    -unity-text-align: middle-left;
+    -unity-font-style: bold;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    transition-property: background-color, color;
+    transition-duration: 0.15s;
+}
+
+.sidebar-btn:hover {
+    background-color: rgb(58, 51, 40);
+}
+
+.sidebar-btn.active {
+    background-color: rgb(232, 120, 38);
+    color: rgb(240, 230, 210);
+}
+
+.sidebar-btn-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 12px;
+    background-color: rgb(107, 93, 82);
+    border-radius: 4px;
+}
+
+.sidebar-btn.active .sidebar-btn-icon {
+    background-color: rgb(240, 230, 210);
+}
+
+.sidebar-spacer {
+    flex-grow: 1;
+}
+
+.sidebar-btn-secondary {
+    background-color: rgb(50, 26, 22);
+}
+
+.sidebar-btn-secondary:hover {
+    background-color: rgb(70, 38, 32);
+}
+
+/* ── Main area (navbar + content) ────────────────────────── */
+
+.main-area {
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.navbar {
+    height: 90px;
+    padding: 0 40px;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgb(20, 17, 14);
+}
+
+.navbar-greeting {
+    font-size: 28px;
+    color: rgb(240, 230, 210);
+    -unity-font-style: bold;
+    flex-grow: 1;
+}
+
+.navbar-profile {
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+    background-color: rgb(232, 120, 38);
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-profile-text {
+    color: rgb(240, 230, 210);
+    -unity-font-style: bold;
+    font-size: 18px;
+}
+
+/* ── Content container & pages ───────────────────────────── */
+
+.content {
+    flex-grow: 1;
+    padding: 24px 40px 40px 40px;
+}
+
+.page {
+    flex-grow: 1;
+}
+
+.page.hidden {
+    display: none;
+}
+
+/* Placeholder for not-yet-migrated pages */
+.page-placeholder {
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.page-placeholder-text {
+    color: rgb(107, 93, 82);
+    font-size: 14px;
+}
+
+/* ── Leaderboard page (was: standalone .page) ────────────── */
+
+.lb-page {
+    flex-grow: 1;
+}
+
+.lb-header {
+    margin-bottom: 20px;
+}
+
+.label-eyebrow {
+    font-size: 11px;
+    color: rgb(107, 93, 82);
+    letter-spacing: 2px;
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+}
+
+.title {
+    font-size: 32px;
+    color: rgb(240, 230, 210);
+    -unity-font-style: bold;
+}
+
+.stat-strip {
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    flex-grow: 1;
+    background-color: rgb(42, 36, 25);
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-right: 16px;
+}
+
+.stat-card-last { margin-right: 0; }
+
+.stat-label {
+    font-size: 11px;
+    color: rgb(107, 93, 82);
+    letter-spacing: 1.5px;
+    -unity-font-style: bold;
+    margin-bottom: 6px;
+}
+
+.stat-value {
+    font-size: 28px;
+    color: rgb(240, 230, 210);
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+}
+
+.stat-subtitle {
+    font-size: 12px;
+    color: rgb(107, 93, 82);
+}
+
+.filter-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.filter-tab {
+    background-color: rgb(42, 36, 25);
+    color: rgb(107, 93, 82);
+    border-radius: 22px;
+    padding: 8px 18px;
+    margin-right: 8px;
+    -unity-font-style: bold;
+    font-size: 12px;
+    border-width: 0;
+}
+
+.filter-tab:hover {
+    background-color: rgb(58, 51, 40);
+    color: rgb(240, 230, 210);
+}
+
+.filter-tab.active {
+    background-color: rgb(232, 120, 38);
+    color: rgb(240, 230, 210);
+}
+
+.table-header {
+    flex-direction: row;
+    padding: 12px 24px;
+    margin-bottom: 4px;
+}
+
+.col-header {
+    font-size: 11px;
+    color: rgb(107, 93, 82);
+    letter-spacing: 1.5px;
+    -unity-font-style: bold;
+}
+
+.col-rank { width: 60px; }
+.col-player { flex-grow: 2; flex-basis: 0; }
+.col-topic { flex-grow: 3; flex-basis: 0; }
+.col-score { width: 80px; -unity-text-align: middle-right; }
+
+.row-list { flex-grow: 1; }
+
+.row {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgb(42, 36, 25);
+    border-radius: 12px;
+    padding: 12px 24px;
+    margin-bottom: 8px;
+    border-left-width: 0;
+    border-left-color: rgb(232, 120, 38);
+}
+
+.row.you { border-left-width: 4px; }
+
+.row:hover { background-color: rgb(58, 51, 40); }
+
+.rank-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background-color: rgb(58, 51, 40);
+    align-items: center;
+    justify-content: center;
+}
+
+.rank-badge.first { background-color: rgb(232, 120, 38); }
+
+.rank-badge-text {
+    color: rgb(240, 230, 210);
+    -unity-font-style: bold;
+    font-size: 13px;
+}
+
+.player-cell {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 2;
+    flex-basis: 0;
+    margin-left: 28px;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    background-color: rgb(58, 51, 40);
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+.avatar-text {
+    color: rgb(240, 230, 210);
+    -unity-font-style: bold;
+    font-size: 12px;
+}
+
+.player-name {
+    color: rgb(240, 230, 210);
+    font-size: 14px;
+}
+
+.you-badge {
+    background-color: rgb(232, 120, 38);
+    color: rgb(240, 230, 210);
+    font-size: 9px;
+    -unity-font-style: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 10px;
+    letter-spacing: 1px;
+}
+
+.topic-text {
+    color: rgb(107, 93, 82);
+    font-size: 13px;
+    flex-grow: 3;
+    flex-basis: 0;
+}
+
+.score-text {
+    color: rgb(240, 230, 210);
+    font-size: 16px;
+    -unity-font-style: bold;
+    width: 80px;
+    -unity-text-align: middle-right;
+}
+
+.empty-state {
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+}
+
+.empty-text {
+    color: rgb(107, 93, 82);
+    font-size: 14px;
+}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements">
+    <engine:Style src="project://database/Assets/UI%20Toolkit/Leaderboard/LeaderboardStyles.uss" />
+    <engine:VisualElement class="page">
+
+        <!-- Header -->
+        <engine:VisualElement class="page-header">
+            <engine:Label text="LEADERBOARD" class="label-eyebrow" />
+            <engine:Label text="Top Scores" class="title" />
+        </engine:VisualElement>
+
+        <!-- Stat strip (3 cards) -->
+        <engine:VisualElement class="stat-strip">
+            <engine:VisualElement class="stat-card" name="stat-your-rank">
+                <engine:Label text="YOUR RANK" class="stat-label" />
+                <engine:Label text="—" class="stat-value" name="your-rank-value" />
+                <engine:Label text="not yet ranked" class="stat-subtitle" name="your-rank-subtitle" />
+            </engine:VisualElement>
+            <engine:VisualElement class="stat-card" name="stat-your-best">
+                <engine:Label text="YOUR BEST" class="stat-label" />
+                <engine:Label text="—" class="stat-value" name="your-best-value" />
+                <engine:Label text="no completion yet" class="stat-subtitle" name="your-best-subtitle" />
+            </engine:VisualElement>
+            <engine:VisualElement class="stat-card stat-card-last" name="stat-top-score">
+                <engine:Label text="TOP SCORE" class="stat-label" />
+                <engine:Label text="—" class="stat-value" name="top-score-value" />
+                <engine:Label text="—" class="stat-subtitle" name="top-score-subtitle" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <!-- Filter row -->
+        <engine:VisualElement class="filter-row">
+            <engine:Button text="Global" class="filter-tab active" name="tab-global" />
+            <engine:Button text="Friends" class="filter-tab" name="tab-friends" />
+            <engine:Button text="This Week" class="filter-tab" name="tab-week" />
+        </engine:VisualElement>
+
+        <!-- Table header -->
+        <engine:VisualElement class="table-header">
+            <engine:Label text="RANK"   class="col-header col-rank" />
+            <engine:Label text="PLAYER" class="col-header col-player" />
+            <engine:Label text="TOPIC"  class="col-header col-topic" />
+            <engine:Label text="SCORE"  class="col-header col-score" />
+        </engine:VisualElement>
+
+        <!-- Row list (populated dynamically) -->
+        <engine:ScrollView class="row-list" name="row-list" />
+
+    </engine:VisualElement>
+</engine:UXML>

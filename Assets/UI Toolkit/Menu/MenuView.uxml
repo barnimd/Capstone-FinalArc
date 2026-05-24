@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements">
+    <engine:Style src="project://database/Assets/UI%20Toolkit/Menu/MenuStyles.uss" />
+
+    <engine:VisualElement class="menu-root">
+
+        <!-- ============= SIDEBAR ============= -->
+        <engine:VisualElement class="sidebar">
+            <engine:VisualElement class="sidebar-logo" name="sidebar-logo" />
+
+            <engine:Button name="btn-dashboard"   class="sidebar-btn active" text="Dashboard">
+                <engine:VisualElement class="sidebar-btn-icon" />
+            </engine:Button>
+            <engine:Button name="btn-class"       class="sidebar-btn" text="Class">
+                <engine:VisualElement class="sidebar-btn-icon" />
+            </engine:Button>
+            <engine:Button name="btn-profile"     class="sidebar-btn" text="Profile">
+                <engine:VisualElement class="sidebar-btn-icon" />
+            </engine:Button>
+            <engine:Button name="btn-leaderboard" class="sidebar-btn" text="Leaderboard">
+                <engine:VisualElement class="sidebar-btn-icon" />
+            </engine:Button>
+
+            <engine:VisualElement class="sidebar-spacer" />
+
+            <engine:Button name="btn-settings" class="sidebar-btn sidebar-btn-secondary" text="Settings">
+                <engine:VisualElement class="sidebar-btn-icon" />
+            </engine:Button>
+            <engine:Button name="btn-help"     class="sidebar-btn sidebar-btn-secondary" text="Get Help">
+                <engine:VisualElement class="sidebar-btn-icon" />
+            </engine:Button>
+        </engine:VisualElement>
+
+        <!-- ============= MAIN AREA ============= -->
+        <engine:VisualElement class="main-area">
+
+            <!-- Navbar -->
+            <engine:VisualElement class="navbar">
+                <engine:Label text="Hi, Player" name="navbar-greeting" class="navbar-greeting" />
+                <engine:VisualElement class="navbar-profile">
+                    <engine:Label text="?" name="navbar-profile-text" class="navbar-profile-text" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+
+            <!-- Content -->
+            <engine:VisualElement class="content">
+
+                <!-- Placeholder pages (fallback to uGUI for now) -->
+                <engine:VisualElement name="page-dashboard" class="page page-placeholder">
+                    <engine:Label text="(Dashboard page belum dimigrate — masih pakai uGUI canvas lama)" class="page-placeholder-text" />
+                </engine:VisualElement>
+
+                <engine:VisualElement name="page-class" class="page page-placeholder hidden">
+                    <engine:Label text="(Class page belum dimigrate)" class="page-placeholder-text" />
+                </engine:VisualElement>
+
+                <engine:VisualElement name="page-profile" class="page page-placeholder hidden">
+                    <engine:Label text="(Profile page belum dimigrate)" class="page-placeholder-text" />
+                </engine:VisualElement>
+
+                <!-- LEADERBOARD page (fully migrated) -->
+                <engine:VisualElement name="page-leaderboard" class="page lb-page hidden">
+                    <engine:VisualElement class="lb-header">
+                        <engine:Label text="LEADERBOARD" class="label-eyebrow" />
+                        <engine:Label text="Top Scores" class="title" />
+                    </engine:VisualElement>
+
+                    <engine:VisualElement class="stat-strip">
+                        <engine:VisualElement class="stat-card" name="stat-your-rank">
+                            <engine:Label text="YOUR RANK" class="stat-label" />
+                            <engine:Label text="—" class="stat-value" name="your-rank-value" />
+                            <engine:Label text="not yet ranked" class="stat-subtitle" name="your-rank-subtitle" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="stat-card" name="stat-your-best">
+                            <engine:Label text="YOUR BEST" class="stat-label" />
+                            <engine:Label text="—" class="stat-value" name="your-best-value" />
+                            <engine:Label text="no completion yet" class="stat-subtitle" name="your-best-subtitle" />
+                        </engine:VisualElement>
+                        <engine:VisualElement class="stat-card stat-card-last" name="stat-top-score">
+                            <engine:Label text="TOP SCORE" class="stat-label" />
+                            <engine:Label text="—" class="stat-value" name="top-score-value" />
+                            <engine:Label text="—" class="stat-subtitle" name="top-score-subtitle" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+
+                    <engine:VisualElement class="filter-row">
+                        <engine:Button text="Global"    class="filter-tab active" name="tab-global" />
+                        <engine:Button text="Friends"   class="filter-tab"        name="tab-friends" />
+                        <engine:Button text="This Week" class="filter-tab"        name="tab-week" />
+                    </engine:VisualElement>
+
+                    <engine:VisualElement class="table-header">
+                        <engine:Label text="RANK"   class="col-header col-rank" />
+                        <engine:Label text="PLAYER" class="col-header col-player" />
+                        <engine:Label text="TOPIC"  class="col-header col-topic" />
+                        <engine:Label text="SCORE"  class="col-header col-score" />
+                    </engine:VisualElement>
+
+                    <engine:ScrollView class="row-list" name="row-list" />
+                </engine:VisualElement>
+
+                <engine:VisualElement name="page-settings" class="page page-placeholder hidden">
+                    <engine:Label text="(Settings page belum dimigrate)" class="page-placeholder-text" />
+                </engine:VisualElement>
+
+                <engine:VisualElement name="page-help" class="page page-placeholder hidden">
+                    <engine:Label text="(Get Help page belum dimigrate)" class="page-placeholder-text" />
+                </engine:VisualElement>
+
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
