@@ -8,7 +8,7 @@ using UnityEngine;
 /// then after <see cref="highlightDuration"/> seconds it smoothly slides to the
 /// top-left corner and shrinks to a compact size.
 /// </summary>
-public class ObjectiveUI_Tp1 : MonoBehaviour
+public class ObjectiveUI_Tp1 : MonoBehaviour, IObjectivePanel
 {
     [Header("UI References")]
     public TMP_Text objectiveText;

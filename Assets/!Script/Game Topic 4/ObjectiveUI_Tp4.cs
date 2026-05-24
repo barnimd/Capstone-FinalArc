@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 
-public class ObjectiveUI_Tp4 : MonoBehaviour
+public class ObjectiveUI_Tp4 : MonoBehaviour, IObjectivePanel
 {
     [Header("=== UI Reference ===")]
     public TMP_Text objectiveText;

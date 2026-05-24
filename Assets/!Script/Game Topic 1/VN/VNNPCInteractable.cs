@@ -51,8 +51,10 @@ public class VNNPCInteractable : MonoBehaviour
     public Vector2 roomMaxBounds;
 
     [Header("Objective & Follow Arrow (optional)")]
-    [Tooltip("Objective UI panel to display after this dialogue ends.")]
-    public ObjectiveUI_Tp1 objectiveUI;
+    [Tooltip("Objective UI panel to display after this dialogue ends. " +
+             "Accepts any MonoBehaviour that implements IObjectivePanel " +
+             "(e.g. ObjectiveUI_Tp1 / ObjectiveUI_Tp3 / ObjectiveUI_Tp4).")]
+    public MonoBehaviour objectiveUI;
 
     [Tooltip("Text to show in the objective panel after this dialogue ends.")]
     public string objectiveTextOnEnd;
@@ -82,6 +84,44 @@ public class VNNPCInteractable : MonoBehaviour
             Debug.LogWarning("[VNNPCInteractable] Collider2D on '" + gameObject.name +
                              "' should be a trigger.");
     }
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// Edit-time validation. When the user drops a GameObject onto the Objective UI
+    /// field, Unity picks the first MonoBehaviour-ish component it finds (often the
+    /// wrong one — Image, CanvasScaler, etc.). This scans all sibling components on
+    /// the same GameObject and auto-swaps to the first one that implements
+    /// IObjectivePanel, so designers can drag freely without worrying about which
+    /// component gets picked.
+    /// </summary>
+    void OnValidate()
+    {
+        if (objectiveUI == null) return;
+        if (objectiveUI is IObjectivePanel) return;
+
+        // Scan siblings on the same GameObject for an IObjectivePanel component.
+        foreach (var mb in objectiveUI.GetComponents<MonoBehaviour>())
+        {
+            if (mb is IObjectivePanel)
+            {
+                Debug.Log("[VNNPCInteractable] Auto-swapped Objective UI on '" +
+                          gameObject.name + "' from '" + objectiveUI.GetType().Name +
+                          "' to '" + mb.GetType().Name + "'.", this);
+                objectiveUI = mb;
+                return;
+            }
+        }
+
+        // No sibling implements the contract — clear the slot and warn the user.
+        Debug.LogWarning("[VNNPCInteractable] '" + gameObject.name +
+                         "' Objective UI was set to '" + objectiveUI.GetType().Name +
+                         "' but no component implementing IObjectivePanel was found " +
+                         "on that GameObject. Field cleared. Drag a panel that has " +
+                         "ObjectiveUI_Tp1 / Tp3 / Tp4 attached.",
+                         this);
+        objectiveUI = null;
+    }
+#endif
 
     void Update()
     {
@@ -176,8 +216,34 @@ public class VNNPCInteractable : MonoBehaviour
 
         if (oneTimeOnly && interactPrompt != null) interactPrompt.SetActive(false);
 
-        if (objectiveUI != null && !string.IsNullOrEmpty(objectiveTextOnEnd))
-            objectiveUI.ShowObjective(objectiveTextOnEnd);
+        // -------- Objective panel --------
+        // Verbose logging so wiring problems are easy to diagnose in Console.
+        if (objectiveUI == null)
+        {
+            Debug.Log("[VNNPCInteractable] '" + gameObject.name +
+                      "' has no Objective UI assigned — skipping objective update.", this);
+        }
+        else if (string.IsNullOrEmpty(objectiveTextOnEnd))
+        {
+            Debug.Log("[VNNPCInteractable] '" + gameObject.name +
+                      "' has empty Objective Text On End — skipping objective update.", this);
+        }
+        else if (objectiveUI is IObjectivePanel panel)
+        {
+            Debug.Log("[VNNPCInteractable] '" + gameObject.name +
+                      "' setting objective: \"" + objectiveTextOnEnd + "\" via " +
+                      objectiveUI.GetType().Name, this);
+            panel.ShowObjective(objectiveTextOnEnd);
+        }
+        else
+        {
+            Debug.LogWarning("[VNNPCInteractable] '" + gameObject.name +
+                             "' Objective UI '" + objectiveUI.GetType().Name +
+                             "' does NOT implement IObjectivePanel. " +
+                             "Make sure you dragged ObjectiveUI_Tp1/Tp3/Tp4 (the component, " +
+                             "not the GameObject), and that the class implements IObjectivePanel.",
+                             this);
+        }
 
         if (followArrow != null)
         {
