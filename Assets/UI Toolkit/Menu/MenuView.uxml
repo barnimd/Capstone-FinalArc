@@ -8,26 +8,32 @@
         <engine:VisualElement class="sidebar">
             <engine:VisualElement class="sidebar-logo" name="sidebar-logo" />
 
-            <engine:Button name="btn-dashboard"   class="sidebar-btn active" text="Dashboard">
+            <engine:Button name="btn-dashboard" class="sidebar-btn active">
                 <engine:VisualElement class="sidebar-btn-icon" />
+                <engine:Label text="Dashboard" class="sidebar-btn-label" />
             </engine:Button>
-            <engine:Button name="btn-class"       class="sidebar-btn" text="Class">
+            <engine:Button name="btn-class" class="sidebar-btn">
                 <engine:VisualElement class="sidebar-btn-icon" />
+                <engine:Label text="Class" class="sidebar-btn-label" />
             </engine:Button>
-            <engine:Button name="btn-profile"     class="sidebar-btn" text="Profile">
+            <engine:Button name="btn-profile" class="sidebar-btn">
                 <engine:VisualElement class="sidebar-btn-icon" />
+                <engine:Label text="Profile" class="sidebar-btn-label" />
             </engine:Button>
-            <engine:Button name="btn-leaderboard" class="sidebar-btn" text="Leaderboard">
+            <engine:Button name="btn-leaderboard" class="sidebar-btn">
                 <engine:VisualElement class="sidebar-btn-icon" />
+                <engine:Label text="Leaderboard" class="sidebar-btn-label" />
             </engine:Button>
 
             <engine:VisualElement class="sidebar-spacer" />
 
-            <engine:Button name="btn-settings" class="sidebar-btn sidebar-btn-secondary" text="Settings">
+            <engine:Button name="btn-settings" class="sidebar-btn sidebar-btn-secondary">
                 <engine:VisualElement class="sidebar-btn-icon" />
+                <engine:Label text="Settings" class="sidebar-btn-label" />
             </engine:Button>
-            <engine:Button name="btn-help"     class="sidebar-btn sidebar-btn-secondary" text="Get Help">
+            <engine:Button name="btn-help" class="sidebar-btn sidebar-btn-secondary">
                 <engine:VisualElement class="sidebar-btn-icon" />
+                <engine:Label text="Get Help" class="sidebar-btn-label" />
             </engine:Button>
         </engine:VisualElement>
 
@@ -50,8 +56,17 @@
                     <engine:Label text="(Dashboard page belum dimigrate — masih pakai uGUI canvas lama)" class="page-placeholder-text" />
                 </engine:VisualElement>
 
-                <engine:VisualElement name="page-class" class="page page-placeholder hidden">
-                    <engine:Label text="(Class page belum dimigrate)" class="page-placeholder-text" />
+                <engine:VisualElement name="page-class" class="page class-page hidden">
+                    <engine:VisualElement class="class-header">
+                        <engine:Label text="CLASSROOM" class="label-eyebrow" />
+                        <engine:Label text="Lessons" class="title" />
+                    </engine:VisualElement>
+                    <engine:ScrollView class="class-scroll">
+                        <engine:Label text="UNLOCKED" class="section-title" />
+                        <engine:VisualElement name="unlocked-grid" class="lesson-grid" />
+                        <engine:Label text="LOCKED" class="section-title" />
+                        <engine:VisualElement name="locked-grid" class="lesson-grid" />
+                    </engine:ScrollView>
                 </engine:VisualElement>
 
                 <engine:VisualElement name="page-profile" class="page page-placeholder hidden">

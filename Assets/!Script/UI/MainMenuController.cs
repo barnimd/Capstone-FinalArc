@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 /// <summary>
@@ -28,7 +29,7 @@ public class MainMenuController : MonoBehaviour
 
     [Header("Page migration flags (toggle when each page is ported)")]
     public bool dashboardMigrated   = false;
-    public bool classMigrated       = false;
+    public bool classMigrated       = true;
     public bool profileMigrated     = false;
     public bool leaderboardMigrated = true;
     public bool settingsMigrated    = false;
@@ -53,6 +54,11 @@ public class MainMenuController : MonoBehaviour
     // Navbar
     private Label _navbarGreeting;
     private Label _navbarProfileText;
+
+    // Class page
+    private VisualElement _unlockedGrid;
+    private VisualElement _lockedGrid;
+    private bool          _classCardsBuilt;
 
     private string _currentPage = "dashboard";
 
@@ -99,6 +105,10 @@ public class MainMenuController : MonoBehaviour
         _navbarGreeting    = _root.Q<Label>("navbar-greeting");
         _navbarProfileText = _root.Q<Label>("navbar-profile-text");
 
+        // Class page grids
+        _unlockedGrid = _root.Q<VisualElement>("unlocked-grid");
+        _lockedGrid   = _root.Q<VisualElement>("locked-grid");
+
         // Wire button clicks
         if (_btnDashboard   != null) _btnDashboard.clicked   += () => ShowPage("dashboard");
         if (_btnClass       != null) _btnClass.clicked       += () => ShowPage("class");
@@ -120,13 +130,20 @@ public class MainMenuController : MonoBehaviour
     private void UpdateNavbarGreeting()
     {
         if (_navbarGreeting == null) return;
-        string name = FirebaseManager.Instance != null && !string.IsNullOrEmpty(FirebaseManager.Instance.Username)
+        string raw = FirebaseManager.Instance != null && !string.IsNullOrEmpty(FirebaseManager.Instance.Username)
             ? FirebaseManager.Instance.Username
             : "Player";
-        _navbarGreeting.text = $"Hi, {name}";
+        string display = CapitalizeFirst(raw);
+        _navbarGreeting.text = $"Hi, {display}";
 
         if (_navbarProfileText != null)
-            _navbarProfileText.text = string.IsNullOrEmpty(name) ? "?" : name.Substring(0, 1).ToUpper();
+            _navbarProfileText.text = string.IsNullOrEmpty(display) ? "?" : display.Substring(0, 1).ToUpper();
+    }
+
+    private static string CapitalizeFirst(string s)
+    {
+        if (string.IsNullOrEmpty(s)) return s;
+        return char.ToUpper(s[0]) + s.Substring(1);
     }
 
     public void ShowPage(string pageName)
@@ -160,7 +177,11 @@ public class MainMenuController : MonoBehaviour
                 else ShowElement(_pageDashboard); // placeholder
                 break;
             case "class":
-                if (classMigrated) ShowElement(_pageClass);
+                if (classMigrated)
+                {
+                    ShowElement(_pageClass);
+                    BuildClassCardsIfNeeded();
+                }
                 else if (canvasClass != null) canvasClass.SetActive(true);
                 else ShowElement(_pageClass);
                 break;
@@ -268,6 +289,86 @@ public class MainMenuController : MonoBehaviour
 
         foreach (GlobalLeaderboardEntryDTO e in entries)
             _rowList.Add(BuildRow(e, isYou: e.userId == myUid));
+    }
+
+    // ── Class page ──────────────────────────────────────────────────────────
+
+    private void BuildClassCardsIfNeeded()
+    {
+        if (_classCardsBuilt) return;
+        if (_unlockedGrid == null || _lockedGrid == null)
+        {
+            Debug.LogWarning("[MainMenuController] unlocked-grid / locked-grid not found in UXML");
+            return;
+        }
+
+        // Load all LessonData from Resources/Lessons folder (existing ScriptableObjects)
+        LessonData[] lessons = Resources.LoadAll<LessonData>("Lessons");
+        if (lessons == null || lessons.Length == 0)
+        {
+            Debug.LogWarning("[MainMenuController] No LessonData found in Resources/Lessons");
+            return;
+        }
+
+        // Sort by name for stable order (Lesson_01..Lesson_06)
+        System.Array.Sort(lessons, (a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
+
+        int unlockedIdx = 1, lockedIdx = 1;
+        foreach (LessonData data in lessons)
+        {
+            if (data == null) continue;
+            int displayIdx = data.isUnlocked ? unlockedIdx++ : lockedIdx++;
+            VisualElement card = BuildLessonCard(data, displayIdx);
+            (data.isUnlocked ? _unlockedGrid : _lockedGrid).Add(card);
+        }
+
+        _classCardsBuilt = true;
+        Debug.Log($"[MainMenuController] Built {lessons.Length} lesson cards");
+    }
+
+    private VisualElement BuildLessonCard(LessonData data, int index)
+    {
+        VisualElement card = new VisualElement();
+        card.AddToClassList("lesson-card");
+        if (!data.isUnlocked) card.AddToClassList("locked");
+
+        Label number = new Label(index.ToString("D2"));
+        number.AddToClassList("lesson-number");
+        card.Add(number);
+
+        VisualElement icon = new VisualElement();
+        icon.AddToClassList("lesson-icon");
+        if (data.icon != null)
+            icon.style.backgroundImage = new StyleBackground(data.icon);
+        card.Add(icon);
+
+        Label title = new Label(data.title);
+        title.AddToClassList("lesson-title");
+        card.Add(title);
+
+        if (!data.isUnlocked)
+        {
+            VisualElement lockBadge = new VisualElement();
+            lockBadge.AddToClassList("lock-badge");
+            Label lockText = new Label(""); // lock unicode glyph — fallback if font supports it
+            lockText.text = "L";
+            lockText.AddToClassList("lock-badge-text");
+            lockBadge.Add(lockText);
+            card.Add(lockBadge);
+        }
+        else if (!string.IsNullOrEmpty(data.sceneName))
+        {
+            string scene = data.sceneName;
+            card.RegisterCallback<ClickEvent>(evt =>
+            {
+                Debug.Log($"[MainMenuController] Loading scene: {scene}");
+                SceneManager.LoadScene(scene);
+            });
+            // Visual feedback (cursor)
+            card.style.cursor = new StyleCursor();
+        }
+
+        return card;
     }
 
     private VisualElement BuildRow(GlobalLeaderboardEntryDTO e, bool isYou)
