@@ -33,7 +33,7 @@ public class MainMenuController : MonoBehaviour
     public bool profileMigrated     = true;
     public bool leaderboardMigrated = true;
     public bool settingsMigrated    = false;
-    public bool helpMigrated        = false;
+    public bool helpMigrated        = true;
 
     [Header("Dashboard slides (drag banners or auto-loaded)")]
     public Sprite[] dashboardSlides;
@@ -70,6 +70,12 @@ public class MainMenuController : MonoBehaviour
     private VisualElement _slideshowDots;
     private int           _slideIndex;
     private bool          _dashboardWired;
+
+    // Help page
+    private VisualElement _faqList;
+    private VisualElement _comingSoonModal;
+    private Label         _modalDesc;
+    private bool          _helpWired;
 
     // Profile page
     private Label         _profileGreeting;
@@ -252,7 +258,11 @@ public class MainMenuController : MonoBehaviour
                 else ShowElement(_pageSettings);
                 break;
             case "help":
-                if (helpMigrated) ShowElement(_pageHelp);
+                if (helpMigrated)
+                {
+                    ShowElement(_pageHelp);
+                    SetupHelpIfNeeded();
+                }
                 else if (canvasGetHelp != null) canvasGetHelp.SetActive(true);
                 else ShowElement(_pageHelp);
                 break;
@@ -341,6 +351,134 @@ public class MainMenuController : MonoBehaviour
 
         foreach (GlobalLeaderboardEntryDTO e in entries)
             _rowList.Add(BuildRow(e, isYou: e.userId == myUid));
+    }
+
+    // ── Help page ──────────────────────────────────────────────────────────
+
+    private static readonly (string question, string answer)[] _faqs = new (string, string)[]
+    {
+        ("How do I unlock the next module?",
+         "Complete the current module with a score of 70% or higher to unlock the next one in sequence."),
+        ("Can I retake a quiz to improve my score?",
+         "Yes! You can replay any completed module anytime. Your highest score is what counts for the leaderboard, so retaking only helps you."),
+        ("Why didn't my score appear on the leaderboard?",
+         "Scores sync to the server every few seconds. If yours is still missing after a minute, make sure you completed the module fully and try refreshing the page."),
+        ("How does the streak system work?",
+         "Play at least one module per day to keep your streak alive. Miss a day and the streak resets to zero. Streaks earn bonus rewards every 7 days."),
+        ("Is my progress saved if I sign out?",
+         "Yes. Your progress, scores, and checkpoints are tied to your account. Sign back in on any device and pick up right where you left off."),
+    };
+
+    private void SetupHelpIfNeeded()
+    {
+        if (_helpWired) return;
+        if (_pageHelp == null) return;
+
+        _faqList         = _pageHelp.Q<VisualElement>("help-faq-list");
+        _comingSoonModal = _pageHelp.Q<VisualElement>("coming-soon-modal");
+        _modalDesc       = _pageHelp.Q<Label>("modal-desc");
+
+        Debug.Log($"[MainMenuController] Help refs: faqList={_faqList != null} modal={_comingSoonModal != null} modalDesc={_modalDesc != null}");
+
+        // Wire 3 topic cards + contact button + search → show modal
+        WireComingSoon(_pageHelp.Q<Button>("help-topic-1"),    "Detail panduan 'How to play' belum tersedia.");
+        WireComingSoon(_pageHelp.Q<Button>("help-topic-2"),    "Detail 'Account & login' belum tersedia.");
+        WireComingSoon(_pageHelp.Q<Button>("help-topic-3"),    "Form 'Report a bug' belum tersedia.");
+        WireComingSoon(_pageHelp.Q<Button>("help-contact-btn"),"Live chat dengan SecMind team belum tersedia.");
+        WireComingSoon(_pageHelp.Q<Button>("help-search-btn"), "Fitur pencarian belum tersedia.");
+
+        // Modal close button — register both .clicked AND ClickEvent for redundancy
+        Button closeBtn = _pageHelp.Q<Button>("modal-close-btn");
+        if (closeBtn != null)
+        {
+            closeBtn.clicked += HideComingSoonModal;
+            closeBtn.RegisterCallback<ClickEvent>(evt =>
+            {
+                Debug.Log("[MainMenuController] modal-close-btn ClickEvent fired");
+                HideComingSoonModal();
+                evt.StopPropagation();
+            });
+        }
+        else
+        {
+            Debug.LogWarning("[MainMenuController] modal-close-btn not found in page-help!");
+        }
+
+        // Stop click propagation on modal-card so clicks inside card don't bubble to backdrop
+        VisualElement modalCard = _pageHelp.Q<VisualElement>(className: "modal-card");
+        if (modalCard != null)
+        {
+            modalCard.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
+        }
+
+        // Click on backdrop (outside card) closes modal
+        if (_comingSoonModal != null)
+        {
+            _comingSoonModal.RegisterCallback<ClickEvent>(evt =>
+            {
+                Debug.Log("[MainMenuController] backdrop ClickEvent — closing modal");
+                HideComingSoonModal();
+            });
+        }
+
+        // Build FAQ list
+        if (_faqList != null)
+        {
+            _faqList.Clear();
+            foreach (var (question, answer) in _faqs)
+                _faqList.Add(BuildFaqItem(question, answer));
+        }
+
+        _helpWired = true;
+    }
+
+    private void WireComingSoon(Button btn, string desc)
+    {
+        if (btn == null) return;
+        btn.clicked += () => ShowComingSoonModal(desc);
+    }
+
+    private void ShowComingSoonModal(string desc)
+    {
+        if (_comingSoonModal == null) return;
+        if (_modalDesc != null) _modalDesc.text = desc;
+        _comingSoonModal.RemoveFromClassList("hidden");
+    }
+
+    private void HideComingSoonModal()
+    {
+        if (_comingSoonModal == null) return;
+        _comingSoonModal.AddToClassList("hidden");
+    }
+
+    private VisualElement BuildFaqItem(string question, string answer)
+    {
+        VisualElement item = new VisualElement();
+        item.AddToClassList("help-faq-item");
+
+        VisualElement qRow = new VisualElement();
+        qRow.AddToClassList("help-faq-question");
+        Label qText = new Label(question);
+        qText.AddToClassList("help-faq-q-text");
+        Label chevron = new Label("▾");
+        chevron.AddToClassList("help-faq-chevron");
+        qRow.Add(qText);
+        qRow.Add(chevron);
+        item.Add(qRow);
+
+        Label answerLabel = new Label(answer);
+        answerLabel.AddToClassList("help-faq-answer");
+        item.Add(answerLabel);
+
+        item.RegisterCallback<ClickEvent>(evt =>
+        {
+            if (item.ClassListContains("expanded"))
+                item.RemoveFromClassList("expanded");
+            else
+                item.AddToClassList("expanded");
+        });
+
+        return item;
     }
 
     // ── Dashboard slideshow ─────────────────────────────────────────────────

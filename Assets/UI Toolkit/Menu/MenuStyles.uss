@@ -724,3 +724,311 @@ Button {
     background-color: rgb(232, 120, 38);
     width: 24px;
 }
+
+/* ── Get Help page ───────────────────────────────────────── */
+
+.help-page {
+    flex-grow: 1;
+    background-color: rgb(26, 22, 18);
+    border-radius: 24px;
+    padding: 32px 40px;
+}
+
+.help-header {
+    margin-bottom: 20px;
+}
+
+.help-section-eyebrow {
+    color: rgb(107, 93, 82);
+    font-size: 11px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-top: 8px;
+    margin-bottom: 14px;
+}
+
+/* Search */
+
+.help-search-row {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgb(42, 36, 25);
+    border-radius: 16px;
+    padding: 6px;
+    margin-bottom: 24px;
+}
+
+.help-search { flex-grow: 1; }
+
+.help-search > .unity-base-text-field__input {
+    background-color: rgba(0,0,0,0);
+    color: rgb(240, 230, 210);
+    border-width: 0;
+    padding: 10px 16px;
+    font-size: 13px;
+}
+
+.help-search-btn {
+    background-color: rgb(232, 120, 38);
+    color: rgb(240, 230, 210);
+    border-radius: 12px;
+    padding: 10px 24px;
+    -unity-font-style: bold;
+    font-size: 13px;
+}
+
+.help-search-btn:hover { background-color: rgb(212, 100, 28); }
+
+/* Topic cards */
+
+.help-topics-row {
+    flex-direction: row;
+    margin-bottom: 28px;
+}
+
+.help-topic-card {
+    flex-grow: 1;
+    flex-basis: 0;
+    background-color: rgb(240, 230, 210);
+    border-radius: 16px;
+    padding: 20px;
+    margin-right: 16px;
+    align-items: flex-start;
+    flex-direction: column;
+    border-width: 0;
+}
+
+.help-topic-card:hover {
+    background-color: rgb(220, 210, 190);
+}
+
+.help-topics-row > .help-topic-card:last-child { margin-right: 0; }
+
+.help-topic-icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: rgb(232, 120, 38);
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.help-topic-icon {
+    font-size: 16px;
+    color: rgb(240, 230, 210);
+    -unity-text-align: middle-center;
+    width: 40px;
+    height: 40px;
+}
+
+.help-topic-title {
+    color: rgb(30, 22, 18);
+    font-size: 15px;
+    -unity-font-style: bold;
+    margin-bottom: 6px;
+}
+
+.help-topic-desc {
+    color: rgb(107, 93, 82);
+    font-size: 12px;
+    white-space: normal;
+    margin-bottom: 14px;
+}
+
+.help-topic-open {
+    color: rgb(232, 120, 38);
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+/* Bottom row: FAQ + Still Stuck */
+
+.help-bottom-row {
+    flex-direction: row;
+}
+
+.help-faq-col {
+    flex-grow: 2;
+    flex-basis: 0;
+    margin-right: 24px;
+}
+
+.help-faq-list {
+    flex-direction: column;
+}
+
+.help-faq-item {
+    background-color: rgb(42, 36, 25);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+}
+
+.help-faq-item:hover {
+    background-color: rgb(50, 43, 32);
+}
+
+.help-faq-question {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.help-faq-q-text {
+    color: rgb(240, 230, 210);
+    font-size: 13px;
+    -unity-font-style: bold;
+    flex-grow: 1;
+    white-space: normal;
+}
+
+.help-faq-chevron {
+    color: rgb(107, 93, 82);
+    font-size: 14px;
+    margin-left: 8px;
+    rotate: 0deg;
+    transition-property: rotate;
+    transition-duration: 0.15s;
+}
+
+.help-faq-item.expanded .help-faq-chevron {
+    rotate: 180deg;
+    color: rgb(232, 120, 38);
+}
+
+.help-faq-answer {
+    color: rgb(180, 165, 150);
+    font-size: 12px;
+    white-space: normal;
+    margin-top: 8px;
+    display: none;
+}
+
+.help-faq-item.expanded .help-faq-answer {
+    display: flex;
+}
+
+/* Still Stuck */
+
+.help-stuck-col {
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.help-stuck-card {
+    background-color: rgb(240, 230, 210);
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.help-stuck-title {
+    color: rgb(30, 22, 18);
+    font-size: 15px;
+    -unity-font-style: bold;
+    white-space: normal;
+    margin-bottom: 8px;
+}
+
+.help-stuck-desc {
+    color: rgb(107, 93, 82);
+    font-size: 12px;
+    white-space: normal;
+    margin-bottom: 16px;
+}
+
+.help-stuck-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.help-stuck-icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background-color: rgb(232, 120, 38);
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+.help-stuck-icon {
+    font-size: 14px;
+    color: rgb(240, 230, 210);
+    -unity-text-align: middle-center;
+    width: 36px;
+    height: 36px;
+}
+
+.help-stuck-text-block { flex-direction: column; }
+
+.help-stuck-label {
+    color: rgb(107, 93, 82);
+    font-size: 11px;
+    -unity-font-style: bold;
+    letter-spacing: 0.5px;
+}
+
+.help-stuck-value {
+    color: rgb(30, 22, 18);
+    font-size: 13px;
+    -unity-font-style: bold;
+}
+
+.help-contact-btn {
+    background-color: rgb(30, 22, 18);
+    color: rgb(240, 230, 210);
+    border-radius: 12px;
+    padding: 14px;
+    -unity-font-style: bold;
+    font-size: 13px;
+    margin-top: 12px;
+    -unity-text-align: middle-center;
+}
+
+.help-contact-btn:hover { background-color: rgb(50, 42, 36); }
+
+/* ── Coming Soon modal ───────────────────────────────────── */
+
+.modal-backdrop {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-card {
+    width: 360px;
+    background-color: rgb(42, 36, 25);
+    border-radius: 16px;
+    padding: 28px 24px;
+    align-items: center;
+}
+
+.modal-title {
+    color: rgb(232, 120, 38);
+    font-size: 22px;
+    -unity-font-style: bold;
+    margin-bottom: 12px;
+}
+
+.modal-desc {
+    color: rgb(180, 165, 150);
+    font-size: 13px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-bottom: 22px;
+}
+
+.modal-button {
+    background-color: rgb(232, 120, 38);
+    color: rgb(240, 230, 210);
+    border-radius: 12px;
+    padding: 10px 36px;
+    -unity-font-style: bold;
+    font-size: 13px;
+}
+
+.modal-button:hover { background-color: rgb(212, 100, 28); }

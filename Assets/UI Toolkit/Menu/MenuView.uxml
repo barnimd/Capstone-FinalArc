@@ -179,8 +179,92 @@
                     <engine:Label text="(Settings page belum dimigrate)" class="page-placeholder-text" />
                 </engine:VisualElement>
 
-                <engine:VisualElement name="page-help" class="page page-placeholder hidden">
-                    <engine:Label text="(Get Help page belum dimigrate)" class="page-placeholder-text" />
+                <engine:VisualElement name="page-help" class="page help-page hidden">
+                    <engine:VisualElement class="help-header">
+                        <engine:Label text="HELP CENTER" class="label-eyebrow" />
+                        <engine:Label text="How can we help?" class="title" />
+                    </engine:VisualElement>
+
+                    <engine:VisualElement class="help-search-row">
+                        <engine:TextField name="help-search" class="help-search" />
+                        <engine:Button text="Search" name="help-search-btn" class="help-search-btn" />
+                    </engine:VisualElement>
+
+                    <engine:Label text="BROWSE TOPICS" class="help-section-eyebrow" />
+                    <engine:VisualElement class="help-topics-row">
+                        <engine:Button name="help-topic-1" class="help-topic-card">
+                            <engine:VisualElement class="help-topic-icon-box">
+                                <engine:Label text="▶" class="help-topic-icon" />
+                            </engine:VisualElement>
+                            <engine:Label text="How to play" class="help-topic-title" />
+                            <engine:Label text="Walkthrough of game modes, scoring, and unlocking modules." class="help-topic-desc" />
+                            <engine:Label text="Open  →" class="help-topic-open" />
+                        </engine:Button>
+                        <engine:Button name="help-topic-2" class="help-topic-card">
+                            <engine:VisualElement class="help-topic-icon-box">
+                                <engine:Label text="👤" class="help-topic-icon" />
+                            </engine:VisualElement>
+                            <engine:Label text="Account &amp; login" class="help-topic-title" />
+                            <engine:Label text="Reset password, change email, or recover access." class="help-topic-desc" />
+                            <engine:Label text="Open  →" class="help-topic-open" />
+                        </engine:Button>
+                        <engine:Button name="help-topic-3" class="help-topic-card">
+                            <engine:VisualElement class="help-topic-icon-box">
+                                <engine:Label text="🐞" class="help-topic-icon" />
+                            </engine:VisualElement>
+                            <engine:Label text="Report a bug" class="help-topic-title" />
+                            <engine:Label text="Something broken? Send us the details and screenshots." class="help-topic-desc" />
+                            <engine:Label text="Open  →" class="help-topic-open" />
+                        </engine:Button>
+                    </engine:VisualElement>
+
+                    <engine:VisualElement class="help-bottom-row">
+                        <!-- LEFT: FAQ accordion -->
+                        <engine:VisualElement class="help-faq-col">
+                            <engine:Label text="FREQUENTLY ASKED" class="help-section-eyebrow" />
+                            <engine:VisualElement class="help-faq-list" name="help-faq-list" />
+                        </engine:VisualElement>
+
+                        <!-- RIGHT: Still Stuck -->
+                        <engine:VisualElement class="help-stuck-col">
+                            <engine:Label text="STILL STUCK?" class="help-section-eyebrow" />
+                            <engine:VisualElement class="help-stuck-card">
+                                <engine:Label text="Talk to a human on the SecMind team" class="help-stuck-title" />
+                                <engine:Label text="Usually responds within a day. Include screenshots if you can." class="help-stuck-desc" />
+
+                                <engine:VisualElement class="help-stuck-row">
+                                    <engine:VisualElement class="help-stuck-icon-box">
+                                        <engine:Label text="✉" class="help-stuck-icon" />
+                                    </engine:VisualElement>
+                                    <engine:VisualElement class="help-stuck-text-block">
+                                        <engine:Label text="Email" class="help-stuck-label" />
+                                        <engine:Label text="support@secmind.id" class="help-stuck-value" />
+                                    </engine:VisualElement>
+                                </engine:VisualElement>
+
+                                <engine:VisualElement class="help-stuck-row">
+                                    <engine:VisualElement class="help-stuck-icon-box">
+                                        <engine:Label text="💬" class="help-stuck-icon" />
+                                    </engine:VisualElement>
+                                    <engine:VisualElement class="help-stuck-text-block">
+                                        <engine:Label text="Live chat" class="help-stuck-label" />
+                                        <engine:Label text="Mon–Fri · 09.00–17.00 WIB" class="help-stuck-value" />
+                                    </engine:VisualElement>
+                                </engine:VisualElement>
+
+                                <engine:Button text="Start a conversation" name="help-contact-btn" class="help-contact-btn" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+
+                    <!-- Coming Soon modal (overlay) -->
+                    <engine:VisualElement name="coming-soon-modal" class="modal-backdrop hidden">
+                        <engine:VisualElement class="modal-card">
+                            <engine:Label text="Coming Soon" class="modal-title" />
+                            <engine:Label text="" name="modal-desc" class="modal-desc" />
+                            <engine:Button text="OK" name="modal-close-btn" class="modal-button" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
                 </engine:VisualElement>
 
             </engine:VisualElement>
