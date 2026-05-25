@@ -6,6 +6,8 @@ public class TopDownPlayerMovement : MonoBehaviour
     [SerializeField] private float speed = 5f;
     [SerializeField] private Animator animator;
 
+    public bool CanMove { get; set; } = true;
+
     private Rigidbody2D rb;
     private Vector2 movement;
 
@@ -16,6 +18,13 @@ public class TopDownPlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (!CanMove)
+        {
+            movement = Vector2.zero;
+            if (animator != null) animator.SetBool("isMoving", false);
+            return;
+        }
+
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
 
@@ -36,6 +45,6 @@ public class TopDownPlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = movement * speed;
+        rb.velocity = CanMove ? movement * speed : Vector2.zero;
     }
 }
