@@ -1,33 +1,66 @@
-const cacheName = "Secmind-Capstone-0.1";
-const contentToCache = [
+// Network-first Service Worker for SecMind WebGL
+// Strategy: always try network first, fall back to cache only when offline.
+// On install: skip waiting so the new SW activates immediately.
+// On activate: claim clients + nuke old caches so stale builds can't linger.
+
+const CACHE_NAME = "Secmind-Capstone-runtime";
+const PRECACHE_URLS = [
     "Build/docs.loader.js",
     "Build/docs.framework.js",
     "Build/docs.data",
     "Build/docs.wasm",
     "TemplateData/style.css"
-
 ];
 
-self.addEventListener('install', function (e) {
-    console.log('[Service Worker] Install');
-    
-    e.waitUntil((async function () {
-      const cache = await caches.open(cacheName);
-      console.log('[Service Worker] Caching all: app shell and content');
-      await cache.addAll(contentToCache);
-    })());
+self.addEventListener("install", (event) => {
+    self.skipWaiting();
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) =>
+            Promise.all(
+                PRECACHE_URLS.map((url) =>
+                    fetch(url, { cache: "no-store" })
+                        .then((res) => (res.ok ? cache.put(url, res) : null))
+                        .catch(() => null)
+                )
+            )
+        )
+    );
 });
 
-self.addEventListener('fetch', function (e) {
-    e.respondWith((async function () {
-      let response = await caches.match(e.request);
-      console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
-      if (response) { return response; }
+self.addEventListener("activate", (event) => {
+    event.waitUntil(
+        (async () => {
+            const keys = await caches.keys();
+            await Promise.all(
+                keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
+            );
+            await self.clients.claim();
+        })()
+    );
+});
 
-      response = await fetch(e.request);
-      const cache = await caches.open(cacheName);
-      console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
-      cache.put(e.request, response.clone());
-      return response;
-    })());
+self.addEventListener("fetch", (event) => {
+    const req = event.request;
+    if (req.method !== "GET") return;
+
+    event.respondWith(
+        (async () => {
+            try {
+                const networkResponse = await fetch(req, { cache: "no-store" });
+                if (networkResponse && networkResponse.ok) {
+                    const cache = await caches.open(CACHE_NAME);
+                    cache.put(req, networkResponse.clone()).catch(() => {});
+                }
+                return networkResponse;
+            } catch (_err) {
+                const cached = await caches.match(req);
+                if (cached) return cached;
+                throw _err;
+            }
+        })()
+    );
+});
+
+self.addEventListener("message", (event) => {
+    if (event.data === "SKIP_WAITING") self.skipWaiting();
 });
