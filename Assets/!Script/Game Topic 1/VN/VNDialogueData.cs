@@ -50,6 +50,9 @@ public class VNLine
 
     [TextArea(2, 5)]
     public string text;
+
+    [Tooltip("Voice clip for this line. Leave empty = no voice (silent line).")]
+    public AudioClip voiceClip;
 }
 
 /// <summary>

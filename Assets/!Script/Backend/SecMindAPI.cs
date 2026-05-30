@@ -20,6 +20,7 @@ public static class SecMindAPI
         public const string ScoreSubmit      = "/api/score/submit";
         public const string Leaderboard       = "/api/leaderboard";
         public const string LeaderboardGlobal = "/api/leaderboard/global";
+        public const string Chat              = "/api/chat";
     }
 }
 

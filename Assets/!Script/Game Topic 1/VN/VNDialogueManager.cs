@@ -88,6 +88,19 @@ public class VNDialogueManager : MonoBehaviour
              "Total fade-out time = 2 x this value.")]
     [Range(0f, 2f)] public float fadeOutDuration = 0.5f;
 
+    [Header("Voice Acting")]
+    [Tooltip("AudioSource used to play per-line voice clips. " +
+             "Add an AudioSource component on this GameObject and assign it here.")]
+    [SerializeField] private AudioSource voiceSource;
+
+    [Header("Typewriter SFX")]
+    [Tooltip("AudioSource for the per-character keypress click. Use a separate AudioSource from voiceSource.")]
+    [SerializeField] private AudioSource sfxSource;
+    [Tooltip("Short keypress clip played on every character typed. Assign sfx_keypress.wav from Audio/SFX/.")]
+    [SerializeField] private AudioClip keypressClip;
+    [Tooltip("Volume for the keypress click (0–1). Keep low, e.g. 0.4.")]
+    [Range(0f, 1f)] public float keypressVolume = 0.4f;
+
     [Header("Scoring")]
     [Tooltip("Score added on Accept. Set per-DialogueManager (e.g. -10 if Accept is unsafe).")]
     public int acceptScore = 0;
@@ -414,6 +427,18 @@ public class VNDialogueManager : MonoBehaviour
         if (rejectButton != null) rejectButton.gameObject.SetActive(false);
         if (continueIndicator != null) continueIndicator.SetActive(false);
 
+        // Voice acting — stop previous clip then play this line's clip (if assigned)
+        if (voiceSource != null)
+        {
+            voiceSource.Stop();
+            if (line.voiceClip != null)
+                voiceSource.PlayOneShot(line.voiceClip);
+        }
+
+        // Single click SFX on each new line (not per character)
+        if (sfxSource != null && keypressClip != null)
+            sfxSource.PlayOneShot(keypressClip, keypressVolume);
+
         // Type
         fullSentence = line.text ?? "";
         if (typingCo != null) StopCoroutine(typingCo);
@@ -611,6 +636,7 @@ public class VNDialogueManager : MonoBehaviour
     {
         if (typingCo != null) { StopCoroutine(typingCo); typingCo = null; }
         isTyping = false;
+        if (voiceSource != null) voiceSource.Stop();
 
         if (vnRoot != null) vnRoot.SetActive(false);
         if (playerMovement != null) playerMovement.movementLocked = false;
