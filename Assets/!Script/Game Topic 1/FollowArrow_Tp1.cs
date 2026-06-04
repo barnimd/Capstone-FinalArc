@@ -13,6 +13,12 @@ using System.Collections;
 [RequireComponent(typeof(RectTransform))]
 public class FollowArrow_Tp1 : MonoBehaviour
 {
+    public enum ArrowDisplayMode
+    {
+        FixedHud,
+        ScreenEdge
+    }
+
     [Header("Target")]
     [Tooltip("The world-space Transform the arrow should point toward (e.g. RightWallTrigger).")]
     public Transform target;
@@ -28,6 +34,15 @@ public class FollowArrow_Tp1 : MonoBehaviour
     [Tooltip("Degrees to add so the arrow sprite's 'forward' direction aligns with Up (default = 0 for a sprite that naturally points upward).")]
     public float rotationOffset = 0f;
 
+    [Header("Display Mode")]
+    public ArrowDisplayMode displayMode = ArrowDisplayMode.FixedHud;
+    [Tooltip("Distance in pixels kept between a screen-edge arrow and the edge of the canvas.")]
+    public float screenEdgeMargin = 52f;
+    [Tooltip("Hide the screen-edge arrow while the target is already visible.")]
+    public bool hideWhenTargetVisible = true;
+    [Tooltip("Hide the screen-edge arrow when the player is this close to the target. Set to 0 to disable.")]
+    public float hideWithinWorldDistance = 1.5f;
+
     [Header("Bounce Animation")]
     [Tooltip("Seconds for one full bounce cycle when the arrow first appears.")]
     public float bounceDuration  = 0.4f;
@@ -41,6 +56,7 @@ public class FollowArrow_Tp1 : MonoBehaviour
     private Camera        _cam;
     private Coroutine     _bounceRoutine;
     private Vector2       _basePosition;
+    private bool          _requestedVisible;
 
     private void Awake()
     {
@@ -51,20 +67,27 @@ public class FollowArrow_Tp1 : MonoBehaviour
 
     private void Start()
     {
-        _cam = Camera.main;
+        ResolveSceneReferences();
         _basePosition = _rect.anchoredPosition;
     }
 
     private void LateUpdate()
     {
-        if (target == null || _cam == null) return;
-        RotateTowardTarget();
+        if (!_requestedVisible || target == null) return;
+        ResolveSceneReferences();
+        if (_cam == null) return;
+
+        if (displayMode == ArrowDisplayMode.ScreenEdge)
+            UpdateScreenEdgeArrow();
+        else
+            RotateTowardTarget();
     }
 
     /// <summary>Show the arrow and point it toward <paramref name="newTarget"/>.</summary>
     public void Show(Transform newTarget)
     {
         target = newTarget;
+        _requestedVisible = target != null;
 
         // Ensure the Canvas (and whole hierarchy) is active — StartCoroutine
         // requires activeInHierarchy == true on the calling MonoBehaviour.
@@ -72,9 +95,25 @@ public class FollowArrow_Tp1 : MonoBehaviour
         if (rootCanvas != null) rootCanvas.gameObject.SetActive(true);
 
         gameObject.SetActive(true);
+        ResolveSceneReferences();
 
-        if (_bounceRoutine != null) StopCoroutine(_bounceRoutine);
-        _bounceRoutine = StartCoroutine(BounceRoutine());
+        if (arrowImage != null)
+            arrowImage.enabled = true;
+
+        if (displayMode == ArrowDisplayMode.ScreenEdge)
+        {
+            ConfigureScreenEdgeRect();
+            // The ObjectiveCanvas can still have its compact objective-panel
+            // dimensions during the frame it is reactivated. Wait for the next
+            // LateUpdate so the arrow never flashes at a wrong position.
+            if (arrowImage != null)
+                arrowImage.enabled = false;
+        }
+        else
+        {
+            if (_bounceRoutine != null) StopCoroutine(_bounceRoutine);
+            _bounceRoutine = StartCoroutine(BounceRoutine());
+        }
     }
 
     /// <summary>Show the arrow using the already-assigned <see cref="target"/>.</summary>
@@ -83,11 +122,81 @@ public class FollowArrow_Tp1 : MonoBehaviour
     /// <summary>Hide the arrow.</summary>
     public void Hide()
     {
+        _requestedVisible = false;
         if (_bounceRoutine != null) { StopCoroutine(_bounceRoutine); _bounceRoutine = null; }
         gameObject.SetActive(false);
     }
 
     // ----------------------------------------------------------------
+    private void ResolveSceneReferences()
+    {
+        if (_cam == null)
+            _cam = Camera.main;
+
+        if (player == null)
+        {
+            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+            if (playerObject != null)
+                player = playerObject.transform;
+        }
+    }
+
+    private void ConfigureScreenEdgeRect()
+    {
+        _rect.anchorMin = new Vector2(0.5f, 0.5f);
+        _rect.anchorMax = new Vector2(0.5f, 0.5f);
+        _rect.pivot = new Vector2(0.5f, 0.5f);
+    }
+
+    private void UpdateScreenEdgeArrow()
+    {
+        Vector3 targetScreen3 = _cam.WorldToScreenPoint(target.position);
+        Vector3 viewport = _cam.WorldToViewportPoint(target.position);
+        bool targetVisible = viewport.z > 0f
+                             && viewport.x >= 0f && viewport.x <= 1f
+                             && viewport.y >= 0f && viewport.y <= 1f;
+        bool playerNear = player != null && hideWithinWorldDistance > 0f
+                          && Vector2.Distance(player.position, target.position) <= hideWithinWorldDistance;
+
+        if (arrowImage != null)
+            arrowImage.enabled = !(playerNear || (hideWhenTargetVisible && targetVisible));
+
+        if (playerNear || (hideWhenTargetVisible && targetVisible))
+            return;
+
+        // Screen-edge indicators should point from the visible screen centre,
+        // not from the player's on-screen position. The player can be offset
+        // while the camera is clamped at a room boundary.
+        Vector2 direction = new Vector2(viewport.x - 0.5f, viewport.y - 0.5f);
+        if (targetScreen3.z < 0f)
+            direction = -direction;
+        if (direction.sqrMagnitude < 0.001f)
+            return;
+
+        direction.Normalize();
+
+        Canvas canvas = GetComponentInParent<Canvas>();
+        RectTransform canvasRect = canvas != null ? canvas.GetComponent<RectTransform>() : null;
+        if (canvasRect != null)
+        {
+            Vector2 halfCanvas = canvasRect.rect.size * 0.5f;
+            Vector2 halfArrow = _rect.rect.size * 0.5f;
+            Vector2 usable = new Vector2(
+                Mathf.Max(1f, halfCanvas.x - screenEdgeMargin - halfArrow.x),
+                Mathf.Max(1f, halfCanvas.y - screenEdgeMargin - halfArrow.y));
+            float scaleX = Mathf.Abs(direction.x) > 0.001f
+                ? usable.x / Mathf.Abs(direction.x)
+                : float.MaxValue;
+            float scaleY = Mathf.Abs(direction.y) > 0.001f
+                ? usable.y / Mathf.Abs(direction.y)
+                : float.MaxValue;
+            _rect.anchoredPosition = direction * Mathf.Min(scaleX, scaleY);
+        }
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f + rotationOffset;
+        _rect.localRotation = Quaternion.Euler(0f, 0f, angle);
+    }
+
     private void RotateTowardTarget()
     {
         // World position -> screen position

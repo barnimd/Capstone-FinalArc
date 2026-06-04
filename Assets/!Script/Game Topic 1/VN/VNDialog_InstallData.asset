@@ -77,11 +77,13 @@ MonoBehaviour:
     expression: {fileID: 0}
     text: "(File dari email tidak dikenal, dikirim bukan lewat \nsistem IT resmi,
       dengan tekanan waktu.)"
+    voiceClip: {fileID: 0}
   - speaker: 2
     mood: 0
     expression: {fileID: 0}
     text: (Install file ini, atau tolak dan lapor ke supervisor?)
-  hasChoice: 1
+    voiceClip: {fileID: 0}
+  hasChoice: 0
   acceptText: Oke Pak, saya install.
   rejectText: Maaf Pak, saya harus verifikasi dulu.
   dialogueIfAccepted: {fileID: 0}

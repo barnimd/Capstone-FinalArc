@@ -6,6 +6,8 @@ using TMPro;
 
 public class InstallerFlow : MonoBehaviour
 {
+    public event System.Action<bool> InstallerCompleted;
+
     public GameObject desktopCanvas;
     public GameObject confirmPopup;
     public GameObject progressPanel;
@@ -25,6 +27,9 @@ public class InstallerFlow : MonoBehaviour
     public Button backButton;
     public Button cancelButton;
 
+    private bool sessionActive;
+    private bool installStarted;
+
     void Start()
     {
         // Panel konfirmasi awalnya tidak aktif
@@ -41,9 +46,30 @@ public class InstallerFlow : MonoBehaviour
 
     public void StartInstall()
     {
+        if (!sessionActive || installStarted)
+            return;
+
+        installStarted = true;
         confirmPopup.SetActive(false);
         progressPanel.SetActive(true);
         StartCoroutine(InstallProcess());
+    }
+
+    public void BeginInstaller()
+    {
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
+
+        StopAllCoroutines();
+        sessionActive = true;
+        installStarted = false;
+
+        if (desktopCanvas != null) desktopCanvas.SetActive(true);
+        if (confirmPopup != null) confirmPopup.SetActive(true);
+        if (progressPanel != null) progressPanel.SetActive(false);
+        if (securityPopup != null) securityPopup.SetActive(false);
+        if (confirmationPanel != null) confirmationPanel.SetActive(false);
+        if (progressBar != null) progressBar.value = 0f;
     }
 
     IEnumerator InstallProcess()
@@ -97,22 +123,30 @@ public class InstallerFlow : MonoBehaviour
     // Tombol Cancel, benar-benar membatalkan
     public void OnCancelConfirmed()
     {
+        if (!sessionActive)
+            return;
 
-        confirmationPanel.SetActive(false);
-        confirmPopup.SetActive(false);
-        desktopCanvas.SetActive(false);
+        if (confirmationPanel != null) confirmationPanel.SetActive(false);
+        if (confirmPopup != null) confirmPopup.SetActive(false);
+        if (desktopCanvas != null) desktopCanvas.SetActive(false);
 
-        // Update score - cancelling is the safe choice, no penalty
-        if (ScoreManager.instance != null)
-            ScoreManager.instance.AddScore(0);
-        SummaryManager.instance.TriggerSummary();
         Debug.Log("Instalasi dibatalkan. Semua popup ditutup. Score: " + (ScoreManager.instance != null ? ScoreManager.instance.score : score));
+        CompleteInstaller(false);
     }
 
     public void CloseSecurityPopup()
     {
-        securityPopup.SetActive(false);
-        desktopCanvas.SetActive(false);
-        SummaryManager.instance.TriggerSummary();
+        if (securityPopup != null) securityPopup.SetActive(false);
+        if (desktopCanvas != null) desktopCanvas.SetActive(false);
+        CompleteInstaller(true);
+    }
+
+    private void CompleteInstaller(bool installed)
+    {
+        if (!sessionActive)
+            return;
+
+        sessionActive = false;
+        InstallerCompleted?.Invoke(installed);
     }
 }

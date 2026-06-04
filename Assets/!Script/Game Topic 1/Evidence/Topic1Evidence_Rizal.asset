@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e7bb3955bbc5fb479681c5d8e5a9bfd, type: 3}
+  m_Name: Topic1Evidence_Rizal
+  m_EditorClassIdentifier: 
+  title: Verifikasi Permintaan Rizal
+  scenario: Rizal meminta file Finance Q3 saat bertemu di lift. Tandai informasi
+    yang merupakan red flag.
+  evidenceOptions:
+  - Identitas Rizal belum pernah diverifikasi.
+  - Permintaan menyangkut file keuangan sensitif.
+  - Ia menekan agar permintaan diselesaikan secepatnya.
+  - Ia mengatakan berasal dari divisi Finance.
+  redFlagIndices: 000000000100000002000000
+  safeActionText: Tolak dan verifikasi melalui supervisor
+  unsafeActionText: Kirim file Finance Q3
+  safeFeedback: Keputusan aman. Permintaan akses data sensitif harus diverifikasi
+    melalui jalur resmi, terlepas dari seberapa mendesaknya permintaan tersebut.
+  unsafeFeedback: Keputusan berisiko. Penyerang sering menggunakan identitas yang
+    belum terverifikasi, data sensitif, dan tekanan waktu untuk mendorong korban
+    melewati prosedur.
+  unsafePenalty: -25

@@ -182,11 +182,11 @@ public class VNNPCInteractable : MonoBehaviour
         if (playerRb != null)
         {
             playerRb.velocity = Vector2.zero;
-            playerRb.gameObject.transform.position = roomSpawnPoint.position;
+            MovePlayerHierarchy(playerRb.transform, roomSpawnPoint.position);
         }
         else if (playerMovement != null)
         {
-            playerMovement.transform.position = roomSpawnPoint.position;
+            MovePlayerHierarchy(playerMovement.transform, roomSpawnPoint.position);
         }
 
         if (roomCameraFollow != null)
@@ -202,6 +202,16 @@ public class VNNPCInteractable : MonoBehaviour
             roomCameraFollow.minBounds = roomMinBounds;
             roomCameraFollow.maxBounds = roomMaxBounds;
         }
+    }
+
+    private static void MovePlayerHierarchy(Transform playerBody, Vector3 destination)
+    {
+        Transform playerRoot = playerBody;
+        while (playerRoot.parent != null && playerRoot.parent.CompareTag("Player"))
+            playerRoot = playerRoot.parent;
+
+        playerRoot.position += destination - playerBody.position;
+        Physics2D.SyncTransforms();
     }
 
     public void OnDialogueAccepted()

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e7bb3955bbc5fb479681c5d8e5a9bfd, type: 3}
+  m_Name: Topic1Evidence_PakBudi
+  m_EditorClassIdentifier: 
+  title: Verifikasi Permintaan Instalasi
+  scenario: Pak Budi meminta software akuntansi dari email segera dipasang. Tandai
+    informasi yang merupakan red flag.
+  evidenceOptions:
+  - Software dikirim melalui email, bukan sistem IT resmi.
+  - Sumber file hanya disebut sebagai teman di Finance.
+  - Ada tekanan waktu sebelum meeting.
+  - Pak Budi memang bekerja di kantor ini.
+  redFlagIndices: 000000000100000002000000
+  safeActionText: Tolak dan verifikasi file
+  unsafeActionText: Instal software tersebut
+  safeFeedback: Keputusan aman. Software harus berasal dari sumber resmi dan diverifikasi
+    sebelum memperoleh izin pada perangkat kantor.
+  unsafeFeedback: Keputusan berisiko. Attachment tidak terverifikasi dapat memasang
+    malware, mengambil data, atau membuka akses ke sistem perusahaan.
+  unsafePenalty: -25

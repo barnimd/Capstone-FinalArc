@@ -5,6 +5,9 @@ using TMPro;
 
 public class InteractOpenDesktop : MonoBehaviour
 {
+    public event System.Action DesktopOpened;
+    public event System.Action DesktopClosed;
+
     public GameObject desktopCanvas;
     public GameObject interactText;
     public MonoBehaviour playerMovement; // Legacy field kept for backward compat
@@ -15,6 +18,8 @@ public class InteractOpenDesktop : MonoBehaviour
     private bool canInteract = false;
     private bool desktopOpen = false;
     private PlayerMovement playerMov;
+
+    public bool IsUnlocked => !requiresNPCUnlock;
 
     void Start()
     {
@@ -29,12 +34,7 @@ public class InteractOpenDesktop : MonoBehaviour
     {
         if (canInteract && Input.GetKeyDown(KeyCode.E) && !desktopOpen && !requiresNPCUnlock)
         {
-            desktopCanvas.SetActive(true);
-            desktopOpen = true;
-
-            // Freeze player movement while desktop is open
-            if (playerMov != null)
-                playerMov.movementLocked = true;
+            OpenDesktop();
         }
 
         // Allow closing desktop with Escape key
@@ -56,6 +56,36 @@ public class InteractOpenDesktop : MonoBehaviour
 
         if (playerMov != null)
             playerMov.movementLocked = false;
+
+        DesktopClosed?.Invoke();
+        RefreshPrompt();
+    }
+
+    public void SetUnlocked(bool unlocked)
+    {
+        requiresNPCUnlock = !unlocked;
+        if (!unlocked && desktopOpen)
+            CloseDesktop();
+        RefreshPrompt();
+    }
+
+    public void RefreshPrompt()
+    {
+        if (interactText != null)
+            interactText.SetActive(canInteract && !requiresNPCUnlock && !desktopOpen);
+    }
+
+    private void OpenDesktop()
+    {
+        if (desktopCanvas != null)
+            desktopCanvas.SetActive(true);
+
+        desktopOpen = true;
+        if (playerMov != null)
+            playerMov.movementLocked = true;
+
+        RefreshPrompt();
+        DesktopOpened?.Invoke();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -65,8 +95,7 @@ public class InteractOpenDesktop : MonoBehaviour
             canInteract = true;
             playerMov = other.GetComponent<PlayerMovement>();
 
-            if (interactText != null)
-                interactText.SetActive(true);
+            RefreshPrompt();
         }
     }
 
@@ -80,8 +109,7 @@ public class InteractOpenDesktop : MonoBehaviour
             if (desktopOpen)
                 CloseDesktop();
 
-            if (interactText != null)
-                interactText.SetActive(false);
+            RefreshPrompt();
         }
     }
 }

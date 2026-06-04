@@ -5,6 +5,9 @@ using System.Collections;
 
 public class GameFlowManager : MonoBehaviour
 {
+    public event System.Action<bool> DecisionCompleted;
+    public bool HasCompletedDecision { get; private set; }
+
     [Header("Panels")]
     public GameObject desktopCanvas;
     public GameObject ChatPanel;
@@ -102,6 +105,7 @@ public class GameFlowManager : MonoBehaviour
     {
         CloseAllPanels();
         desktopCanvas.SetActive(false);
+        CompleteDecision(true);
     }
 
     // =============================
@@ -117,6 +121,7 @@ public class GameFlowManager : MonoBehaviour
     {
         CloseAllPanels();
         desktopCanvas.SetActive(false);
+        CompleteDecision(true);
     }
 
     public void ConfirmSend()
@@ -166,6 +171,7 @@ public class GameFlowManager : MonoBehaviour
     {
         SecurityAlertPanel.SetActive(false);
         desktopCanvas.SetActive(false);
+        CompleteDecision(false);
     }
     // =============================
     // CLOSE ALL
@@ -177,5 +183,14 @@ public class GameFlowManager : MonoBehaviour
         ConfirmationPanel.SetActive(false);
         InstallationPanel.SetActive(false);
         SecurityAlertPanel.SetActive(false);
+    }
+
+    private void CompleteDecision(bool safe)
+    {
+        if (HasCompletedDecision)
+            return;
+
+        HasCompletedDecision = true;
+        DecisionCompleted?.Invoke(safe);
     }
 }
