@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
+  m_Name: VNDialog_PakHendra_Topic5
+  m_EditorClassIdentifier: 
+  playerName: Raka
+  npcName: Pak Hendra
+  playerPortrait: {fileID: 21300000, guid: 91753b50188160e469f1596dd7b4e6be, type: 3}
+  playerTalkingPortrait: {fileID: 21300000, guid: 6f7b85b4da78fd74eb50431daa554c0f, type: 3}
+  playerThinkingPortrait: {fileID: 0}
+  playerSmilingPortrait: {fileID: 0}
+  npc2Name: 
+  npcPortrait: {fileID: 21300000, guid: b6529a954a0d07f44935fa59e90116e2, type: 3}
+  npcTalkingPortrait: {fileID: 21300000, guid: b6529a954a0d07f44935fa59e90116e2, type: 3}
+  npcThinkingPortrait: {fileID: 0}
+  npcSmilingPortrait: {fileID: 0}
+  npc2Portrait: {fileID: 0}
+  npc2TalkingPortrait: {fileID: 0}
+  npc2ThinkingPortrait: {fileID: 0}
+  npc2SmilingPortrait: {fileID: 0}
+  background: {fileID: 21300000, guid: a47d1b04251684747935c3c903086ed3, type: 3}
+  lines:
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Oh, tamu? Ada yang bisa dibantu?
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Pak, saya mau tanya. Wi-Fi kafe ini namanya CafeBean_Free kan? Tapi ada
+      juga FREE_CAFE_WIFI dan CafeBean_Free_5G. Itu punya kafe juga?
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 2
+    expression: {fileID: 0}
+    text: Bukan. Kami hanya punya satu jaringan, CafeBean_Free. Yang lain bukan milik
+      kami.
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Jadi ada yang sengaja bikin jaringan palsu?
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Ini disebut Evil Twin Attack. Seseorang membuat hotspot dengan nama yang
+      mirip Wi-Fi asli.
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: 'Kalau orang connect ke sana, data yang dikirim bisa disadap: password,
+      email, bahkan data kartu kredit.'
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Orangnya masih di sini?
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Kemungkinan besar iya. Pelakunya harus berada dalam jangkauan fisik. Perhatikan
+      orang yang membawa router portable atau laptop dengan antena tambahan.
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Saya coba cari.
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Hati-hati. Kalau sudah ketemu, jangan konfrontasi sendiri. Langsung kabari
+      saya.
+    voiceClip: {fileID: 0}
+  hasChoice: 0
+  acceptText: Ya
+  rejectText: Tidak
+  dialogueIfAccepted: {fileID: 0}
+  dialogueIfRejected: {fileID: 0}
+  actionID: VN_Topic5_PakHendra

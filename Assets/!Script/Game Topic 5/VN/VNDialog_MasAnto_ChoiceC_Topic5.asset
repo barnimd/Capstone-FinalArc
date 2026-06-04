@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
+  m_Name: VNDialog_MasAnto_ChoiceC_Topic5
+  m_EditorClassIdentifier: 
+  playerName: Raka
+  npcName: Mas Anto
+  playerPortrait: {fileID: 21300000, guid: 91753b50188160e469f1596dd7b4e6be, type: 3}
+  playerTalkingPortrait: {fileID: 21300000, guid: 6f7b85b4da78fd74eb50431daa554c0f, type: 3}
+  playerThinkingPortrait: {fileID: 0}
+  playerSmilingPortrait: {fileID: 0}
+  npc2Name: 
+  npcPortrait: {fileID: 21300000, guid: 73896fe4f27144945b5e3d3c555552d5, type: 3}
+  npcTalkingPortrait: {fileID: 21300000, guid: 73896fe4f27144945b5e3d3c555552d5, type: 3}
+  npcThinkingPortrait: {fileID: 0}
+  npcSmilingPortrait: {fileID: 0}
+  npc2Portrait: {fileID: 0}
+  npc2TalkingPortrait: {fileID: 0}
+  npc2ThinkingPortrait: {fileID: 0}
+  npc2SmilingPortrait: {fileID: 0}
+  background: {fileID: 21300000, guid: 4a8c4e79cb98c7249bef36487cb73c21, type: 3}
+  lines:
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Kenapa kamu lakuin ini?
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Iseng aja. Orang-orang terlalu gampang percaya Wi-Fi gratis.
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Itu bukan iseng. Itu kejahatan siber.
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 2
+    expression: {fileID: 0}
+    text: ...
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Matikan sekarang.
+    voiceClip: {fileID: 0}
+  - speaker: 2
+    mood: 0
+    expression: {fileID: 0}
+    text: Mas Anto mematikan router dan pergi. Tanpa laporan ke staff, tidak ada
+      konsekuensi resmi.
+    voiceClip: {fileID: 0}
+  hasChoice: 0
+  acceptText: Ya
+  rejectText: Tidak
+  dialogueIfAccepted: {fileID: 0}
+  dialogueIfRejected: {fileID: 0}
+  actionID: VN_Topic5_MasAnto_ChoiceC
