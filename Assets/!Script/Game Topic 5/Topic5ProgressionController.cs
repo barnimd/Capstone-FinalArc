@@ -37,6 +37,7 @@ public class Topic5ProgressionController : MonoBehaviour
 
     [Header("UI and Laptop")]
     [SerializeField] private Topic5ObjectivePanel objectivePanel;
+    [SerializeField] private FollowArrow_Tp1 objectiveArrow;
     [SerializeField] private Topic5ThreeWayChoiceController choiceController;
     [SerializeField] private Topic5LaptopInteractable laptop;
     [SerializeField] private GameObject embeddedComputerRoot;
@@ -75,6 +76,7 @@ public class Topic5ProgressionController : MonoBehaviour
 
         stage = Stage.Opening;
         ShowObjective("Tanya nama Wi-Fi ke barista");
+        objectiveArrow?.Hide();
     }
 
     private void OnDestroy()
@@ -112,6 +114,7 @@ public class Topic5ProgressionController : MonoBehaviour
         }
 
         stage = Stage.Computer;
+        objectiveArrow?.Hide();
         if (playerMovement != null)
             playerMovement.CanMove = false;
         if (embeddedComputerRoot != null)
@@ -127,21 +130,21 @@ public class Topic5ProgressionController : MonoBehaviour
         {
             stage = Stage.Sari;
             SetInteractable(sari, true);
-            ShowObjective("Tanya nama Wi-Fi ke barista");
+            ShowObjective("Tanya nama Wi-Fi ke barista", sari);
         }
         else if (source == sari && stage == Stage.Sari)
         {
             stage = Stage.Rina;
             SetInteractable(sari, false);
             SetInteractable(rina, true);
-            ShowObjective("Cari tempat duduk di area seating");
+            ShowObjective("Cari tempat duduk di area seating", rina);
         }
         else if (source == rina && stage == Stage.Rina)
         {
             stage = Stage.PakHendra;
             SetInteractable(rina, false);
             SetInteractable(pakHendra, true);
-            ShowObjective("Tanya staff soal Wi-Fi mencurigakan");
+            ShowObjective("Tanya staff soal Wi-Fi mencurigakan", pakHendra);
         }
         else if (source == pakHendra && stage == Stage.PakHendra)
         {
@@ -149,7 +152,7 @@ public class Topic5ProgressionController : MonoBehaviour
             SetInteractable(pakHendra, false);
             SetInteractable(budi, true);
             SetInteractable(buDewi, true);
-            ShowObjective("Selidiki setiap ruangan dan cari sumber Wi-Fi palsu");
+            ShowObjective("Selidiki setiap ruangan dan cari sumber Wi-Fi palsu", budi);
         }
         else if (source == buDewi && !buDewiCompleted
                  && stage >= Stage.Investigation && stage < Stage.Laptop)
@@ -164,19 +167,20 @@ public class Topic5ProgressionController : MonoBehaviour
             stage = Stage.KaraokeNarration;
             SetInteractable(budi, false);
             SetInteractable(karaokeNarration, true);
-            ShowObjective("Periksa ruang karaoke");
+            ShowObjective("Periksa ruang karaoke", karaokeNarration);
         }
         else if (source == karaokeNarration && stage == Stage.KaraokeNarration)
         {
             stage = Stage.MasAnto;
             SetInteractable(karaokeNarration, false);
             SetInteractable(masAnto, true);
-            ShowObjective("Hadapi sumber Wi-Fi palsu");
+            ShowObjective("Hadapi sumber Wi-Fi palsu", masAnto);
         }
         else if (source == masAnto && stage == Stage.MasAnto)
         {
             stage = Stage.Choice;
             SetInteractable(masAnto, false);
+            objectiveArrow?.Hide();
             if (playerMovement != null)
                 playerMovement.CanMove = false;
             choiceController.Show(ResolveMasAntoChoice);
@@ -187,7 +191,7 @@ public class Topic5ProgressionController : MonoBehaviour
             SetInteractable(buDewi, false);
             if (playerMovement != null)
                 playerMovement.CanMove = true;
-            ShowObjective("Kembali ke meja dan sambungkan laptop dengan aman");
+            ShowObjective("Kembali ke meja dan sambungkan laptop dengan aman", laptop);
             laptop?.RefreshPrompt();
         }
     }
@@ -215,6 +219,19 @@ public class Topic5ProgressionController : MonoBehaviour
     private void ShowObjective(string text)
     {
         objectivePanel?.ShowObjective(text);
+    }
+
+    private void ShowObjective(string text, Component target)
+    {
+        ShowObjective(text);
+
+        if (objectiveArrow == null)
+            return;
+
+        if (target != null)
+            objectiveArrow.Show(target.transform);
+        else
+            objectiveArrow.Hide();
     }
 
     private static void SetInteractable(VNNPCInteractable interactable, bool enabled)
