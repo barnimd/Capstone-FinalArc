@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
+  m_Name: VNDialog_Rina_Topic5
+  m_EditorClassIdentifier: 
+  playerName: Raka
+  npcName: Rina
+  playerPortrait: {fileID: 21300000, guid: 91753b50188160e469f1596dd7b4e6be, type: 3}
+  playerTalkingPortrait: {fileID: 21300000, guid: 6f7b85b4da78fd74eb50431daa554c0f, type: 3}
+  playerThinkingPortrait: {fileID: 0}
+  playerSmilingPortrait: {fileID: 0}
+  npc2Name: 
+  npcPortrait: {fileID: 21300000, guid: db561ec6e2c62ca4d97523d8036c50a1, type: 3}
+  npcTalkingPortrait: {fileID: 21300000, guid: 5c65e9eda00eafd4295869a651231baa, type: 3}
+  npcThinkingPortrait: {fileID: 0}
+  npcSmilingPortrait: {fileID: 0}
+  npc2Portrait: {fileID: 0}
+  npc2TalkingPortrait: {fileID: 0}
+  npc2ThinkingPortrait: {fileID: 0}
+  npc2SmilingPortrait: {fileID: 0}
+  background: {fileID: 21300000, guid: efcff2e8eebb3f548b4dd196a95532b0, type: 3}
+  lines:
+  - speaker: 1
+    mood: 2
+    expression: {fileID: 0}
+    text: Aduh... aduh aduh...
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Hei, kamu baik-baik aja?
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Nggak tau deh. Tadi aku connect Wi-Fi, terus tiba-tiba browser-ku redirect
+      ke halaman login yang aneh. Minta username sama password email.
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Kamu connect ke Wi-Fi yang mana?
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Yang ini, FREE_CAFE_WIFI. Namanya mirip punya kafe kan? Aku kira sama.
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Itu bukan nama yang dikasih barista tadi...
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 2
+    expression: {fileID: 0}
+    text: Hah? Serius? Terus aku harus gimana sekarang?
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Pertama, disconnect sekarang. Jangan isi form apa pun. Ganti password email
+      kamu dari perangkat lain yang aman.
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Iya iya... makasih. Tapi Wi-Fi palsu itu dari mana ya?
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Aku coba cari tahu. Kamu tunggu di sini dulu.
+    voiceClip: {fileID: 0}
+  hasChoice: 0
+  acceptText: Ya
+  rejectText: Tidak
+  dialogueIfAccepted: {fileID: 0}
+  dialogueIfRejected: {fileID: 0}
+  actionID: VN_Topic5_Rina

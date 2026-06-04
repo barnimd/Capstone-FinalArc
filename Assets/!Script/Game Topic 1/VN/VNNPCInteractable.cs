@@ -10,6 +10,11 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class VNNPCInteractable : MonoBehaviour
 {
+    public event System.Action<VNNPCInteractable> DialogueStarted;
+    public event System.Action<VNNPCInteractable> DialogueAccepted;
+    public event System.Action<VNNPCInteractable> DialogueRejected;
+    public event System.Action<VNNPCInteractable> DialogueEnded;
+
     [Header("Interaction Settings")]
     [Tooltip("'Press E to interact' prompt (child UI element).")]
     public GameObject interactPrompt;
@@ -132,6 +137,16 @@ public class VNNPCInteractable : MonoBehaviour
             OpenDialogue();
     }
 
+    public void RefreshPrompt()
+    {
+        if (interactPrompt == null)
+            return;
+
+        interactPrompt.SetActive(playerNearby && isInteractable
+                                 && (!oneTimeOnly || !hasInteracted)
+                                 && !autoTrigger);
+    }
+
     void OpenDialogue()
     {
         VNDialogueManager mgr = manager != null ? manager : VNDialogueManager.Instance;
@@ -148,6 +163,7 @@ public class VNNPCInteractable : MonoBehaviour
 
         mgr.SetActiveInteractable(this);
         mgr.StartDialogue(vnDialogue);
+        DialogueStarted?.Invoke(this);
 
         if (interactPrompt != null) interactPrompt.SetActive(false);
         if (playerMovement != null) playerMovement.movementLocked = true;
@@ -191,11 +207,12 @@ public class VNNPCInteractable : MonoBehaviour
     public void OnDialogueAccepted()
     {
         if (activateOnAccept != null) activateOnAccept.SetActive(true);
+        DialogueAccepted?.Invoke(this);
     }
 
     public void OnDialogueRejected()
     {
-        // hook for later
+        DialogueRejected?.Invoke(this);
     }
 
     public void OnDialogueEnd()
@@ -252,6 +269,8 @@ public class VNNPCInteractable : MonoBehaviour
             else
                 followArrow.Show();
         }
+
+        DialogueEnded?.Invoke(this);
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -270,7 +289,7 @@ public class VNNPCInteractable : MonoBehaviour
             return;
         }
 
-        if (interactPrompt != null) interactPrompt.SetActive(true);
+        RefreshPrompt();
     }
 
     void OnTriggerExit2D(Collider2D collision)
