@@ -40,6 +40,13 @@ public class SummaryManager : MonoBehaviour
     [Tooltip("TextMeshPro text that shows the elapsed time.")]
     public TMP_Text timeText;
 
+    [Header("Backend / Neon")]
+    [Tooltip("Stage ID untuk disimpan ke Neon. Kosongkan kalau scene ini tidak menyimpan skor. " +
+             "Contoh: Topic 2 (Office_Environment) = 2fa.")]
+    public string stageId = "";
+    [Tooltip("Server menolak skor di atas nilai ini. Skor akhir di-clamp ke [0, maxScore] sebelum dikirim.")]
+    public int maxScore = 100;
+
     // ── Internal ──────────────────────────────────────────────
     private float _startTime;
     private bool _triggered = false;
@@ -102,6 +109,9 @@ public class SummaryManager : MonoBehaviour
         // ── 2. Populate Summary Panel ─────────────────────────
         int finalScore = ScoreManager.instance != null ? ScoreManager.instance.score : 0;
 
+        // Simpan hasil ke Neon (kalau scene ini punya stageId)
+        SubmitResultToNeon(finalScore);
+
         if (levelCompleteText != null)
             levelCompleteText.text = "Level Complete!";
 
@@ -139,6 +149,75 @@ public class SummaryManager : MonoBehaviour
             }
             c.a = 0f;
             fadeOverlay.color = c;
+        }
+    }
+
+    // ── Neon score persistence ────────────────────────────────────────────────
+
+    /// <summary>
+    /// Kirim skor akhir ke Neon. No-op (aman) kalau stageId kosong, manager backend
+    /// tidak ada, atau player belum login. Server menyimpan skor tertinggi per stage.
+    /// </summary>
+    private void SubmitResultToNeon(int rawScore)
+    {
+        if (string.IsNullOrEmpty(stageId))
+            return; // scene ini tidak menyimpan skor ke server
+
+        int finalScore = Mathf.Clamp(rawScore, 0, maxScore);
+        Debug.Log($"[Summary] 🏁 Stage '{stageId}' selesai — final score siap (raw={rawScore}, dikirim={finalScore}). Mulai simpan...");
+
+        if (StageManager.Instance == null ||
+            FirebaseManager.Instance == null ||
+            !FirebaseManager.Instance.IsAuthenticated)
+        {
+            Debug.LogWarning($"[Summary] ⚠️ Save DIBATALKAN untuk '{stageId}' — backend manager hilang / belum login " +
+                             $"(StageManager={(StageManager.Instance != null)}, " +
+                             $"Firebase={(FirebaseManager.Instance != null)}, " +
+                             $"login={(FirebaseManager.Instance != null && FirebaseManager.Instance.IsAuthenticated)}). " +
+                             $"Skor {finalScore} cuma kesimpen lokal.");
+            return;
+        }
+
+        if (APIClient.Instance != null)
+        {
+            Debug.Log("[Summary] 📤 Sedang menyimpan ke Vercel — langkah 1/2: sinkronisasi data user...");
+            APIClient.Instance.UserSync(FirebaseManager.Instance.Username, (ok, resp, raw) =>
+            {
+                if (ok)
+                    Debug.Log("[Summary] ✅ Langkah 1/2 OK — user tersinkron. Lanjut simpan hasil stage...");
+                else
+                    Debug.LogWarning("[Summary] ⚠️ Langkah 1/2 (UserSync) gagal, lanjut tetap coba simpan: " + raw);
+                SendComplete(finalScore);
+            });
+        }
+        else
+        {
+            SendComplete(finalScore);
+        }
+    }
+
+    private void SendComplete(int finalScore)
+    {
+        Debug.Log($"[Summary] 📤 Sedang menyimpan ke Vercel — langkah 2/2: kirim hasil stage '{stageId}' (score={finalScore})...");
+        if (APIClient.Instance != null)
+        {
+            APIClient.Instance.StageComplete(stageId, finalScore, (ok, resp, raw) =>
+            {
+                if (ok && resp != null && resp.success)
+                    Debug.Log($"[Summary] ✅ SAVE BERHASIL MASUK DB — stage '{stageId}', finalScore={finalScore}. (Neon menyimpan skor tertinggi)");
+                else
+                    Debug.LogError($"[Summary] ❌ SAVE GAGAL ke DB untuk stage '{stageId}' (score {finalScore}). Respon server: {raw}");
+            });
+        }
+        else
+        {
+            StageManager.Instance.Complete(stageId, finalScore, success =>
+            {
+                if (success)
+                    Debug.Log($"[Summary] ✅ SAVE BERHASIL MASUK DB — stage '{stageId}', finalScore={finalScore}.");
+                else
+                    Debug.LogError($"[Summary] ❌ SAVE GAGAL ke DB untuk stage '{stageId}' — score {finalScore} cuma kesimpen lokal.");
+            });
         }
     }
 }

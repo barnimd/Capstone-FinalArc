@@ -9,8 +9,8 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager instance;
 
-    [Tooltip("Skor awal saat game mulai. Tiap jawaban salah mengurangi skor (mis. -25). Jawaban benar tidak mengurangi.")]
-    public int startingScore = 1000;
+    [Tooltip("Skor awal saat game mulai. Default 0 (skor aditif). Untuk Topic 1 di-set 1000 di Inspector (skor turun tiap salah).")]
+    public int startingScore = 0;
     public int score;
     public TextMeshProUGUI scoreText; // Optional HUD display — can be left unassigned
 

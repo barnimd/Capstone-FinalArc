@@ -5581,7 +5581,7 @@ MonoBehaviour:
   pakBudiCase: {fileID: 11400000, guid: 99eaab334a6d423408d4494fab1378c4, type: 2}
   computerCase: {fileID: 11400000, guid: 853562baae285f3488335a0c2a6daa2f, type: 2}
   stageId: phishing
-  maxScore: 1000
+  maxScore: 100
 --- !u!114 &445872617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5636,8 +5636,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 619e4e86e2e151b4d8e8bdb6c898a0bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
+  startingScore: 100
   score: 0
   scoreText: {fileID: 0}
 --- !u!4 &446724623

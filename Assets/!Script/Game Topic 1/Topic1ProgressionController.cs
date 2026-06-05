@@ -44,7 +44,7 @@ public class Topic1ProgressionController : MonoBehaviour
     [Tooltip("Stage ID sent to Neon. Topic 1 (Privasi_Keamanan / level 1) = phishing.")]
     public string stageId = "phishing";
     [Tooltip("Server rejects scores above this. Final score is clamped to [0, maxScore] before submit.")]
-    public int maxScore = 1000;
+    public int maxScore = 100;
 
     private Stage stage;
 
