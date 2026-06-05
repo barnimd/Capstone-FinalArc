@@ -32,8 +32,8 @@ public class GameManager_Tp5 : MonoBehaviour
     [Header("=== Backend / Neon ===")]
     [Tooltip("Stage ID untuk disimpan ke Neon. Topic 5 = wifi-security.")]
     public string stageId = "wifi-security";
-    [Tooltip("Skor akhir di-clamp ke [0, maxScore] sebelum dikirim ke server.")]
-    public int maxScore = 1000;
+    [Tooltip("Skor akhir (map + challenge) di-clamp ke [0, maxScore]. Topic 5 max 100.")]
+    public int maxScore = 100;
 
     private bool _wifiDone;
     private bool _websiteDone;
@@ -136,19 +136,28 @@ public class GameManager_Tp5 : MonoBehaviour
         if (desktopCanvas != null) desktopCanvas.SetActive(false);
         if (websiteCanvas != null) websiteCanvas.SetActive(false);
 
-        if (isSuccess && ScoreManager.instance != null)
-            ScoreManager.instance.score = scoreOnSuccess;
-        else if (ScoreManager.instance != null)
-            ScoreManager.instance.score = 0;
+        // Gabung hasil challenge ke skor map (AddScore — JANGAN timpa biar skor map gak hilang),
+        // lalu cap ke maxScore. AddScore juga me-refresh teks HUD ScoreManager.
+        if (ScoreManager.instance != null)
+        {
+            if (isSuccess)
+                ScoreManager.instance.AddScore(scoreOnSuccess);
+            ScoreManager.instance.score = Mathf.Clamp(ScoreManager.instance.score, 0, maxScore);
+        }
 
-        // Simpan skor akhir ke Neon
+        // Simpan skor GABUNGAN (map + challenge, sudah di-cap) ke Neon
         int finalScore = ScoreManager.instance != null ? ScoreManager.instance.score : (isSuccess ? scoreOnSuccess : 0);
         if (StageManager.Instance != null)
             StageManager.Instance.SubmitFinalScore(stageId, finalScore, maxScore, "Topic5");
         else
             Debug.LogWarning("[GameManager_Tp5] StageManager tidak ada — skor tidak tersimpan ke Neon (cuma lokal).");
 
-        if (summaryCanvas != null)
+        // Tampilkan panel lewat SummaryManager supaya scoreText-nya kebaca skor gabungan yang benar
+        // (panel-nya objek yang sama dengan summaryCanvas). SummaryManager di scene ini stageId-nya
+        // kosong, jadi dia cuma menampilkan — TIDAK double-save.
+        if (SummaryManager.instance != null)
+            SummaryManager.instance.TriggerSummary();
+        else if (summaryCanvas != null)
             summaryCanvas.SetActive(true);
     }
 }
