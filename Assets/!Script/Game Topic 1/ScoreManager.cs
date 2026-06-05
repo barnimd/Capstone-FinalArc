@@ -8,6 +8,9 @@ using TMPro;
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager instance;
+
+    [Tooltip("Skor awal saat game mulai. Tiap jawaban salah mengurangi skor (mis. -25). Jawaban benar tidak mengurangi.")]
+    public int startingScore = 1000;
     public int score;
     public TextMeshProUGUI scoreText; // Optional HUD display — can be left unassigned
 
@@ -19,7 +22,9 @@ public class ScoreManager : MonoBehaviour
             return;
         }
         instance = this;
-        score = 0;
+        score = startingScore;
+        if (scoreText != null)
+            scoreText.text = "Score: " + score;
         Debug.Log("[ScoreManager] Initialized. Score = " + score);
     }
 

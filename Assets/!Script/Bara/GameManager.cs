@@ -73,10 +73,32 @@ public class GameplayManager : MonoBehaviour
         int seconds = Mathf.FloorToInt(elapsedTime % 60f);
 
         // {0:00} memastikan formatnya selalu dua digit (contoh: 05:09)
-        timeText.text = "Waktu Penyelesaian: " + string.Format("{0:00}:{1:00}", minutes, seconds);
+        // timeText optional — panel summary boleh gak punya label waktu (jangan sampai NPE blokir panel)
+        if (timeText != null)
+            timeText.text = "Waktu Penyelesaian: " + string.Format("{0:00}:{1:00}", minutes, seconds);
+        else
+            Debug.LogWarning("[GameplayManager] timeText not assigned — skipping time display.");
 
-        // Tampilkan summary panel
-        summaryPanel.SetActive(true);
+        // Tampilkan summary panel — sekaligus pastikan SEMUA parent-nya aktif.
+        // Kalau nggak, panel "aktif" tapi tetap kehalang parent (root Canvas) yang non-aktif.
+        if (summaryPanel != null)
+        {
+            summaryPanel.SetActive(true);
+
+            Transform p = summaryPanel.transform.parent;
+            while (p != null)
+            {
+                if (!p.gameObject.activeSelf)
+                {
+                    Debug.Log($"[GameplayManager] Mengaktifkan parent non-aktif agar panel terlihat: {p.name}");
+                    p.gameObject.SetActive(true);
+                }
+                p = p.parent;
+            }
+            Debug.Log("[GameplayManager] Summary panel ditampilkan.");
+        }
+        else
+            Debug.LogError("[GameplayManager] summaryPanel not assigned — cannot show summary panel!");
     }
 
     // Dipanggil oleh tombol di summary panel untuk kembali ke Dashboard

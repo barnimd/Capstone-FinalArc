@@ -40,6 +40,12 @@ public class Topic1ProgressionController : MonoBehaviour
     public Topic1EvidenceCase pakBudiCase;
     public Topic1EvidenceCase computerCase;
 
+    [Header("Backend / Scoring (Neon)")]
+    [Tooltip("Stage ID sent to Neon. Topic 1 (Privasi_Keamanan / level 1) = phishing.")]
+    public string stageId = "phishing";
+    [Tooltip("Server rejects scores above this. Final score is clamped to [0, maxScore] before submit.")]
+    public int maxScore = 1000;
+
     private Stage stage;
 
     private void Awake()
@@ -196,7 +202,83 @@ public class Topic1ProgressionController : MonoBehaviour
         computer?.SetUnlocked(false);
         objectiveArrow?.Hide();
         objectivePanel?.HideImmediate();
+
+        SubmitResultToNeon();
+
         gameplayManager?.FinishGame();
+    }
+
+    // ── Neon score persistence ────────────────────────────────────────────────
+
+    /// <summary>
+    /// Pushes the final Topic 1 result to Neon: ensures the user row exists (FK parent),
+    /// then marks the stage complete. Server keeps the highest score per user per stage.
+    /// Fully guarded — silently no-ops if backend managers are missing or the player
+    /// isn't authenticated (e.g. playing the scene directly in the editor).
+    /// </summary>
+    private void SubmitResultToNeon()
+    {
+        int rawScore   = ScoreManager.instance != null ? ScoreManager.instance.score : 0;
+        int finalScore = Mathf.Clamp(rawScore, 0, maxScore);
+
+        Debug.Log($"[Topic1] 🏁 Game selesai — final score siap (raw={rawScore}, dikirim={finalScore}). Mulai proses simpan...");
+
+        if (StageManager.Instance == null ||
+            FirebaseManager.Instance == null ||
+            !FirebaseManager.Instance.IsAuthenticated)
+        {
+            Debug.LogWarning($"[Topic1] ⚠️ Save DIBATALKAN — backend manager hilang / belum login " +
+                             $"(StageManager={(StageManager.Instance != null)}, " +
+                             $"Firebase={(FirebaseManager.Instance != null)}, " +
+                             $"login={(FirebaseManager.Instance != null && FirebaseManager.Instance.IsAuthenticated)}). " +
+                             $"Score {finalScore} cuma kesimpen lokal.");
+            return;
+        }
+
+        // Upsert the Neon users row first so stage_completions has its FK parent, then complete.
+        if (APIClient.Instance != null)
+        {
+            Debug.Log("[Topic1] 📤 Sedang menyimpan ke Vercel — langkah 1/2: sinkronisasi data user...");
+            APIClient.Instance.UserSync(FirebaseManager.Instance.Username, (ok, resp, raw) =>
+            {
+                if (ok)
+                    Debug.Log("[Topic1] ✅ Langkah 1/2 OK — user tersinkron. Lanjut simpan hasil stage...");
+                else
+                    Debug.LogWarning("[Topic1] ⚠️ Langkah 1/2 (UserSync) gagal, lanjut tetap coba simpan: " + raw);
+                SendComplete(finalScore);
+            });
+        }
+        else
+        {
+            SendComplete(finalScore);
+        }
+    }
+
+    private void SendComplete(int finalScore)
+    {
+        Debug.Log($"[Topic1] 📤 Sedang menyimpan ke Vercel — langkah 2/2: kirim hasil stage '{stageId}' (score={finalScore})...");
+
+        // Call the endpoint directly so we can surface the raw server response on failure (diagnostics).
+        if (APIClient.Instance != null)
+        {
+            APIClient.Instance.StageComplete(stageId, finalScore, (ok, resp, raw) =>
+            {
+                if (ok && resp != null && resp.success)
+                    Debug.Log($"[Topic1] ✅ SAVE BERHASIL MASUK DB — stage '{stageId}', finalScore={finalScore}. (Neon menyimpan score tertinggi)");
+                else
+                    Debug.LogError($"[Topic1] ❌ SAVE GAGAL ke DB untuk stage '{stageId}' (score {finalScore}). Respon server: {raw}");
+            });
+        }
+        else
+        {
+            StageManager.Instance.Complete(stageId, finalScore, success =>
+            {
+                if (success)
+                    Debug.Log($"[Topic1] ✅ SAVE BERHASIL MASUK DB — stage '{stageId}', finalScore={finalScore}.");
+                else
+                    Debug.LogError($"[Topic1] ❌ SAVE GAGAL ke DB untuk stage '{stageId}' — score {finalScore} cuma kesimpen lokal.");
+            });
+        }
     }
 
     private void SetStage(Stage nextStage)
