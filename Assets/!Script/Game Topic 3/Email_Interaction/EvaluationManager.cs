@@ -15,6 +15,12 @@ public class EvaluationManager : MonoBehaviour
     [Tooltip("Skor per jawaban benar dalam evaluasi")]
     public int scorePerCorrect = 20;
 
+    [Header("=== Backend / Neon ===")]
+    [Tooltip("Stage ID untuk disimpan ke Neon. Topic 3 = password-security.")]
+    public string stageId = "password-security";
+    [Tooltip("Skor akhir di-cap ke nilai ini (semua topik max 100).")]
+    public int maxScore = 100;
+
     [Header("=== Email Stats ===")]
     [Tooltip("Referensi ke EmailManager untuk baca statistik email")]
     public EmailManager emailManager;
@@ -62,10 +68,24 @@ public class EvaluationManager : MonoBehaviour
         int totalScore = evaluationScore + (emailCorrect * 10) - (emailWrong * 5);
 
         if (ScoreManager.instance != null)
+        {
             ScoreManager.instance.AddScore(totalScore);
+            // Cap ke [0, maxScore] supaya konsisten max 100 (skor email bisa bikin lewat 100)
+            ScoreManager.instance.score = Mathf.Clamp(ScoreManager.instance.score, 0, maxScore);
+        }
+
+        int finalScore = ScoreManager.instance != null
+            ? ScoreManager.instance.score
+            : Mathf.Clamp(totalScore, 0, maxScore);
 
         Debug.Log($"[EvaluationManager] Evaluasi selesai! Correct={correct}/{total} | " +
-                  $"Email: C={emailCorrect} W={emailWrong} N={emailNeutral} | TotalScore={totalScore}");
+                  $"Email: C={emailCorrect} W={emailWrong} N={emailNeutral} | TotalScore={totalScore} | finalScore(capped)={finalScore}");
+
+        // Simpan hasil ke Neon
+        if (StageManager.Instance != null)
+            StageManager.Instance.SubmitFinalScore(stageId, finalScore, maxScore, "Topic3");
+        else
+            Debug.LogWarning("[EvaluationManager] StageManager tidak ada — skor tidak tersimpan ke Neon (cuma lokal).");
 
         TampilkanSummary();
     }
