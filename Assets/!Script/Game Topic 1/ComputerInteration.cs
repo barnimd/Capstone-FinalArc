@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class InteractOpenDesktop : MonoBehaviour
@@ -78,8 +79,59 @@ public class InteractOpenDesktop : MonoBehaviour
     private void OpenDesktop()
     {
         if (desktopCanvas != null)
-            desktopCanvas.SetActive(true);
+            StartCoroutine(FadeToDesktopRoutine());
+        else
+            FinalizeOpenDesktop();
+    }
 
+    private IEnumerator FadeToDesktopRoutine()
+    {
+        // Create fullscreen black overlay
+        GameObject overlay = new GameObject("FadeOverlay", typeof(RectTransform), typeof(Image));
+        overlay.transform.SetParent(desktopCanvas.transform, false);
+        RectTransform rt = overlay.GetComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
+        rt.sizeDelta = rt.anchoredPosition = Vector2.zero;
+        Image img = overlay.GetComponent<Image>();
+        img.color = new Color(0, 0, 0, 0);
+        img.raycastTarget = false;
+
+        // Fade to black
+        float elapsed = 0f;
+        float duration = 0.5f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            img.color = new Color(0, 0, 0, Mathf.Clamp01(elapsed / duration));
+            yield return null;
+        }
+        img.color = Color.black;
+
+        // Activate desktop
+        desktopCanvas.SetActive(true);
+
+        // Fade desktop in via CanvasGroup
+        CanvasGroup cg = desktopCanvas.GetComponent<CanvasGroup>();
+        if (cg == null) cg = desktopCanvas.AddComponent<CanvasGroup>();
+        cg.alpha = 0f;
+
+        elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            cg.alpha = Mathf.Clamp01(elapsed / duration);
+            yield return null;
+        }
+        cg.alpha = 1f;
+
+        // Remove overlay
+        Destroy(overlay);
+
+        FinalizeOpenDesktop();
+    }
+
+    private void FinalizeOpenDesktop()
+    {
         desktopOpen = true;
         if (playerMov != null)
             playerMov.movementLocked = true;

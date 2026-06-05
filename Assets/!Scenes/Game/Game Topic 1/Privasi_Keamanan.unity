@@ -4969,6 +4969,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CanvasSummaryPanel
       objectReference: {fileID: 0}
+    - target: {fileID: 5409479713633745855, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5636,8 +5640,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 619e4e86e2e151b4d8e8bdb6c898a0bf, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   startingScore: 100
   score: 0
   scoreText: {fileID: 0}
@@ -26899,7 +26903,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1698344735
 MonoBehaviour:
   m_ObjectHideFlags: 0
