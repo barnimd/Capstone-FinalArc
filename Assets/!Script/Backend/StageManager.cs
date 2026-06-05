@@ -103,6 +103,72 @@ public class StageManager : MonoBehaviour
         if (SaveSystem.Instance == null) { callback?.Invoke(false); return; }
         SaveSystem.Instance.SubmitReplayScore(stageId, score, callback);
     }
+
+    // ── Shared "stage finished → save to Neon" helper ─────────────────────────
+
+    /// <summary>
+    /// One-call stage completion save used by every topic's end-of-game point.
+    /// Clamps the score to [0, maxScore], ensures the Neon users row exists (UserSync),
+    /// then marks the stage complete (server keeps the highest score per stage).
+    /// Logs every step with the given tag. Safe no-op (logs why) if stageId is empty,
+    /// backend managers are missing, or the player isn't authenticated.
+    /// </summary>
+    public void SubmitFinalScore(string stageId, int rawScore, int maxScore = 100, string tag = "Neon")
+    {
+        if (string.IsNullOrEmpty(stageId)) return;
+
+        int finalScore = Mathf.Clamp(rawScore, 0, maxScore);
+        Debug.Log($"[{tag}] 🏁 Stage '{stageId}' selesai — final score siap (raw={rawScore}, dikirim={finalScore}). Mulai simpan...");
+
+        if (FirebaseManager.Instance == null || !FirebaseManager.Instance.IsAuthenticated)
+        {
+            Debug.LogWarning($"[{tag}] ⚠️ Save DIBATALKAN untuk '{stageId}' — belum login / FirebaseManager hilang. Skor {finalScore} cuma lokal.");
+            return;
+        }
+
+        if (APIClient.Instance != null)
+        {
+            Debug.Log($"[{tag}] 📤 Sedang menyimpan ke Vercel — langkah 1/2: sinkronisasi data user...");
+            APIClient.Instance.UserSync(FirebaseManager.Instance.Username, (ok, resp, raw) =>
+            {
+                if (ok) Debug.Log($"[{tag}] ✅ Langkah 1/2 OK — user tersinkron. Lanjut simpan hasil stage...");
+                else    Debug.LogWarning($"[{tag}] ⚠️ Langkah 1/2 (UserSync) gagal, lanjut tetap coba simpan: {raw}");
+                CompleteWithLog(stageId, finalScore, tag);
+            });
+        }
+        else
+        {
+            CompleteWithLog(stageId, finalScore, tag);
+        }
+    }
+
+    private void CompleteWithLog(string stageId, int finalScore, string tag)
+    {
+        Debug.Log($"[{tag}] 📤 Sedang menyimpan ke Vercel — langkah 2/2: kirim hasil stage '{stageId}' (score={finalScore})...");
+
+        if (APIClient.Instance != null)
+        {
+            APIClient.Instance.StageComplete(stageId, finalScore, (ok, resp, raw) =>
+            {
+                if (ok && resp != null && resp.success)
+                    Debug.Log($"[{tag}] ✅ SAVE BERHASIL MASUK DB — stage '{stageId}', finalScore={finalScore}. (Neon menyimpan skor tertinggi)");
+                else
+                    Debug.LogError($"[{tag}] ❌ SAVE GAGAL ke DB untuk stage '{stageId}' (score {finalScore}). Respon server: {raw}");
+            });
+        }
+        else if (SaveSystem.Instance != null)
+        {
+            SaveSystem.Instance.CompleteStage(stageId, finalScore, success =>
+            {
+                if (success) Debug.Log($"[{tag}] ✅ SAVE BERHASIL MASUK DB — stage '{stageId}', finalScore={finalScore}.");
+                else         Debug.LogError($"[{tag}] ❌ SAVE GAGAL ke DB untuk stage '{stageId}' — score {finalScore} cuma lokal.");
+            });
+        }
+        else
+        {
+            Debug.LogError($"[{tag}] ❌ SAVE GAGAL — APIClient & SaveSystem dua-duanya hilang. Stage '{stageId}'.");
+        }
+    }
 }
 
 // ── DTOs ────────────────────────────────────────────────────────────────────
