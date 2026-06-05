@@ -29,6 +29,12 @@ public class GameManager_Tp5 : MonoBehaviour
     [Header("=== Score ===")]
     public int scoreOnSuccess = 90;
 
+    [Header("=== Backend / Neon ===")]
+    [Tooltip("Stage ID untuk disimpan ke Neon. Topic 5 = wifi-security.")]
+    public string stageId = "wifi-security";
+    [Tooltip("Skor akhir di-clamp ke [0, maxScore] sebelum dikirim ke server.")]
+    public int maxScore = 1000;
+
     private bool _wifiDone;
     private bool _websiteDone;
 
@@ -131,9 +137,16 @@ public class GameManager_Tp5 : MonoBehaviour
         if (websiteCanvas != null) websiteCanvas.SetActive(false);
 
         if (isSuccess && ScoreManager.instance != null)
-            ScoreManager.instance.score = 90;
+            ScoreManager.instance.score = scoreOnSuccess;
         else if (ScoreManager.instance != null)
             ScoreManager.instance.score = 0;
+
+        // Simpan skor akhir ke Neon
+        int finalScore = ScoreManager.instance != null ? ScoreManager.instance.score : (isSuccess ? scoreOnSuccess : 0);
+        if (StageManager.Instance != null)
+            StageManager.Instance.SubmitFinalScore(stageId, finalScore, maxScore, "Topic5");
+        else
+            Debug.LogWarning("[GameManager_Tp5] StageManager tidak ada — skor tidak tersimpan ke Neon (cuma lokal).");
 
         if (summaryCanvas != null)
             summaryCanvas.SetActive(true);
