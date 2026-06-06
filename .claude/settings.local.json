@@ -82,7 +82,10 @@
       "Bash(curl -s -w \"\\\\nHTTP=%{http_code} time=%{time_total}s\\\\n\" --max-time 60 \"https://secmind.vercel.app/api/leaderboard?stageId=phishing&limit=5\")",
       "Bash(curl -s -o /dev/null -w \"HTTP=%{http_code} time=%{time_total}s\\\\n\" --max-time 30 https://secmind.vercel.app/)",
       "Bash(curl -s -I -w \"\\\\nHTTP=%{http_code} time=%{time_total}s\\\\n\" --max-time 30 https://secmind.vercel.app/api/stages)",
-      "Bash(nslookup secmind.vercel.app)"
+      "Bash(nslookup secmind.vercel.app)",
+      "mcp__unityMCP__manage_script",
+      "mcp__unityMCP__execute_menu_item",
+      "mcp__unityMCP__delete_script"
     ]
   },
   "enabledMcpjsonServers": [
