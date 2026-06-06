@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
+  m_Name: VNDialog_Topic4_VendingConversation
+  m_EditorClassIdentifier: 
+  playerName: Kamu
+  npcName: Dina
+  playerPortrait: {fileID: 21300000, guid: 91753b50188160e469f1596dd7b4e6be, type: 3}
+  playerTalkingPortrait: {fileID: 21300000, guid: 6f7b85b4da78fd74eb50431daa554c0f, type: 3}
+  playerThinkingPortrait: {fileID: 0}
+  playerSmilingPortrait: {fileID: 0}
+  npc2Name: Rafi
+  npcPortrait: {fileID: 21300000, guid: bf6e39962e9012a49afda18797a83373, type: 3}
+  npcTalkingPortrait: {fileID: 0}
+  npcThinkingPortrait: {fileID: 0}
+  npcSmilingPortrait: {fileID: 0}
+  npc2Portrait: {fileID: 21300000, guid: 59c7d611995e0a74cbf52cd81e5fb97b, type: 3}
+  npc2TalkingPortrait: {fileID: 0}
+  npc2ThinkingPortrait: {fileID: 0}
+  npc2SmilingPortrait: {fileID: 0}
+  background: {fileID: 21300000, guid: 740be369371e16d4791c7930a2e94a97, type: 3}
+  lines:
+  - speaker: 2
+    mood: 0
+    expression: {fileID: 0}
+    text: Di dekat vending machine, kamu mendengar dua rekan kerja sedang berbicara
+      pelan.
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 2
+    expression: {fileID: 0}
+    text: Serius, komputer pribadi kamu kena hack?
+    voiceClip: {fileID: 0}
+  - speaker: 3
+    mood: 2
+    expression: {fileID: 0}
+    text: Iya. Semalam lagi browsing, tiba-tiba muncul pop up bilang PC-ku terinfeksi
+      dan harus klik untuk memperbaiki.
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 2
+    expression: {fileID: 0}
+    text: Terus kamu klik?
+    voiceClip: {fileID: 0}
+  - speaker: 3
+    mood: 0
+    expression: {fileID: 0}
+    text: Aku panik. Aku klik Scan Now, lalu diminta install aplikasi kecil. Setelah
+      itu browser penuh iklan aneh.
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Itu jebakan. Pop up seperti itu sering cuma menakut-nakuti supaya orang
+      install malware.
+    voiceClip: {fileID: 0}
+  - speaker: 3
+    mood: 2
+    expression: {fileID: 0}
+    text: Iya, sekarang beberapa fileku berubah dan laptop jadi lambat banget.
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Lain kali tutup tabnya, jangan download apa pun, dan cek lewat antivirus
+      resmi atau minta bantuan IT.
+    voiceClip: {fileID: 0}
+  - speaker: 2
+    mood: 0
+    expression: {fileID: 0}
+    text: 'Kamu mendapat petunjuk penting: jangan percaya pop up acak, jangan install
+      aplikasi dari peringatan browser yang tidak jelas, lalu kembali ke meja.'
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 3
+    expression: {fileID: 0}
+    text: Oke, cukup jelas. Saatnya balik ke meja dan mulai browsing dengan aman.
+    voiceClip: {fileID: 0}
+  hasChoice: 0
+  acceptText: Ya
+  rejectText: Tidak
+  dialogueIfAccepted: {fileID: 0}
+  dialogueIfRejected: {fileID: 0}
+  actionID: VN_Topic4_Vending_Overheard

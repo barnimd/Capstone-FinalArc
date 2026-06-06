@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
+  m_Name: VNDialog_Topic4_Receptionist
+  m_EditorClassIdentifier: 
+  playerName: Kamu
+  npcName: Resepsionis
+  playerPortrait: {fileID: 21300000, guid: 91753b50188160e469f1596dd7b4e6be, type: 3}
+  playerTalkingPortrait: {fileID: 21300000, guid: 6f7b85b4da78fd74eb50431daa554c0f, type: 3}
+  playerThinkingPortrait: {fileID: 0}
+  playerSmilingPortrait: {fileID: 0}
+  npc2Name: 
+  npcPortrait: {fileID: 21300000, guid: bf6e39962e9012a49afda18797a83373, type: 3}
+  npcTalkingPortrait: {fileID: 0}
+  npcThinkingPortrait: {fileID: 0}
+  npcSmilingPortrait: {fileID: 0}
+  npc2Portrait: {fileID: 0}
+  npc2TalkingPortrait: {fileID: 0}
+  npc2ThinkingPortrait: {fileID: 0}
+  npc2SmilingPortrait: {fileID: 0}
+  background: {fileID: 21300000, guid: f69b27cd3056bf5408a6a1973ab1a99e, type: 3}
+  lines:
+  - speaker: 1
+    mood: 3
+    expression: {fileID: 0}
+    text: Selamat datang. Kamu yang baru ditempatkan di area kerja browser, ya?
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 0
+    expression: {fileID: 0}
+    text: Iya. Saya mau mulai, tapi masih belum yakin harus akses web dari mana dulu.
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Mulai dari cara yang aman. Ketik alamat situs resmi langsung, atau pakai
+      bookmark kantor kalau sudah disediakan.
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 2
+    expression: {fileID: 0}
+    text: Jangan asal klik iklan, link yang muncul tiba-tiba, atau pop up yang memaksa
+      kamu menekan tombol tertentu.
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 2
+    expression: {fileID: 0}
+    text: Kalau ada pop up yang bilang komputer kena virus dan harus klik sekarang?
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 0
+    expression: {fileID: 0}
+    text: Tutup dari tombol browser atau taskbar. Jangan klik tombol di dalam pop
+      up kalau tampilannya mencurigakan, apalagi sampai download aplikasi.
+    voiceClip: {fileID: 0}
+  - speaker: 1
+    mood: 3
+    expression: {fileID: 0}
+    text: Kalau lapar atau haus, vending machine ada di koridor kanan. Setelah itu
+      balik ke meja dan browsing dengan hati-hati.
+    voiceClip: {fileID: 0}
+  - speaker: 0
+    mood: 3
+    expression: {fileID: 0}
+    text: Siap. Saya ambil minum dulu, lalu kembali ke meja.
+    voiceClip: {fileID: 0}
+  hasChoice: 0
+  acceptText: Ya
+  rejectText: Tidak
+  dialogueIfAccepted: {fileID: 0}
+  dialogueIfRejected: {fileID: 0}
+  actionID: VN_Topic4_Receptionist_Clue
