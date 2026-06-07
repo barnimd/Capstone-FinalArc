@@ -59,7 +59,7 @@ public class WebsiteLoginController : MonoBehaviour
 
     private void TampilkanRound(int index)
     {
-        if (index >= _roundURLs.Count) return;
+        if (_roundURLs == null || index >= _roundURLs.Count) return;
 
         URLEntry entry = _roundURLs[index];
 
@@ -78,6 +78,8 @@ public class WebsiteLoginController : MonoBehaviour
 
     private void OnLoginClicked()
     {
+        if (_roundURLs == null || _roundURLs.Count == 0) return;
+
         URLEntry entry = _roundURLs[_currentRound];
 
         if (entry.isPhishing)
@@ -98,6 +100,8 @@ public class WebsiteLoginController : MonoBehaviour
 
     private void OnCancelClicked()
     {
+        if (_roundURLs == null || _roundURLs.Count == 0) return;
+
         URLEntry entry = _roundURLs[_currentRound];
 
         _currentRound++;
