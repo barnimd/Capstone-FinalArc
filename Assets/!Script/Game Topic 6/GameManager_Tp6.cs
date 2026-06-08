@@ -17,6 +17,7 @@ public class GameManager_Tp6 : MonoBehaviour
 
     [Header("=== Canvas ===")]
     public GameObject desktopCanvas;
+    public bool startOnSceneStart = true;
 
     [Header("=== Controllers ===")]
     public ExplorerController explorer;
@@ -45,6 +46,7 @@ public class GameManager_Tp6 : MonoBehaviour
 
     private Tp6State _state;
     private int _score;
+    private bool _started;
 
     // FIX R5: referensi ke tombol OK di feedbackPanel agar bisa di-disable saat auto-dismiss
     private Button _feedbackOkBtn;
@@ -73,9 +75,21 @@ public class GameManager_Tp6 : MonoBehaviour
 
     void Start()
     {
-        desktopCanvas.SetActive(true);
+        if (desktopCanvas) desktopCanvas.SetActive(startOnSceneStart);
         if (feedbackPanel) feedbackPanel.SetActive(false);
         if (summaryCanvas) summaryCanvas.SetActive(false);
+
+        if (startOnSceneStart)
+            BeginDesktopFlow();
+    }
+
+    public void BeginDesktopFlow()
+    {
+        if (_started)
+            return;
+
+        _started = true;
+        if (desktopCanvas) desktopCanvas.SetActive(true);
         GoToState(Tp6State.Organize);
     }
 
