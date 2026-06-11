@@ -83,6 +83,14 @@ public class GameManager_Tp6 : MonoBehaviour
             BeginDesktopFlow();
     }
 
+    void Update()
+    {
+        // Saat startOnSceneStart = false, desktopCanvas diaktifkan dari luar
+        // (InteractableTrigger tombol E). Mulai flow begitu canvas aktif.
+        if (!_started && desktopCanvas && desktopCanvas.activeInHierarchy)
+            BeginDesktopFlow();
+    }
+
     public void BeginDesktopFlow()
     {
         if (_started)
@@ -359,5 +367,13 @@ public class GameManager_Tp6 : MonoBehaviour
     }
 
     void Add(int v) { _score += v; }
-    void SetObj(string t) { if (objectiveUI) objectiveUI.ShowObjective(t); }
+    void SetObj(string t)
+    {
+        if (!objectiveUI) return;
+        // ObjectiveUI bisa dalam keadaan nonaktif (mis. belum pernah dibuka /
+        // dimatikan di akhir game) — aktifkan dulu agar coroutine-nya bisa jalan.
+        if (!objectiveUI.gameObject.activeSelf)
+            objectiveUI.gameObject.SetActive(true);
+        objectiveUI.ShowObjective(t);
+    }
 }

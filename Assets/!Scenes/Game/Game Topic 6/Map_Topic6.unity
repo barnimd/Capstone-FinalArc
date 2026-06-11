@@ -15367,7 +15367,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1db263131e39db4d9e6439aab15baee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueManager: {fileID: 793439679}
 --- !u!114 &793439682
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25852,7 +25851,7 @@ Transform:
   m_GameObject: {fileID: 1494225119}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.1111107, y: 6, z: -10}
+  m_LocalPosition: {x: 5.1157026, y: 6, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -26130,11 +26129,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eac44aedb717c034eb0f7fcf565462d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  morningGreetingNpc: {fileID: 816490}
-  backupStoryNpc: {fileID: 258334927}
-  workComputer: {fileID: 1744281531}
-  legacyComputerTrigger: {fileID: 1744281530}
-  objectiveUI: {fileID: 2016070598}
 --- !u!4 &1523084155
 Transform:
   m_ObjectHideFlags: 0
@@ -29546,7 +29540,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1718793612
 RectTransform:
   m_ObjectHideFlags: 0
@@ -30041,7 +30035,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1744281527}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9bc3ae6f28ced94783413c1cd169682, type: 3}
   m_Name: 
@@ -30063,10 +30057,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e329950d772551e4dace199c7efe9572, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasToOpen: {fileID: 588240837}
-  playerMovement: {fileID: 632404068}
-  gameManager: {fileID: 1565576518}
-  unlocked: 0
 --- !u!1 &1745027891
 GameObject:
   m_ObjectHideFlags: 0
