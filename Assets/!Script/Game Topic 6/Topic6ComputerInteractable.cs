@@ -39,6 +39,11 @@ public class Topic6ComputerInteractable : MonoBehaviour, IInteractable
 
         if (playerMovement != null)
             playerMovement.CanMove = false;
+
+        // Sembunyikan prompt "Tekan E" selama desktop terbuka
+        var prompt = FindObjectOfType<InteractionPromptUI>();
+        if (prompt != null)
+            prompt.HidePrompt();
     }
 
     public void CloseInteraction()

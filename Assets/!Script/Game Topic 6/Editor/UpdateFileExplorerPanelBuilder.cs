@@ -237,6 +237,63 @@ public static class UpdateFileExplorerPanelBuilder
         return fi;
     }
 
+    /// <summary>
+    /// Membangun panel prompt interaksi "[E] ..." gaya lama untuk sistem baru
+    /// (PlayerInteraction + InteractionPromptUI). Bottom-center, auto-hide saat Awake.
+    /// </summary>
+    [MenuItem("Tools/Topic6/Build InteractionPromptUI")]
+    public static void BuildInteractionPrompt()
+    {
+        // hapus yang lama jika ada
+        var existing = Object.FindObjectOfType<InteractionPromptUI>(true);
+        if (existing != null) Object.DestroyImmediate(existing.gameObject);
+
+        // root canvas
+        var canvasGo = new GameObject("InteractionPromptCanvas", typeof(RectTransform));
+        var canvas = canvasGo.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 500;
+        var scaler = canvasGo.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+        scaler.matchWidthOrHeight = 0.5f;
+
+        // panel bottom-center
+        GameObject panel = MakeGO("PromptPanel", canvasGo.transform);
+        var pr = panel.GetComponent<RectTransform>();
+        pr.anchorMin = new Vector2(0.5f, 0);
+        pr.anchorMax = new Vector2(0.5f, 0);
+        pr.pivot = new Vector2(0.5f, 0);
+        pr.anchoredPosition = new Vector2(0, 48);
+        pr.sizeDelta = new Vector2(520, 64);
+        AddMP(panel, new Color(0f, 0f, 0f, 0.78f), new Vector4(12, 12, 12, 12));
+
+        // kotak tombol "E"
+        GameObject keyBox = MakeGO("KeyBox", panel.transform);
+        SetRect(keyBox, new Vector2(0, 0.5f), new Vector2(0, 0.5f), new Vector2(12, -20), new Vector2(52, 20));
+        AddMP(keyBox, new Color(1f, 0.85f, 0.3f, 1f), new Vector4(8, 8, 8, 8));
+        GameObject keyLbl = MakeGO("KeyText", keyBox.transform);
+        SetRect(keyLbl, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+        AddText(keyLbl, "E", 22, new Color(0.1f, 0.1f, 0.1f, 1f), TextAlignmentOptions.Center, true);
+
+        // teks prompt (diisi dinamis oleh InteractionPromptUI.ShowPrompt)
+        GameObject promptTxt = MakeGO("PromptText", panel.transform);
+        SetRect(promptTxt, Vector2.zero, Vector2.one, new Vector2(64, 0), new Vector2(-16, 0));
+        TextMeshProUGUI txt = AddText(promptTxt, "Tekan E untuk berinteraksi", 20, Color.white, TextAlignmentOptions.MidlineLeft, false);
+
+        // pasang & wire InteractionPromptUI
+        var ui = canvasGo.AddComponent<InteractionPromptUI>();
+        var so = new SerializedObject(ui);
+        so.FindProperty("promptPanel").objectReferenceValue = panel;
+        so.FindProperty("promptText").objectReferenceValue = txt;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        EditorUtility.SetDirty(canvasGo);
+        EditorSceneManager.MarkSceneDirty(canvasGo.scene);
+        EditorSceneManager.SaveScene(canvasGo.scene);
+        Debug.Log("[Builder] InteractionPromptCanvas dibuat & scene disimpan.");
+    }
+
     // ── helpers ──
     static GameObject MakeGO(string name, Transform parent)
     {
