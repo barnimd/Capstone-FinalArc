@@ -161,7 +161,7 @@ public class DashboardPopupController : MonoBehaviour
         string detail = "";
         for (int i = 0; i < _popupQueue.Count; i++)
         {
-            string icon = _playerAnswers[i] ? "✓" : "✗";
+            string icon = _playerAnswers[i] ? "[OK]" : "[X]";
             detail += $"{icon} {_popupQueue[i].title}\n";
         }
         txtResultDetail.text = detail;
