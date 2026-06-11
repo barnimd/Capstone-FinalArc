@@ -26,18 +26,22 @@ MonoBehaviour:
     wrongActionLabel: Bersihkan Sekarang
     explanation: 'Ini popup phishing. System warning asli tidak akan meminta kamu
       klik tombol "Bersihkan" dari browser. '
-  - title: Critical Browser Update Required
-    message: 'Chrome versi Anda sudah kadaluarsa!
+  - title: PERINGATAN KEAMANAN KRITIS
+    message: 'Windows Defender telah mendeteksi 5 ancaman pada komputer Anda.
 
-      Download update terbaru
-      sekarang untuk melanjutkan browsing dengan aman.
+      Trojan:CoinMiner
 
-      Versi: 132.0.xxxx'
+      Adware:RelevantKnowledge
+
+      Spyware:KeyLogger
+
+      Klik
+      "Pindai Sekarang" untuk menghapus ancaman ini segera.'
     isPhishing: 1
     correctActionLabel: Tutup
-    wrongActionLabel: Download Update
-    explanation: 'Ini popup phishing. Chrome mengupdate otomatis di background tanpa
-      popup seperti ini. '
+    wrongActionLabel: Pindai Sekarang
+    explanation: Ini adalah popup antivirus palsu. Notifikasi Windows Defender yang
+      asli muncul melalui aplikasi Keamanan Windows, bukan sebagai popup di browser.
   - title: SELAMAT! Anda Pemenang!
     message: 'Anda terpilih sebagai pemenang iPhone 15!
 
@@ -52,7 +56,7 @@ MonoBehaviour:
     message: 'Akun Microsoft Anda telah dibobol dari lokasi asing!
 
       Hubungi
-      segera: 1-800-555-0199
+      segera: +62-8xxx-xxxx
 
       Teknisi kami siap membantu memulihkan akun Anda.'
     isPhishing: 1
@@ -91,14 +95,14 @@ MonoBehaviour:
     message: 'Beberapa fitur aplikasi ini diblokir oleh Windows Firewall.
 
       Nama:
-      Java Runtime Environment
+      Microsoft Teams
 
-      Publisher: Oracle Corporation
+      Publisher: Microsoft Corporation
 
-      Path:
-      C:\Program Files\Java\...'
+      Izinkan aplikasi
+      ini berkomunikasi melalui jaringan.'
     isPhishing: 0
-    correctActionLabel: Izinkan
+    correctActionLabel: Izinkan Akses
     wrongActionLabel: Blokir
     explanation: Ini popup system asli. Firewall Windows akan meminta izin saat aplikasi
       mencoba mengakses jaringan.

@@ -1866,7 +1866,9 @@ MonoBehaviour:
   summaryPanel: {fileID: 1356547235}
   levelCompleteText: {fileID: 1356547239}
   scoreText: {fileID: 1356547237}
-  timeText: {fileID: 1356547238}
+  timeText: {fileID: 0}
+  stageId: 
+  maxScore: 100
 --- !u!4 &306037910
 Transform:
   m_ObjectHideFlags: 0
@@ -1911,6 +1913,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 619e4e86e2e151b4d8e8bdb6c898a0bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startingScore: 0
   score: 0
   scoreText: {fileID: 1356547237}
 --- !u!4 &346708107
@@ -6799,17 +6802,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1356547238 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4863880720639456251, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
-  m_PrefabInstance: {fileID: 1356547234}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1356547239 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 271749845340500006, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
@@ -9940,7 +9932,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 39}
-  m_SizeDelta: {x: 300, y: 150}
+  m_SizeDelta: {x: 400, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1987963250
 CanvasRenderer:
