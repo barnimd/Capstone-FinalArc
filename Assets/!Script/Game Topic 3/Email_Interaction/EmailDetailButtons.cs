@@ -64,9 +64,9 @@ public class EmailDetailButtons : MonoBehaviour
                     EmailManager.Instance.RecordDecision(PlayerAction.Balas, phishing);
 
                 if (phishing)
-                    TampilHasil("⚠️ Kamu telah membalas email Phishing!\nLain kali harap lebih berhati-hati.");
+                    TampilHasil("Kamu telah membalas email Phishing!\nLain kali harap lebih berhati-hati.");
                 else
-                    TampilHasil("✅ Balasan terkirim.\nEmail ini adalah email normal.");
+                    TampilHasil("Balasan terkirim.\nEmail ini adalah email normal.");
             }
         );
     }
@@ -84,7 +84,7 @@ public class EmailDetailButtons : MonoBehaviour
                 if (EmailManager.Instance != null)
                     EmailManager.Instance.RecordDecision(PlayerAction.Hapus, phishing);
 
-                TampilHasil("🗑️ Email telah dihapus.");
+                TampilHasil("Email telah dihapus.");
             }
         );
     }
@@ -103,9 +103,9 @@ public class EmailDetailButtons : MonoBehaviour
                     EmailManager.Instance.RecordDecision(PlayerAction.Laporkan, phishing);
 
                 if (phishing)
-                    TampilHasil("✅ Benar! Ini adalah email Phishing.\nTerima kasih sudah melaporkannya!");
+                    TampilHasil("Benar! Ini adalah email Phishing.\nTerima kasih sudah melaporkannya!");
                 else
-                    TampilHasil("⚠️ Email ini sebenarnya normal.\nLain kali periksa lebih teliti.");
+                    TampilHasil("Email ini sebenarnya normal.\nLain kali periksa lebih teliti.");
             }
         );
     }
