@@ -6,6 +6,7 @@ public class Topic6ComputerInteractable : MonoBehaviour, IInteractable
     [SerializeField] private Canvas canvasToOpen;
     [SerializeField] private TopDownPlayerMovement playerMovement;
     [SerializeField] private GameManager_Tp6 gameManager;
+    [SerializeField] private Topic6ProgressionController progression;
     [SerializeField] private bool unlocked;
 
     public string InteractionPrompt => unlocked
@@ -31,6 +32,11 @@ public class Topic6ComputerInteractable : MonoBehaviour, IInteractable
 
         if (playerMovement == null && interactor != null)
             playerMovement = interactor.GetComponentInParent<TopDownPlayerMovement>();
+
+        if (progression == null)
+            progression = FindObjectOfType<Topic6ProgressionController>();
+
+        progression?.BeginComputerInteraction();
 
         if (gameManager != null)
             gameManager.BeginDesktopFlow();

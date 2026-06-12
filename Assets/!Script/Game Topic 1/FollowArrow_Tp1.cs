@@ -38,8 +38,14 @@ public class FollowArrow_Tp1 : MonoBehaviour
     public ArrowDisplayMode displayMode = ArrowDisplayMode.FixedHud;
     [Tooltip("Distance in pixels kept between a screen-edge arrow and the edge of the canvas.")]
     public float screenEdgeMargin = 52f;
+    [Tooltip("Extra canvas-space inset for left, bottom, right, and top edges.")]
+    public Vector4 screenEdgeInsets = Vector4.zero;
     [Tooltip("Hide the screen-edge arrow while the target is already visible.")]
     public bool hideWhenTargetVisible = true;
+    [Tooltip("When the target is visible, show the arrow as a marker above it instead of keeping it at the screen edge.")]
+    public bool pinToVisibleTarget;
+    public Vector2 visibleTargetOffset = new Vector2(0f, 44f);
+    public float visibleTargetRotation = 180f;
     [Tooltip("Hide the screen-edge arrow when the player is this close to the target. Set to 0 to disable.")]
     public float hideWithinWorldDistance = 1.5f;
 
@@ -159,10 +165,30 @@ public class FollowArrow_Tp1 : MonoBehaviour
                           && Vector2.Distance(player.position, target.position) <= hideWithinWorldDistance;
 
         if (arrowImage != null)
-            arrowImage.enabled = !(playerNear || (hideWhenTargetVisible && targetVisible));
+            arrowImage.enabled = !(playerNear || (hideWhenTargetVisible && targetVisible && !pinToVisibleTarget));
 
-        if (playerNear || (hideWhenTargetVisible && targetVisible))
+        if (playerNear || (hideWhenTargetVisible && targetVisible && !pinToVisibleTarget))
             return;
+
+        Canvas canvas = GetComponentInParent<Canvas>();
+        RectTransform canvasRect = canvas != null ? canvas.GetComponent<RectTransform>() : null;
+        if (canvasRect == null)
+            return;
+
+        GetNavigationBounds(canvasRect, out Vector2 boundsMin, out Vector2 boundsMax);
+
+        if (targetVisible && pinToVisibleTarget)
+        {
+            Camera eventCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _cam;
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    canvasRect, targetScreen3, eventCamera, out Vector2 localTarget))
+            {
+                _rect.anchoredPosition = ClampToBounds(localTarget + visibleTargetOffset, boundsMin, boundsMax);
+                _rect.localRotation = Quaternion.Euler(0f, 0f, visibleTargetRotation);
+            }
+
+            return;
+        }
 
         // Screen-edge indicators should point from the visible screen centre,
         // not from the player's on-screen position. The player can be offset
@@ -175,26 +201,37 @@ public class FollowArrow_Tp1 : MonoBehaviour
 
         direction.Normalize();
 
-        Canvas canvas = GetComponentInParent<Canvas>();
-        RectTransform canvasRect = canvas != null ? canvas.GetComponent<RectTransform>() : null;
-        if (canvasRect != null)
-        {
-            Vector2 halfCanvas = canvasRect.rect.size * 0.5f;
-            Vector2 halfArrow = _rect.rect.size * 0.5f;
-            Vector2 usable = new Vector2(
-                Mathf.Max(1f, halfCanvas.x - screenEdgeMargin - halfArrow.x),
-                Mathf.Max(1f, halfCanvas.y - screenEdgeMargin - halfArrow.y));
-            float scaleX = Mathf.Abs(direction.x) > 0.001f
-                ? usable.x / Mathf.Abs(direction.x)
-                : float.MaxValue;
-            float scaleY = Mathf.Abs(direction.y) > 0.001f
-                ? usable.y / Mathf.Abs(direction.y)
-                : float.MaxValue;
-            _rect.anchoredPosition = direction * Mathf.Min(scaleX, scaleY);
-        }
+        Vector2 boundsCenter = (boundsMin + boundsMax) * 0.5f;
+        Vector2 usable = (boundsMax - boundsMin) * 0.5f;
+        float scaleX = Mathf.Abs(direction.x) > 0.001f
+            ? usable.x / Mathf.Abs(direction.x)
+            : float.MaxValue;
+        float scaleY = Mathf.Abs(direction.y) > 0.001f
+            ? usable.y / Mathf.Abs(direction.y)
+            : float.MaxValue;
+        _rect.anchoredPosition = boundsCenter + direction * Mathf.Min(scaleX, scaleY);
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f + rotationOffset;
         _rect.localRotation = Quaternion.Euler(0f, 0f, angle);
+    }
+
+    private void GetNavigationBounds(RectTransform canvasRect, out Vector2 boundsMin, out Vector2 boundsMax)
+    {
+        Vector2 halfArrow = _rect.rect.size * 0.5f;
+        Rect canvasBounds = canvasRect.rect;
+        boundsMin = new Vector2(
+            canvasBounds.xMin + screenEdgeMargin + screenEdgeInsets.x + halfArrow.x,
+            canvasBounds.yMin + screenEdgeMargin + screenEdgeInsets.y + halfArrow.y);
+        boundsMax = new Vector2(
+            canvasBounds.xMax - screenEdgeMargin - screenEdgeInsets.z - halfArrow.x,
+            canvasBounds.yMax - screenEdgeMargin - screenEdgeInsets.w - halfArrow.y);
+    }
+
+    private static Vector2 ClampToBounds(Vector2 position, Vector2 boundsMin, Vector2 boundsMax)
+    {
+        return new Vector2(
+            Mathf.Clamp(position.x, boundsMin.x, boundsMax.x),
+            Mathf.Clamp(position.y, boundsMin.y, boundsMax.y));
     }
 
     private void RotateTowardTarget()
