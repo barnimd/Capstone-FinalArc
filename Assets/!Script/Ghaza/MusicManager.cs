@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Persistent background music manager. Lives across all scenes (DontDestroyOnLoad).
@@ -57,6 +58,24 @@ public class MusicManager : MonoBehaviour
 
         if (defaultClip != null)
             Play(defaultClip);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this)
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    // Scene tanpa SceneMusicOverride dianggap scene tanpa BGM (menu, login, dst.)
+    // → musik topic yang kebawa dari scene sebelumnya di-fade-out.
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (mode != LoadSceneMode.Single) return;
+
+        if (FindObjectOfType<SceneMusicOverride>() == null && audioSource.isPlaying)
+            FadeOut();
     }
 
     // ── Public API ───────────────────────────────────────────────────────────
