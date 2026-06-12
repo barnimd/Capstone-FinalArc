@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -28,15 +29,18 @@ public class MainMenuController : MonoBehaviour
     public int leaderboardLimit = 10;
 
     [Header("Page migration flags (toggle when each page is ported)")]
-    public bool dashboardMigrated   = true;
-    public bool classMigrated       = true;
-    public bool profileMigrated     = true;
+    public bool dashboardMigrated = true;
+    public bool classMigrated = true;
+    public bool profileMigrated = true;
     public bool leaderboardMigrated = true;
-    public bool settingsMigrated    = false;
-    public bool helpMigrated        = true;
+    public bool settingsMigrated = false;
+    public bool helpMigrated = true;
 
     [Header("Dashboard slides (drag banners or auto-loaded)")]
     public Sprite[] dashboardSlides;
+
+    [Header("Auto Slide Settings")]
+    public float slideInterval = 3f;
 
     private UIDocument _document;
     private VisualElement _root;
@@ -61,41 +65,42 @@ public class MainMenuController : MonoBehaviour
     // Class page
     private VisualElement _unlockedGrid;
     private VisualElement _lockedGrid;
-    private bool          _classCardsBuilt;
+    private bool _classCardsBuilt;
 
     // Dashboard page
     private VisualElement _slideshowImage;
-    private Button        _slideshowPrev;
-    private Button        _slideshowNext;
+    private Button _slideshowPrev;
+    private Button _slideshowNext;
     private VisualElement _slideshowDots;
-    private int           _slideIndex;
-    private bool          _dashboardWired;
+    private int _slideIndex;
+    private bool _dashboardWired;
+    private Coroutine _autoSlideCoroutine;
 
     // Help page
     private VisualElement _faqList;
     private VisualElement _comingSoonModal;
-    private Label         _modalDesc;
-    private bool          _helpWired;
+    private Label _modalDesc;
+    private bool _helpWired;
 
     // Profile page
-    private Label         _profileGreeting;
-    private Label         _profileAvatarText;
-    private Label         _profileName;
-    private Label         _profileMeta;
-    private Label         _profileLevelCleared;
-    private Label         _profileAchievements;
-    private Label         _profilePlaytime;
-    private Label         _profileRank;
+    private Label _profileGreeting;
+    private Label _profileAvatarText;
+    private Label _profileName;
+    private Label _profileMeta;
+    private Label _profileLevelCleared;
+    private Label _profileAchievements;
+    private Label _profilePlaytime;
+    private Label _profileRank;
     private VisualElement _courseProgressList;
     private VisualElement _gameProgressList;
-    private bool          _profilePopulated;
+    private bool _profilePopulated;
 
     private string _currentPage = "dashboard";
 
     void OnEnable()
     {
         _document = GetComponent<UIDocument>();
-        _root     = _document.rootVisualElement;
+        _root = _document.rootVisualElement;
         if (_root == null)
         {
             Debug.LogWarning("[MainMenuController] rootVisualElement is null");
@@ -103,79 +108,88 @@ public class MainMenuController : MonoBehaviour
         }
 
         // Sidebar buttons
-        _btnDashboard   = _root.Q<Button>("btn-dashboard");
-        _btnClass       = _root.Q<Button>("btn-class");
-        _btnProfile     = _root.Q<Button>("btn-profile");
+        _btnDashboard = _root.Q<Button>("btn-dashboard");
+        _btnClass = _root.Q<Button>("btn-class");
+        _btnProfile = _root.Q<Button>("btn-profile");
         _btnLeaderboard = _root.Q<Button>("btn-leaderboard");
-        _btnSettings    = _root.Q<Button>("btn-settings");
-        _btnHelp        = _root.Q<Button>("btn-help");
+        _btnSettings = _root.Q<Button>("btn-settings");
+        _btnHelp = _root.Q<Button>("btn-help");
 
         // Pages
-        _pageDashboard   = _root.Q<VisualElement>("page-dashboard");
-        _pageClass       = _root.Q<VisualElement>("page-class");
-        _pageProfile     = _root.Q<VisualElement>("page-profile");
+        _pageDashboard = _root.Q<VisualElement>("page-dashboard");
+        _pageClass = _root.Q<VisualElement>("page-class");
+        _pageProfile = _root.Q<VisualElement>("page-profile");
         _pageLeaderboard = _root.Q<VisualElement>("page-leaderboard");
-        _pageSettings    = _root.Q<VisualElement>("page-settings");
-        _pageHelp        = _root.Q<VisualElement>("page-help");
+        _pageSettings = _root.Q<VisualElement>("page-settings");
+        _pageHelp = _root.Q<VisualElement>("page-help");
 
         // Leaderboard sub-refs
-        _yourRankValue    = _root.Q<Label>("your-rank-value");
+        _yourRankValue = _root.Q<Label>("your-rank-value");
         _yourRankSubtitle = _root.Q<Label>("your-rank-subtitle");
-        _yourBestValue    = _root.Q<Label>("your-best-value");
+        _yourBestValue = _root.Q<Label>("your-best-value");
         _yourBestSubtitle = _root.Q<Label>("your-best-subtitle");
-        _topScoreValue    = _root.Q<Label>("top-score-value");
+        _topScoreValue = _root.Q<Label>("top-score-value");
         _topScoreSubtitle = _root.Q<Label>("top-score-subtitle");
-        _rowList          = _root.Q<ScrollView>("row-list");
+        _rowList = _root.Q<ScrollView>("row-list");
 
-        _tabGlobal  = _root.Q<Button>("tab-global");
+        _tabGlobal = _root.Q<Button>("tab-global");
         _tabFriends = _root.Q<Button>("tab-friends");
-        _tabWeek    = _root.Q<Button>("tab-week");
+        _tabWeek = _root.Q<Button>("tab-week");
 
         // Navbar
-        _navbarGreeting    = _root.Q<Label>("navbar-greeting");
+        _navbarGreeting = _root.Q<Label>("navbar-greeting");
         _navbarProfileText = _root.Q<Label>("navbar-profile-text");
 
         // Dashboard slideshow refs
         _slideshowImage = _root.Q<VisualElement>("slideshow-image");
-        _slideshowPrev  = _root.Q<Button>("slideshow-prev");
-        _slideshowNext  = _root.Q<Button>("slideshow-next");
-        _slideshowDots  = _root.Q<VisualElement>("slideshow-dots");
-        if (_slideshowPrev != null) _slideshowPrev.clicked += PrevSlide;
-        if (_slideshowNext != null) _slideshowNext.clicked += NextSlide;
+        _slideshowPrev = _root.Q<Button>("slideshow-prev");
+        _slideshowNext = _root.Q<Button>("slideshow-next");
+        _slideshowDots = _root.Q<VisualElement>("slideshow-dots");
+
+        // Wire slideshow buttons (separate methods so RestartAutoSlide only fires on manual click)
+        if (_slideshowPrev != null) _slideshowPrev.clicked += OnPrevClicked;
+        if (_slideshowNext != null) _slideshowNext.clicked += OnNextClicked;
 
         // Class page grids
         _unlockedGrid = _root.Q<VisualElement>("unlocked-grid");
-        _lockedGrid   = _root.Q<VisualElement>("locked-grid");
+        _lockedGrid = _root.Q<VisualElement>("locked-grid");
 
         // Profile page refs
-        _profileGreeting     = _root.Q<Label>("profile-greeting");
-        _profileAvatarText   = _root.Q<Label>("profile-avatar-text");
-        _profileName         = _root.Q<Label>("profile-name");
-        _profileMeta         = _root.Q<Label>("profile-meta");
+        _profileGreeting = _root.Q<Label>("profile-greeting");
+        _profileAvatarText = _root.Q<Label>("profile-avatar-text");
+        _profileName = _root.Q<Label>("profile-name");
+        _profileMeta = _root.Q<Label>("profile-meta");
         _profileLevelCleared = _root.Q<Label>("profile-level-cleared");
         _profileAchievements = _root.Q<Label>("profile-achievements");
-        _profilePlaytime     = _root.Q<Label>("profile-playtime");
-        _profileRank         = _root.Q<Label>("profile-rank");
-        _courseProgressList  = _root.Q<VisualElement>("course-progress-list");
-        _gameProgressList    = _root.Q<VisualElement>("game-progress-list");
+        _profilePlaytime = _root.Q<Label>("profile-playtime");
+        _profileRank = _root.Q<Label>("profile-rank");
+        _courseProgressList = _root.Q<VisualElement>("course-progress-list");
+        _gameProgressList = _root.Q<VisualElement>("game-progress-list");
 
-        // Wire button clicks
-        if (_btnDashboard   != null) _btnDashboard.clicked   += () => ShowPage("dashboard");
-        if (_btnClass       != null) _btnClass.clicked       += () => ShowPage("class");
-        if (_btnProfile     != null) _btnProfile.clicked     += () => ShowPage("profile");
+        // Wire sidebar button clicks
+        if (_btnDashboard != null) _btnDashboard.clicked += () => ShowPage("dashboard");
+        if (_btnClass != null) _btnClass.clicked += () => ShowPage("class");
+        if (_btnProfile != null) _btnProfile.clicked += () => ShowPage("profile");
         if (_btnLeaderboard != null) _btnLeaderboard.clicked += () => ShowPage("leaderboard");
-        if (_btnSettings    != null) _btnSettings.clicked    += () => ShowPage("settings");
-        if (_btnHelp        != null) _btnHelp.clicked        += () => ShowPage("help");
+        if (_btnSettings != null) _btnSettings.clicked += () => ShowPage("settings");
+        if (_btnHelp != null) _btnHelp.clicked += () => ShowPage("help");
 
-        if (_tabGlobal  != null) _tabGlobal.clicked  += () => SelectFilterTab(_tabGlobal);
+        if (_tabGlobal != null) _tabGlobal.clicked += () => SelectFilterTab(_tabGlobal);
         if (_tabFriends != null) _tabFriends.clicked += () => { SelectFilterTab(_tabFriends); Debug.Log("[MainMenuController] Friends tab — not implemented"); };
-        if (_tabWeek    != null) _tabWeek.clicked    += () => { SelectFilterTab(_tabWeek);    Debug.Log("[MainMenuController] This Week tab — not implemented"); };
+        if (_tabWeek != null) _tabWeek.clicked += () => { SelectFilterTab(_tabWeek); Debug.Log("[MainMenuController] This Week tab — not implemented"); };
 
         UpdateNavbarGreeting();
 
         // Default to dashboard
         ShowPage(_currentPage);
     }
+
+    void OnDisable()
+    {
+        StopAutoSlide();
+    }
+
+    // ── Navbar ──────────────────────────────────────────────────────────────
 
     private void UpdateNavbarGreeting()
     {
@@ -196,6 +210,8 @@ public class MainMenuController : MonoBehaviour
         return char.ToUpper(s[0]) + s.Substring(1);
     }
 
+    // ── Page routing ────────────────────────────────────────────────────────
+
     public void ShowPage(string pageName)
     {
         _currentPage = pageName;
@@ -213,10 +229,10 @@ public class MainMenuController : MonoBehaviour
 
         // 3. Hide all old uGUI canvases
         if (canvasDashboard != null) canvasDashboard.SetActive(false);
-        if (canvasClass     != null) canvasClass.SetActive(false);
-        if (canvasProfile   != null) canvasProfile.SetActive(false);
-        if (canvasSettings  != null) canvasSettings.SetActive(false);
-        if (canvasGetHelp   != null) canvasGetHelp.SetActive(false);
+        if (canvasClass != null) canvasClass.SetActive(false);
+        if (canvasProfile != null) canvasProfile.SetActive(false);
+        if (canvasSettings != null) canvasSettings.SetActive(false);
+        if (canvasGetHelp != null) canvasGetHelp.SetActive(false);
 
         // 4. Show the target page (UXML if migrated, else activate old canvas)
         switch (pageName)
@@ -226,11 +242,16 @@ public class MainMenuController : MonoBehaviour
                 {
                     ShowElement(_pageDashboard);
                     SetupDashboardIfNeeded();
+                    // Resume auto-slide if not already running
+                    if (_autoSlideCoroutine == null && dashboardSlides != null && dashboardSlides.Length > 1)
+                        _autoSlideCoroutine = StartCoroutine(AutoSlideCoroutine());
                 }
                 else if (canvasDashboard != null) canvasDashboard.SetActive(true);
                 else ShowElement(_pageDashboard);
                 break;
+
             case "class":
+                StopAutoSlide();
                 if (classMigrated)
                 {
                     ShowElement(_pageClass);
@@ -239,7 +260,9 @@ public class MainMenuController : MonoBehaviour
                 else if (canvasClass != null) canvasClass.SetActive(true);
                 else ShowElement(_pageClass);
                 break;
+
             case "profile":
+                StopAutoSlide();
                 if (profileMigrated)
                 {
                     ShowElement(_pageProfile);
@@ -248,16 +271,22 @@ public class MainMenuController : MonoBehaviour
                 else if (canvasProfile != null) canvasProfile.SetActive(true);
                 else ShowElement(_pageProfile);
                 break;
+
             case "leaderboard":
+                StopAutoSlide();
                 ShowElement(_pageLeaderboard);
                 RefreshLeaderboard();
                 break;
+
             case "settings":
+                StopAutoSlide();
                 if (settingsMigrated) ShowElement(_pageSettings);
                 else if (canvasSettings != null) canvasSettings.SetActive(true);
                 else ShowElement(_pageSettings);
                 break;
+
             case "help":
+                StopAutoSlide();
                 if (helpMigrated)
                 {
                     ShowElement(_pageHelp);
@@ -271,19 +300,19 @@ public class MainMenuController : MonoBehaviour
 
     private void SetActiveButton(string pageName)
     {
-        SetButtonActive(_btnDashboard,   pageName == "dashboard");
-        SetButtonActive(_btnClass,       pageName == "class");
-        SetButtonActive(_btnProfile,     pageName == "profile");
+        SetButtonActive(_btnDashboard, pageName == "dashboard");
+        SetButtonActive(_btnClass, pageName == "class");
+        SetButtonActive(_btnProfile, pageName == "profile");
         SetButtonActive(_btnLeaderboard, pageName == "leaderboard");
-        SetButtonActive(_btnSettings,    pageName == "settings");
-        SetButtonActive(_btnHelp,        pageName == "help");
+        SetButtonActive(_btnSettings, pageName == "settings");
+        SetButtonActive(_btnHelp, pageName == "help");
     }
 
     private void SetButtonActive(Button btn, bool isActive)
     {
         if (btn == null) return;
         if (isActive) btn.AddToClassList("active");
-        else          btn.RemoveFromClassList("active");
+        else btn.RemoveFromClassList("active");
     }
 
     private void ShowElement(VisualElement el) { if (el != null) el.RemoveFromClassList("hidden"); }
@@ -303,9 +332,9 @@ public class MainMenuController : MonoBehaviour
 
     private void SelectFilterTab(Button selected)
     {
-        if (_tabGlobal  != null) _tabGlobal.RemoveFromClassList("active");
+        if (_tabGlobal != null) _tabGlobal.RemoveFromClassList("active");
         if (_tabFriends != null) _tabFriends.RemoveFromClassList("active");
-        if (_tabWeek    != null) _tabWeek.RemoveFromClassList("active");
+        if (_tabWeek != null) _tabWeek.RemoveFromClassList("active");
         if (selected != null) selected.AddToClassList("active");
     }
 
@@ -327,7 +356,7 @@ public class MainMenuController : MonoBehaviour
 
         string myUid = FirebaseManager.Instance != null ? FirebaseManager.Instance.LocalId : null;
 
-        if (_topScoreValue    != null) _topScoreValue.text    = entries[0].score.ToString();
+        if (_topScoreValue != null) _topScoreValue.text = entries[0].score.ToString();
         if (_topScoreSubtitle != null) _topScoreSubtitle.text = $"by {entries[0].displayName}";
 
         GlobalLeaderboardEntryDTO mine = !string.IsNullOrEmpty(myUid)
@@ -336,16 +365,16 @@ public class MainMenuController : MonoBehaviour
 
         if (mine != null)
         {
-            if (_yourRankValue    != null) _yourRankValue.text    = "#" + mine.rank;
+            if (_yourRankValue != null) _yourRankValue.text = "#" + mine.rank;
             if (_yourRankSubtitle != null) _yourRankSubtitle.text = $"out of {entries.Length} players";
-            if (_yourBestValue    != null) _yourBestValue.text    = mine.score.ToString();
+            if (_yourBestValue != null) _yourBestValue.text = mine.score.ToString();
             if (_yourBestSubtitle != null) _yourBestSubtitle.text = mine.bestStageName;
         }
         else
         {
-            if (_yourRankValue    != null) _yourRankValue.text    = "—";
+            if (_yourRankValue != null) _yourRankValue.text = "—";
             if (_yourRankSubtitle != null) _yourRankSubtitle.text = "not on leaderboard yet";
-            if (_yourBestValue    != null) _yourBestValue.text    = "—";
+            if (_yourBestValue != null) _yourBestValue.text = "—";
             if (_yourBestSubtitle != null) _yourBestSubtitle.text = "no completion yet";
         }
 
@@ -374,20 +403,20 @@ public class MainMenuController : MonoBehaviour
         if (_helpWired) return;
         if (_pageHelp == null) return;
 
-        _faqList         = _pageHelp.Q<VisualElement>("help-faq-list");
+        _faqList = _pageHelp.Q<VisualElement>("help-faq-list");
         _comingSoonModal = _pageHelp.Q<VisualElement>("coming-soon-modal");
-        _modalDesc       = _pageHelp.Q<Label>("modal-desc");
+        _modalDesc = _pageHelp.Q<Label>("modal-desc");
 
         Debug.Log($"[MainMenuController] Help refs: faqList={_faqList != null} modal={_comingSoonModal != null} modalDesc={_modalDesc != null}");
 
         // Wire 3 topic cards + contact button + search → show modal
-        WireComingSoon(_pageHelp.Q<Button>("help-topic-1"),    "Detail panduan 'How to play' belum tersedia.");
-        WireComingSoon(_pageHelp.Q<Button>("help-topic-2"),    "Detail 'Account & login' belum tersedia.");
-        WireComingSoon(_pageHelp.Q<Button>("help-topic-3"),    "Form 'Report a bug' belum tersedia.");
-        WireComingSoon(_pageHelp.Q<Button>("help-contact-btn"),"Live chat dengan SecMind team belum tersedia.");
+        WireComingSoon(_pageHelp.Q<Button>("help-topic-1"), "Detail panduan 'How to play' belum tersedia.");
+        WireComingSoon(_pageHelp.Q<Button>("help-topic-2"), "Detail 'Account & login' belum tersedia.");
+        WireComingSoon(_pageHelp.Q<Button>("help-topic-3"), "Form 'Report a bug' belum tersedia.");
+        WireComingSoon(_pageHelp.Q<Button>("help-contact-btn"), "Live chat dengan SecMind team belum tersedia.");
         WireComingSoon(_pageHelp.Q<Button>("help-search-btn"), "Fitur pencarian belum tersedia.");
 
-        // Modal close button — register both .clicked AND ClickEvent for redundancy
+        // Modal close button
         Button closeBtn = _pageHelp.Q<Button>("modal-close-btn");
         if (closeBtn != null)
         {
@@ -407,9 +436,7 @@ public class MainMenuController : MonoBehaviour
         // Stop click propagation on modal-card so clicks inside card don't bubble to backdrop
         VisualElement modalCard = _pageHelp.Q<VisualElement>(className: "modal-card");
         if (modalCard != null)
-        {
             modalCard.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
-        }
 
         // Click on backdrop (outside card) closes modal
         if (_comingSoonModal != null)
@@ -508,8 +535,42 @@ public class MainMenuController : MonoBehaviour
         _slideIndex = 0;
         UpdateSlide();
         _dashboardWired = true;
+
+        // Start auto-slide coroutine
+        if (_autoSlideCoroutine != null) StopCoroutine(_autoSlideCoroutine);
+        _autoSlideCoroutine = StartCoroutine(AutoSlideCoroutine());
     }
 
+    // Auto-slide coroutine — only advances the index, does NOT call RestartAutoSlide
+    private IEnumerator AutoSlideCoroutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(slideInterval);
+            if (dashboardSlides == null || dashboardSlides.Length == 0) yield break;
+            _slideIndex = (_slideIndex + 1) % dashboardSlides.Length;
+            UpdateSlide();
+        }
+    }
+
+    // Called by manual button clicks — advances slide AND resets the timer
+    private void OnNextClicked()
+    {
+        if (dashboardSlides == null || dashboardSlides.Length == 0) return;
+        _slideIndex = (_slideIndex + 1) % dashboardSlides.Length;
+        UpdateSlide();
+        RestartAutoSlide();
+    }
+
+    private void OnPrevClicked()
+    {
+        if (dashboardSlides == null || dashboardSlides.Length == 0) return;
+        _slideIndex = (_slideIndex - 1 + dashboardSlides.Length) % dashboardSlides.Length;
+        UpdateSlide();
+        RestartAutoSlide();
+    }
+
+    // Internal slide logic (no timer reset — used by coroutine too)
     private void NextSlide()
     {
         if (dashboardSlides == null || dashboardSlides.Length == 0) return;
@@ -522,6 +583,21 @@ public class MainMenuController : MonoBehaviour
         if (dashboardSlides == null || dashboardSlides.Length == 0) return;
         _slideIndex = (_slideIndex - 1 + dashboardSlides.Length) % dashboardSlides.Length;
         UpdateSlide();
+    }
+
+    private void RestartAutoSlide()
+    {
+        if (_autoSlideCoroutine != null) StopCoroutine(_autoSlideCoroutine);
+        _autoSlideCoroutine = StartCoroutine(AutoSlideCoroutine());
+    }
+
+    private void StopAutoSlide()
+    {
+        if (_autoSlideCoroutine != null)
+        {
+            StopCoroutine(_autoSlideCoroutine);
+            _autoSlideCoroutine = null;
+        }
     }
 
     private void UpdateSlide()
@@ -538,7 +614,7 @@ public class MainMenuController : MonoBehaviour
             {
                 VisualElement dot = _slideshowDots[i];
                 if (i == _slideIndex) dot.AddToClassList("active");
-                else                  dot.RemoveFromClassList("active");
+                else dot.RemoveFromClassList("active");
             }
         }
     }
@@ -553,8 +629,8 @@ public class MainMenuController : MonoBehaviour
             : "Player";
         string display = CapitalizeFirst(raw);
 
-        if (_profileGreeting   != null) _profileGreeting.text   = $"Hi, {display}";
-        if (_profileName       != null) _profileName.text       = display;
+        if (_profileGreeting != null) _profileGreeting.text = $"Hi, {display}";
+        if (_profileName != null) _profileName.text = display;
         if (_profileAvatarText != null) _profileAvatarText.text = string.IsNullOrEmpty(display) ? "?" : display.Substring(0, 1).ToUpper();
 
         // Build course progress (from LessonData)
@@ -567,7 +643,7 @@ public class MainMenuController : MonoBehaviour
             foreach (LessonData l in lessons)
             {
                 if (l == null) continue;
-                if (!l.isUnlocked) continue; // hanya unlocked yang muncul di progress
+                if (!l.isUnlocked) continue;
                 int pct = 100; // TODO: real per-stage progress from backend
                 _courseProgressList.Add(BuildProgressItem(l.title, pct));
                 shown++;
@@ -584,18 +660,16 @@ public class MainMenuController : MonoBehaviour
             _gameProgressList.Add(BuildProgressItem("Part 3", 0));
         }
 
-        // Placeholders untuk stat strip (sampai backend tersedia)
+        // Placeholders for stat strip (until backend is available)
         if (_profileLevelCleared != null) _profileLevelCleared.text = "— / 6";
         if (_profileAchievements != null) _profileAchievements.text = "—";
-        if (_profilePlaytime     != null) _profilePlaytime.text     = "—";
-        if (_profileRank         != null) _profileRank.text         = "—";
-        if (_profileMeta         != null) _profileMeta.text         = $"Joined 2026 · Rank — globally";
+        if (_profilePlaytime != null) _profilePlaytime.text = "—";
+        if (_profileRank != null) _profileRank.text = "—";
+        if (_profileMeta != null) _profileMeta.text = "Joined 2026 · Rank — globally";
 
         // Fetch real rank + level cleared from global leaderboard
         if (LeaderboardManager.Instance != null)
-        {
             LeaderboardManager.Instance.FetchGlobal(100, OnProfileLeaderboardLoaded);
-        }
 
         _profilePopulated = true;
     }
@@ -611,20 +685,12 @@ public class MainMenuController : MonoBehaviour
         if (mine != null)
         {
             if (_profileRank != null) _profileRank.text = "#" + mine.rank;
-            if (_profileMeta != null)
-            {
-                string display = CapitalizeFirst(mine.displayName);
-                _profileMeta.text = $"Joined 2026 · Rank #{mine.rank} globally";
-            }
+            if (_profileMeta != null) _profileMeta.text = $"Joined 2026 · Rank #{mine.rank} globally";
         }
         else
         {
             if (_profileRank != null) _profileRank.text = "Unranked";
         }
-
-        // Count completed stages (unique stage IDs the user appears in leaderboard for)
-        // Global leaderboard returns one row per user with their best stage, so this is "1+" not full count.
-        // For now, hardcoded — real count needs new endpoint.
     }
 
     private VisualElement BuildProgressItem(string name, int percent)
@@ -669,7 +735,6 @@ public class MainMenuController : MonoBehaviour
             return;
         }
 
-        // Load all LessonData from Resources/Lessons folder (existing ScriptableObjects)
         LessonData[] lessons = Resources.LoadAll<LessonData>("Lessons");
         if (lessons == null || lessons.Length == 0)
         {
@@ -677,7 +742,6 @@ public class MainMenuController : MonoBehaviour
             return;
         }
 
-        // Sort by name for stable order (Lesson_01..Lesson_06)
         System.Array.Sort(lessons, (a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
 
         int unlockedIdx = 1, lockedIdx = 1;
@@ -717,8 +781,7 @@ public class MainMenuController : MonoBehaviour
         {
             VisualElement lockBadge = new VisualElement();
             lockBadge.AddToClassList("lock-badge");
-            Label lockText = new Label(""); // lock unicode glyph — fallback if font supports it
-            lockText.text = "L";
+            Label lockText = new Label("L");
             lockText.AddToClassList("lock-badge-text");
             lockBadge.Add(lockText);
             card.Add(lockBadge);
@@ -731,12 +794,13 @@ public class MainMenuController : MonoBehaviour
                 Debug.Log($"[MainMenuController] Loading scene: {scene}");
                 SceneManager.LoadScene(scene);
             });
-            // Visual feedback (cursor)
             card.style.cursor = new StyleCursor();
         }
 
         return card;
     }
+
+    // ── Leaderboard row builder ─────────────────────────────────────────────
 
     private VisualElement BuildRow(GlobalLeaderboardEntryDTO e, bool isYou)
     {

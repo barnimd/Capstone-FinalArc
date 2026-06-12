@@ -6,19 +6,43 @@ using UnityEngine.UI;
 public class SlideshowController : MonoBehaviour
 {
     [Header("Slideshow Images")]
-    public Sprite[] slides; // Masukkan semua gambar slideshow di sini
+    public Sprite[] slides;
 
     [Header("UI References")]
-    public Image displayImage;     // Image component yang menampilkan slide
-    public GameObject arrowLeft;   // Tombol panah kiri
-    public GameObject arrowRight;  // Tombol panah kanan
+    public Image displayImage;
+    public GameObject arrowLeft;
+    public GameObject arrowRight;
+
+    [Header("Auto Slide Settings")]
+    public float slideInterval = 3f;
+    public bool loop = true;
 
     private int currentIndex = 0;
 
     void Start()
     {
         if (slides.Length > 0)
+        {
             UpdateSlide();
+            StartCoroutine(AutoSlide());
+        }
+    }
+
+    IEnumerator AutoSlide()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(slideInterval);
+
+            if (currentIndex < slides.Length - 1)
+                currentIndex++;
+            else if (loop)
+                currentIndex = 0;
+            else
+                yield break; // stop if no loop and at last slide
+
+            UpdateSlide();
+        }
     }
 
     public void NextSlide()
@@ -27,6 +51,7 @@ public class SlideshowController : MonoBehaviour
         {
             currentIndex++;
             UpdateSlide();
+            RestartAutoSlide(); // reset timer after manual click
         }
     }
 
@@ -36,12 +61,18 @@ public class SlideshowController : MonoBehaviour
         {
             currentIndex--;
             UpdateSlide();
+            RestartAutoSlide(); // reset timer after manual click
         }
+    }
+
+    void RestartAutoSlide()
+    {
+        StopAllCoroutines();
+        StartCoroutine(AutoSlide());
     }
 
     void UpdateSlide()
     {
         displayImage.sprite = slides[currentIndex];
-
     }
 }
