@@ -217,7 +217,6 @@ public class GameManager_Tp6 : MonoBehaviour
     // FIX R7-A: coroutine baru untuk state Simulation
     IEnumerator SimulationRoutine()
     {
-        SetObj("Menjalankan simulasi backup...");
         ShowFB("Running Simulation", "Sistem sedang menguji konfigurasi backup kamu...", autoClose: false);
         yield return new WaitForSeconds(2f);
 
