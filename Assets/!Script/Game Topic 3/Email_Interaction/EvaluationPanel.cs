@@ -139,7 +139,7 @@ public class EvaluationPanel : MonoBehaviour
         for (int i = 0; i < _data.questions.Length; i++)
         {
             bool benar = _playerAnswers[i] == _data.questions[i].correctAnswerIndex;
-            string icon = benar ? "✓" : "✗";
+            string icon = benar ? "[OK]" : "[X]";
             detail += $"{icon} Soal {i + 1}: {_data.questions[i].explanation}\n\n";
         }
 
