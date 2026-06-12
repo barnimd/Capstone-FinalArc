@@ -1,90 +1,64 @@
-<?xml version="1.0" encoding="utf-8"?>
-<engine:UXML xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements">
-    <engine:Style src="project://database/Assets/UI%20Toolkit/Login/LoginStyles.uss" />
-
-    <engine:VisualElement class="login-root">
-
-        <!-- ============ TOP BAR (full width) ============ -->
-        <engine:VisualElement class="login-topbar">
-            <engine:Label text="SECMIND." class="hero-brand" />
-            <engine:VisualElement class="hero-help">
-                <engine:Label text="Need help?" class="hero-help-text" />
-                <engine:Label text="Contact support" class="hero-help-link" name="link-contact" />
-            </engine:VisualElement>
-        </engine:VisualElement>
-
-        <!-- ============ BODY (2-col) ============ -->
-        <engine:VisualElement class="login-body">
-
-            <!-- LEFT: Hero -->
-            <engine:VisualElement class="hero-panel">
-                <engine:VisualElement class="hero-content">
-                    <engine:Label text="WELCOME BACK" class="hero-eyebrow" />
-                    <engine:Label text="Stay sharp." class="hero-title" />
-                    <engine:VisualElement style="flex-direction: row;">
-                        <engine:Label text="Stay " class="hero-title" />
-                        <engine:Label text="secure." class="hero-title hero-title-accent" />
-                    </engine:VisualElement>
-                    <engine:Label text="Continue your training. Spot phishing, harden passwords, and keep your streak alive." class="hero-subtitle" />
-
-                    <engine:VisualElement class="hero-stats">
-                        <engine:VisualElement class="hero-stat">
-                            <engine:Label text="6"        class="hero-stat-number" />
-                            <engine:Label text="MODULES"  class="hero-stat-label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="hero-stat">
-                            <engine:Label text="184"      class="hero-stat-number" />
-                            <engine:Label text="PLAYERS"  class="hero-stat-label" />
-                        </engine:VisualElement>
-                        <engine:VisualElement class="hero-stat">
-                            <engine:Label text="4.9★"    class="hero-stat-number" />
-                            <engine:Label text="RATING"   class="hero-stat-label" />
-                        </engine:VisualElement>
-                    </engine:VisualElement>
-                </engine:VisualElement>
-            </engine:VisualElement>
-
-            <!-- RIGHT: Login card -->
-            <engine:VisualElement class="login-panel">
-                <engine:VisualElement class="login-card">
-                    <engine:VisualElement class="login-logo" />
-                    <engine:Label text="SIGN IN TO CONTINUE" class="login-eyebrow" />
-
-                    <engine:Label text="NICKNAME" class="login-field-label" />
-                    <engine:TextField name="nickname-input" class="login-input" />
-
-                    <engine:Label text="PASSWORD" class="login-field-label" />
-                    <engine:TextField name="password-input" class="login-input" password="true" />
-
-                    <engine:VisualElement class="login-row">
-                        <engine:Label text="Forgot password?" name="forgot-link" class="login-link" />
-                    </engine:VisualElement>
-
-                    <engine:Button text="OK, go!" name="login-button" class="login-button-primary" />
-
-                    <engine:VisualElement class="login-divider">
-                        <engine:VisualElement class="login-divider-line" />
-                        <engine:Label text="OR" class="login-divider-text" />
-                        <engine:VisualElement class="login-divider-line" />
-                    </engine:VisualElement>
-
-                    <engine:Button name="google-button" class="login-button-google">
-                        <engine:VisualElement class="google-icon" />
-                        <engine:Label text="Sign in with Google" class="google-label" />
-                    </engine:Button>
-
-                    <engine:VisualElement class="login-bottom">
-                        <engine:Label text="New to this game?" class="login-bottom-text" />
-                        <engine:Label text="Make an account" name="signup-link" class="login-link" />
-                    </engine:VisualElement>
-
-                    <engine:Label text="" name="login-error" class="login-error" />
-                </engine:VisualElement>
-            </engine:VisualElement>
-
-        </engine:VisualElement>
-
-        <!-- ============ FOOTER ============ -->
-        <engine:Label text="© 2026 SecMind · Cyber Security Awareness Game" class="hero-footer" />
-    </engine:VisualElement>
-</engine:UXML>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Login/LoginStyles.uss?fileID=7433441132597879392&amp;guid=8050279960f6c304caf84e4dfc0779a0&amp;type=3#LoginStyles" />
+    <ui:VisualElement class="login-root">
+        <ui:VisualElement class="login-topbar">
+            <ui:Label text="SECMIND." class="hero-brand" />
+            <ui:VisualElement class="hero-help">
+                <ui:Label text="Need help?" class="hero-help-text" />
+                <ui:Label text="Contact support" name="link-contact" class="hero-help-link" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement class="login-body">
+            <ui:VisualElement class="hero-panel">
+                <ui:VisualElement class="hero-content">
+                    <ui:Label text="WELCOME BACK" class="hero-eyebrow" />
+                    <ui:Label text="Stay sharp." class="hero-title" />
+                    <ui:VisualElement style="flex-direction: row;">
+                        <ui:Label text="Stay " class="hero-title" />
+                        <ui:Label text="secure." class="hero-title hero-title-accent" />
+                    </ui:VisualElement>
+                    <ui:Label text="Continue your training. Spot phishing, harden passwords, and keep your streak alive." class="hero-subtitle" />
+                    <ui:VisualElement class="hero-stats">
+                        <ui:VisualElement class="hero-stat">
+                            <ui:Label text="6" class="hero-stat-number" />
+                            <ui:Label text="MODULES" class="hero-stat-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="hero-stat">
+                            <ui:Label text="184" class="hero-stat-number" />
+                            <ui:Label text="PLAYERS" class="hero-stat-label" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement class="login-panel">
+                <ui:VisualElement class="login-card">
+                    <ui:VisualElement class="login-logo" />
+                    <ui:Label text="SIGN IN TO CONTINUE" class="login-eyebrow" />
+                    <ui:Label text="NICKNAME" class="login-field-label" />
+                    <ui:TextField name="nickname-input" class="login-input" />
+                    <ui:Label text="PASSWORD" class="login-field-label" />
+                    <ui:TextField name="password-input" password="true" class="login-input" />
+                    <ui:VisualElement class="login-row">
+                        <ui:Label text="Forgot password?" name="forgot-link" class="login-link" />
+                    </ui:VisualElement>
+                    <ui:Button text="OK, go!" name="login-button" class="login-button-primary" />
+                    <ui:VisualElement class="login-divider">
+                        <ui:VisualElement class="login-divider-line" />
+                        <ui:Label text="OR" class="login-divider-text" />
+                        <ui:VisualElement class="login-divider-line" />
+                    </ui:VisualElement>
+                    <ui:Button name="google-button" class="login-button-google">
+                        <ui:VisualElement class="google-icon" />
+                        <ui:Label text="Sign in with Google" class="google-label" />
+                    </ui:Button>
+                    <ui:VisualElement class="login-bottom">
+                        <ui:Label text="New to this game?" class="login-bottom-text" />
+                        <ui:Label text="Make an account" name="signup-link" class="login-link" />
+                    </ui:VisualElement>
+                    <ui:Label name="login-error" class="login-error" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:Label text="© 2026 SecMind · Cyber Security Awareness Game" class="hero-footer" />
+    </ui:VisualElement>
+</ui:UXML>
