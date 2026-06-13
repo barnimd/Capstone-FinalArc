@@ -29,6 +29,10 @@ public class SummaryReturnToMenu : MonoBehaviour
 
         _isLoading = true;
         Time.timeScale = 1f;
+
+        if (MusicManager.Instance != null)
+            MusicManager.Instance.StopImmediately();
+
         SceneManager.LoadScene(MenuSceneName);
     }
 }

@@ -68,14 +68,13 @@ public class MusicManager : MonoBehaviour
             SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    // Scene tanpa SceneMusicOverride dianggap scene tanpa BGM (menu, login, dst.)
-    // → musik topic yang kebawa dari scene sebelumnya di-fade-out.
+    // A scene without an override is intentionally silent (menu, login, etc.).
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (mode != LoadSceneMode.Single) return;
 
-        if (FindObjectOfType<SceneMusicOverride>() == null && audioSource.isPlaying)
-            FadeOut();
+        if (FindObjectOfType<SceneMusicOverride>() == null)
+            StopImmediately();
     }
 
     // ── Public API ───────────────────────────────────────────────────────────
@@ -113,6 +112,22 @@ public class MusicManager : MonoBehaviour
     {
         if (_fadeCo != null) StopCoroutine(_fadeCo);
         audioSource.Stop();
+    }
+
+    public void StopImmediately()
+    {
+        if (_fadeCo != null)
+        {
+            StopCoroutine(_fadeCo);
+            _fadeCo = null;
+        }
+
+        if (audioSource == null)
+            return;
+
+        audioSource.Stop();
+        audioSource.clip = null;
+        audioSource.volume = masterVolume;
     }
 
     public void SetVolume(float volume)
