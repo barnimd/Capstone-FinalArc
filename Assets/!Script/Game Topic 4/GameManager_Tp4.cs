@@ -22,7 +22,11 @@ public class GameManager_Tp4 : MonoBehaviour
     [Header("=== Score ===")]
     public int scorePerCorrectLogin = 30;
     public int scorePerCorrectPopup = 15;
-    public int penaltyPerWrongPopup = -5;
+    public int penaltyPerWrongPopup = 0;
+
+    [Header("=== Backend / Neon ===")]
+    public string stageId = "malware-awareness";
+    public int maxScore = 100;
 
     [Header("=== UI ===")]
     public ObjectiveUI_Tp4 objectiveUI;
@@ -40,6 +44,7 @@ public class GameManager_Tp4 : MonoBehaviour
     private int _totalScore = 0;
     private List<URLEntry> _currentRoundURLs;
     private string _gameResultMessage;
+    private bool _finished;
 
     private void Awake()
     {
@@ -138,13 +143,24 @@ public class GameManager_Tp4 : MonoBehaviour
 
     private void EndGame(bool isSuccess)
     {
+        if (_finished)
+            return;
+
+        _finished = true;
         _currentState = isSuccess ? Tp4State.Completed : Tp4State.Failed;
 
+        int finalScore = Mathf.Clamp(
+            (ScoreManager.instance != null ? ScoreManager.instance.score : 0) + _totalScore,
+            0,
+            maxScore);
+
         if (ScoreManager.instance != null)
-            ScoreManager.instance.AddScore(_totalScore);
+            ScoreManager.instance.SetScore(finalScore);
+
+        StageManager.Instance?.SubmitFinalScore(stageId, finalScore, maxScore, "Topic4");
 
         string status = isSuccess ? "COMPLETED" : "FAILED";
-        Debug.Log($"[GameManager_Tp4] {status} | Score: {_totalScore} | {_gameResultMessage}");
+        Debug.Log($"[GameManager_Tp4] {status} | Score: {finalScore} | {_gameResultMessage}");
 
         if (desktopCanvas != null) desktopCanvas.SetActive(false);
         if (websiteCanvas != null) websiteCanvas.SetActive(false);

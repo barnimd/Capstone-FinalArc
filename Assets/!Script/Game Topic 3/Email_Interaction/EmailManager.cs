@@ -75,6 +75,11 @@ public class EmailManager : MonoBehaviour
         _                       => 0
     };
 
+    public int GetTotalDecisions()
+    {
+        return scoreCorrect + scoreWrong + scoreNeutral;
+    }
+
     public void OnEmailIconClicked()
     {
         if (emailCanvas == null) return;

@@ -27,7 +27,7 @@ public class GameManager_Tp5 : MonoBehaviour
     public GameObject summaryCanvas;
 
     [Header("=== Score ===")]
-    public int scoreOnSuccess = 90;
+    public int scoreOnSuccess = 75;
 
     [Header("=== Backend / Neon ===")]
     [Tooltip("Stage ID untuk disimpan ke Neon. Topic 5 = wifi-security.")]
@@ -37,6 +37,7 @@ public class GameManager_Tp5 : MonoBehaviour
 
     private bool _wifiDone;
     private bool _websiteDone;
+    private bool _finished;
 
     private void Awake()
     {
@@ -70,6 +71,11 @@ public class GameManager_Tp5 : MonoBehaviour
 
     private void OnEvalSelesai()
     {
+        int correct = _evalPanel != null ? _evalPanel.GetCorrectCount() : 0;
+        int total = _evalPanel != null ? _evalPanel.GetTotalQuestions() : 0;
+        int evaluationScore = total > 0 ? Mathf.RoundToInt((float)correct / total * 10) : 0;
+        ScoreManager.instance?.AddScore(evaluationScore);
+
         _evalPanel.evaluationPanelRoot.SetActive(false);
         if (_evalCanvas != null) _evalCanvas.SetActive(false);
         EndGame(true);
@@ -129,6 +135,10 @@ public class GameManager_Tp5 : MonoBehaviour
 
     private void EndGame(bool isSuccess)
     {
+        if (_finished)
+            return;
+
+        _finished = true;
         if (crashOverlay != null && crashOverlay.crashCanvas != null)
             crashOverlay.crashCanvas.SetActive(false);
 
@@ -142,7 +152,7 @@ public class GameManager_Tp5 : MonoBehaviour
         {
             if (isSuccess)
                 ScoreManager.instance.AddScore(scoreOnSuccess);
-            ScoreManager.instance.score = Mathf.Clamp(ScoreManager.instance.score, 0, maxScore);
+            ScoreManager.instance.ClampScore(0, maxScore);
         }
 
         // Simpan skor GABUNGAN (map + challenge, sudah di-cap) ke Neon

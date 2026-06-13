@@ -197,11 +197,16 @@ public class Topic1ProgressionController : MonoBehaviour
 
     private void CompleteLevel()
     {
+        if (stage == Stage.Complete)
+            return;
+
         stage = Stage.Complete;
         SetAllInteractables(false);
         computer?.SetUnlocked(false);
         objectiveArrow?.Hide();
         objectivePanel?.HideImmediate();
+
+        ScoreManager.instance?.ClampScore(0, maxScore);
 
         SubmitResultToNeon();
 

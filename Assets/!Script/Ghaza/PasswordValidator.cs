@@ -280,10 +280,7 @@ namespace GameTopic2
 
             // ── Kirim ke ScoreManager ─────────────────────────────────────
             if (ScoreManager.instance != null)
-            {
-                ScoreManager.instance.AddScore(-ScoreManager.instance.score); // reset ke 0
-                ScoreManager.instance.AddScore(FinalScore);                   // set nilai baru
-            }
+                ScoreManager.instance.SetScore(FinalScore);
 
             // ── Outcome animation ─────────────────────────────────────────
             if (CurrentStrength == PasswordStrength.Strong)

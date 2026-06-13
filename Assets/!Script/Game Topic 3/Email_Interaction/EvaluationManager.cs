@@ -12,8 +12,10 @@ public class EvaluationManager : MonoBehaviour
     public GameObject summaryCanvas;
 
     [Header("=== Score ===")]
-    [Tooltip("Skor per jawaban benar dalam evaluasi")]
-    public int scorePerCorrect = 20;
+    [Tooltip("Maximum score contributed by the evaluation questions.")]
+    public int evaluationMaxScore = 50;
+    [Tooltip("Maximum score contributed by email decisions.")]
+    public int emailMaxScore = 50;
 
     [Header("=== Backend / Neon ===")]
     [Tooltip("Stage ID untuk disimpan ke Neon. Topic 3 = password-security.")]
@@ -53,7 +55,9 @@ public class EvaluationManager : MonoBehaviour
         int correct = evaluationPanel.GetCorrectCount();
         int total = evaluationPanel.GetTotalQuestions();
 
-        int evaluationScore = correct * scorePerCorrect;
+        int evaluationScore = total > 0
+            ? Mathf.RoundToInt((float)correct / total * evaluationMaxScore)
+            : 0;
 
         int emailCorrect = 0;
         int emailWrong = 0;
@@ -65,21 +69,21 @@ public class EvaluationManager : MonoBehaviour
             emailNeutral = emailManager.GetScore(DecisionOutcome.Neutral);
         }
 
-        int totalScore = evaluationScore + (emailCorrect * 10) - (emailWrong * 5);
+        int emailTotal = emailManager != null ? emailManager.GetTotalDecisions() : 0;
+        int emailScore = emailTotal > 0
+            ? Mathf.RoundToInt((float)emailCorrect / emailTotal * emailMaxScore)
+            : 0;
+        int totalScore = Mathf.Clamp(evaluationScore + emailScore, 0, maxScore);
 
         if (ScoreManager.instance != null)
-        {
-            ScoreManager.instance.AddScore(totalScore);
-            // Cap ke [0, maxScore] supaya konsisten max 100 (skor email bisa bikin lewat 100)
-            ScoreManager.instance.score = Mathf.Clamp(ScoreManager.instance.score, 0, maxScore);
-        }
+            ScoreManager.instance.SetScore(totalScore);
 
         int finalScore = ScoreManager.instance != null
             ? ScoreManager.instance.score
             : Mathf.Clamp(totalScore, 0, maxScore);
 
-        Debug.Log($"[EvaluationManager] Evaluasi selesai! Correct={correct}/{total} | " +
-                  $"Email: C={emailCorrect} W={emailWrong} N={emailNeutral} | TotalScore={totalScore} | finalScore(capped)={finalScore}");
+        Debug.Log($"[EvaluationManager] Evaluasi selesai! Questions={correct}/{total} ({evaluationScore}) | " +
+                  $"Email: C={emailCorrect} W={emailWrong} N={emailNeutral} ({emailScore}) | FinalScore={finalScore}");
 
         // Simpan hasil ke Neon
         if (StageManager.Instance != null)

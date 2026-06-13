@@ -9,7 +9,7 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager instance;
 
-    [Tooltip("Skor awal saat game mulai. Default 0 (skor aditif). Untuk Topic 1 di-set 1000 di Inspector (skor turun tiap salah).")]
+    [Tooltip("Skor awal saat game mulai. Default 0 (skor aditif). Topic 1 dimulai dari 100 dan berkurang saat pemain salah.")]
     public int startingScore = 0;
     public int score;
     public TextMeshProUGUI scoreText; // Optional HUD display — can be left unassigned
@@ -31,8 +31,24 @@ public class ScoreManager : MonoBehaviour
     public void AddScore(int value)
     {
         if (value == 0) return; // no-op, skip log noise
-        score += value;
+        SetScore(score + value);
         Debug.Log("[ScoreManager] AddScore(" + value + ") → Score = " + score);
+    }
+
+    public int SetScore(int value)
+    {
+        score = value;
+        RefreshDisplay();
+        return score;
+    }
+
+    public int ClampScore(int min, int max)
+    {
+        return SetScore(Mathf.Clamp(score, min, max));
+    }
+
+    private void RefreshDisplay()
+    {
         if (scoreText != null)
             scoreText.text = "Score: " + score;
     }

@@ -249,7 +249,7 @@ public class GameManager_Tp6 : MonoBehaviour
         if (ScoreManager.instance != null)
         {
             Debug.Log($"[Tp6] SyncScoreToManager → _score = {_score}"); 
-            ScoreManager.instance.score = _score;
+            ScoreManager.instance.SetScore(_score);
         }
     }
 
@@ -276,7 +276,7 @@ public class GameManager_Tp6 : MonoBehaviour
                 if (summaryCanvas) summaryCanvas.SetActive(true);
 
                 if (ScoreManager.instance != null)
-                    ScoreManager.instance.score = Mathf.Clamp(ScoreManager.instance.score, 0, 100);
+                    ScoreManager.instance.ClampScore(0, 100);
             });
         }
         else
@@ -286,7 +286,7 @@ public class GameManager_Tp6 : MonoBehaviour
             if (summaryCanvas) summaryCanvas.SetActive(true);
 
             if (ScoreManager.instance != null)
-                ScoreManager.instance.score = Mathf.Clamp(_score, 0, 100);
+                ScoreManager.instance.SetScore(Mathf.Clamp(_score, 0, 100));
         }
     }
 
@@ -327,7 +327,7 @@ public class GameManager_Tp6 : MonoBehaviour
     {
         if (objectiveUI) objectiveUI.gameObject.SetActive(false);
         if (desktopCanvas) desktopCanvas.SetActive(false);
-        if (ScoreManager.instance != null) ScoreManager.instance.score = Mathf.Max(5, _score);
+        if (ScoreManager.instance != null) ScoreManager.instance.SetScore(Mathf.Max(5, _score));
         if (summaryCanvas && !success) summaryCanvas.SetActive(true);
         Debug.Log($"[Tp6] {(success ? "SUCCESS" : "FAILED")} Score={_score}");
     }

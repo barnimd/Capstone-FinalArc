@@ -47,9 +47,7 @@ public class EvaluationManager_Tp6 : MonoBehaviour
         if (ScoreManager.instance != null)
         {
             ScoreManager.instance.AddScore(correct * 2);
-
-            ScoreManager.instance.score =
-                Mathf.Clamp(ScoreManager.instance.score, 0, 100);
+            ScoreManager.instance.ClampScore(0, 100);
         }
 
         _onComplete?.Invoke();

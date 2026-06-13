@@ -107,7 +107,9 @@ public class SummaryManager : MonoBehaviour
         }
 
         // ── 2. Populate Summary Panel ─────────────────────────
-        int finalScore = ScoreManager.instance != null ? ScoreManager.instance.score : 0;
+        int finalScore = ScoreManager.instance != null
+            ? ScoreManager.instance.ClampScore(0, maxScore)
+            : 0;
 
         // Simpan hasil ke Neon (kalau scene ini punya stageId)
         SubmitResultToNeon(finalScore);
