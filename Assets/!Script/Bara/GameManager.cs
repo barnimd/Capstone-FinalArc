@@ -23,6 +23,7 @@ public class GameplayManager : MonoBehaviour
 
     void Start()
     {
+        ResolveSummaryTextReferences();
         summaryPanel.SetActive(false);
 
         // Simpan posisi awal player & langsung mulai timer
@@ -62,6 +63,8 @@ public class GameplayManager : MonoBehaviour
 
         int finalScore = (sm != null) ? sm.score : 0;
         Debug.Log("[GameplayManager] FinishGame — Final Score = " + finalScore);
+
+        ResolveSummaryTextReferences();
 
         if (scoreText != null)
             scoreText.text = "Score: " + finalScore;
@@ -110,5 +113,23 @@ public class GameplayManager : MonoBehaviour
     public void CloseCanvas()
     {
         canvasInstructor.SetActive(false);
+    }
+
+    private void ResolveSummaryTextReferences()
+    {
+        if (summaryPanel == null)
+            return;
+
+        TextMeshProUGUI[] labels = summaryPanel.GetComponentsInChildren<TextMeshProUGUI>(true);
+        foreach (TextMeshProUGUI label in labels)
+        {
+            if (label == null)
+                continue;
+
+            if (scoreText == null && label.gameObject.name == "ScoreText")
+                scoreText = label;
+            else if (timeText == null && label.gameObject.name == "TimeText")
+                timeText = label;
+        }
     }
 }

@@ -55,6 +55,7 @@ public class SummaryManager : MonoBehaviour
     {
         if (instance != null && instance != this) { Destroy(gameObject); return; }
         instance = this;
+        ResolveSummaryTextReferences();
     }
 
     private void Start()
@@ -107,6 +108,8 @@ public class SummaryManager : MonoBehaviour
         }
 
         // ── 2. Populate Summary Panel ─────────────────────────
+        ResolveSummaryTextReferences();
+
         int finalScore = ScoreManager.instance != null
             ? ScoreManager.instance.ClampScore(0, maxScore)
             : 0;
@@ -160,6 +163,32 @@ public class SummaryManager : MonoBehaviour
     /// Kirim skor akhir ke Neon. No-op (aman) kalau stageId kosong, manager backend
     /// tidak ada, atau player belum login. Server menyimpan skor tertinggi per stage.
     /// </summary>
+    private void ResolveSummaryTextReferences()
+    {
+        if (summaryPanel == null)
+            return;
+
+        TMP_Text[] labels = summaryPanel.GetComponentsInChildren<TMP_Text>(true);
+        foreach (TMP_Text label in labels)
+        {
+            if (label == null)
+                continue;
+
+            switch (label.gameObject.name)
+            {
+                case "LevelCompleteText":
+                    if (levelCompleteText == null) levelCompleteText = label;
+                    break;
+                case "ScoreText":
+                    if (scoreText == null) scoreText = label;
+                    break;
+                case "TimeText":
+                    if (timeText == null) timeText = label;
+                    break;
+            }
+        }
+    }
+
     private void SubmitResultToNeon(int rawScore)
     {
         if (string.IsNullOrEmpty(stageId))
