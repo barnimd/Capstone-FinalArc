@@ -33,6 +33,7 @@ public class GameManager_Tp6 : MonoBehaviour
 
     [Header("=== UI ===")]
     public ObjectiveUI_Tp4 objectiveUI;
+    public ObjectiveUI_Tp6 objectiveRedesign; // redesigned 2-panel objective UI (preferred when set)
 
     [Header("=== Score ===")]
     public int scoreOrganize = 15, scoreRecovery = 15, scoreBackupYes = 20,
@@ -324,6 +325,7 @@ public class GameManager_Tp6 : MonoBehaviour
         _finalized = true;
 
         if (objectiveUI) objectiveUI.gameObject.SetActive(false);
+        if (objectiveRedesign) objectiveRedesign.HideAll();
         if (desktopCanvas) desktopCanvas.SetActive(false);
 
         int finalScore = success
@@ -376,6 +378,14 @@ public class GameManager_Tp6 : MonoBehaviour
     void Add(int v) { _score += v; }
     void SetObj(string t)
     {
+        // Redesigned 2-panel UI takes priority when wired; old panel stays hidden.
+        if (objectiveRedesign != null)
+        {
+            objectiveRedesign.ShowObjective(t);
+            if (objectiveUI) objectiveUI.gameObject.SetActive(false);
+            return;
+        }
+
         if (!objectiveUI) return;
         // ObjectiveUI bisa dalam keadaan nonaktif (mis. belum pernah dibuka /
         // dimatikan di akhir game) — aktifkan dulu agar coroutine-nya bisa jalan.

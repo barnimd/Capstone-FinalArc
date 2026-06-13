@@ -19,6 +19,7 @@ public class Topic6ProgressionController : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private ObjectiveUI_Tp4 objectiveUI;
+    [SerializeField] private ObjectiveUI_Tp6 objectiveRedesign; // redesigned 2-panel UI (preferred when set)
     [SerializeField] private FollowArrow_Tp1 objectiveArrow;
 
     private Stage stage;
@@ -55,6 +56,9 @@ public class Topic6ProgressionController : MonoBehaviour
     {
         objectiveArrow?.Hide();
 
+        if (objectiveRedesign != null)
+            objectiveRedesign.HideAll();
+
         if (objectiveUI != null)
             objectiveUI.gameObject.SetActive(false);
     }
@@ -87,7 +91,13 @@ public class Topic6ProgressionController : MonoBehaviour
 
     private void ShowObjective(string text, Component target)
     {
-        if (objectiveUI != null)
+        if (objectiveRedesign != null)
+        {
+            objectiveRedesign.ShowObjective(text);
+            if (objectiveUI != null)
+                objectiveUI.gameObject.SetActive(false);
+        }
+        else if (objectiveUI != null)
         {
             objectiveUI.gameObject.SetActive(true);
             objectiveUI.ShowObjective(text);
