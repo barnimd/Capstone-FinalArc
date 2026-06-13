@@ -8,6 +8,8 @@ using UnityEngine;
 /// </summary>
 public class ComputerInteraction : MonoBehaviour
 {
+    public event System.Action DesktopOpening;
+
     [Header("Desktop UI")]
     [Tooltip("The desktop canvas to activate after the fade is fully black")]
     [SerializeField] private GameObject desktopCanvas;
@@ -45,6 +47,8 @@ public class ComputerInteraction : MonoBehaviour
             Debug.LogWarning("[ComputerInteraction] CameraZoomFade instance not found.");
             return;
         }
+
+        DesktopOpening?.Invoke();
 
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
         if (collider != null)

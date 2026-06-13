@@ -1,5 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager_Tp3 : MonoBehaviour
@@ -9,23 +7,54 @@ public class GameManager_Tp3 : MonoBehaviour
     [Header("UI")]
     public GameObject canvasInstructor;
     public ObjectiveUI_Tp3 objectiveUI;
+    public FollowArrow_Tp1 objectiveArrow;
 
-    private int currentStep = 0;
+    [Header("Progression Targets")]
+    public VNNPCInteractable arunika;
+    public Transform arunikaTarget;
+    public ComputerInteraction officeComputer;
+    public Transform computerTarget;
 
-    void Awake()
+    private int currentStep;
+
+    private void Awake()
     {
         instance = this;
+
+        if (arunika != null)
+        {
+            arunika.DialogueStarted += OnVNDialogueStarted;
+            arunika.DialogueEnded += OnVNDialogueEnded;
+        }
+
+        if (officeComputer != null)
+            officeComputer.DesktopOpening += OnDesktopOpening;
     }
 
-    void Start()
+    private void Start()
     {
+        if (objectiveArrow != null)
+            objectiveArrow.displayMode = FollowArrow_Tp1.ArrowDisplayMode.ScreenEdge;
+
         StartGame();
     }
 
-    void StartGame()
+    private void OnDestroy()
+    {
+        if (arunika != null)
+        {
+            arunika.DialogueStarted -= OnVNDialogueStarted;
+            arunika.DialogueEnded -= OnVNDialogueEnded;
+        }
+
+        if (officeComputer != null)
+            officeComputer.DesktopOpening -= OnDesktopOpening;
+    }
+
+    private void StartGame()
     {
         currentStep = 0;
-        objectiveUI.SetObjective("Sapa orang di Meja Kerja");
+        ShowObjective("Sapa orang di Meja Kerja", arunikaTarget);
     }
 
     public void CloseInstructor()
@@ -35,11 +64,11 @@ public class GameManager_Tp3 : MonoBehaviour
 
     public void OnPlayerApproachNPC()
     {
-        if (currentStep == 0)
-        {
-            currentStep = 1;
-            objectiveUI.SetObjective("Bicara dengan Arunika...");
-        }
+        if (currentStep != 0)
+            return;
+
+        currentStep = 1;
+        ShowObjective("Bicara dengan Arunika...", arunikaTarget);
     }
 
     public void OnDialogFinished()
@@ -49,7 +78,7 @@ public class GameManager_Tp3 : MonoBehaviour
 
     public void SetObjectiveFromDialog(string objectiveText)
     {
-        objectiveUI.SetObjective(objectiveText);
+        ShowObjective(objectiveText, computerTarget);
     }
 
     public void NextObjective()
@@ -59,15 +88,48 @@ public class GameManager_Tp3 : MonoBehaviour
         switch (currentStep)
         {
             case 2:
-                objectiveUI.SetObjective("Pergi ke meja operator dan periksa email kamu");
+                ShowObjective("Pergi ke meja operator dan periksa email kamu", computerTarget);
                 break;
             case 3:
-                objectiveUI.SetObjective("Gunakan komputer kantor");
+                ShowObjective("Gunakan komputer kantor", computerTarget);
                 break;
             default:
                 if (currentStep > 3)
-                    objectiveUI.SetObjective("Selesai");
+                {
+                    objectiveUI?.SetObjective("Selesai");
+                    objectiveArrow?.Hide();
+                }
                 break;
         }
+    }
+
+    private void OnVNDialogueStarted(VNNPCInteractable source)
+    {
+        objectiveArrow?.Hide();
+    }
+
+    private void OnVNDialogueEnded(VNNPCInteractable source)
+    {
+        if (source != arunika)
+            return;
+
+        currentStep = 2;
+        ShowObjective("Pergi ke meja operator dan periksa email kamu", computerTarget);
+    }
+
+    private void OnDesktopOpening()
+    {
+        currentStep = 3;
+        objectiveArrow?.Hide();
+    }
+
+    private void ShowObjective(string text, Transform target)
+    {
+        objectiveUI?.SetObjective(text);
+
+        if (target != null)
+            objectiveArrow?.Show(target);
+        else
+            objectiveArrow?.Hide();
     }
 }
