@@ -8,6 +8,9 @@ public class ObjectiveUI_Tp4 : MonoBehaviour, IObjectivePanel
     public TMP_Text objectiveText;
     public GameObject panelRoot;
 
+    [Tooltip("If set, objectives are shown via the redesigned 2-panel UI instead of this panel.")]
+    public ObjectiveRedesignUI redesign;
+
     [Header("=== Animation Settings ===")]
     public float highlightDuration = 5f;
     public float moveDuration = 0.5f;
@@ -30,8 +33,20 @@ public class ObjectiveUI_Tp4 : MonoBehaviour, IObjectivePanel
             _rect = GetComponent<RectTransform>();
     }
 
+    private void OnDisable()
+    {
+        if (redesign != null) redesign.HideAll();
+    }
+
+    private void HideOwnGraphics()
+    {
+        foreach (var g in GetComponentsInChildren<UnityEngine.UI.Graphic>(true)) g.enabled = false;
+    }
+
     public void ShowObjective(string text)
     {
+        if (redesign != null) { redesign.ShowObjective(text); HideOwnGraphics(); return; }
+
         if (objectiveText != null)
             objectiveText.text = text;
 

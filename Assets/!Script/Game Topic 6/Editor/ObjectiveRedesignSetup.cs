@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -7,15 +8,19 @@ using TMPro;
 using MPUIKIT;
 
 /// <summary>
-/// DESIGN-ONLY builder for the redesigned Objective UI (Topic 6).
-/// Creates TWO NEW GameObjects under "ObjectiveCanvas" without touching the
-/// existing "ObjectivePanel" (teammate-owned):
-///   1. ObjectivePopup_Center  -> referensi foto 1 (diamond + OBJECTIVE card, solid)
-///   2. ObjectiveDetail_Side    -> referensi foto 2 (TARGET DETAIL card, transparan, pojok kanan atas)
+/// Builder for the redesigned Objective UI (2 panels: center popup + side detail card).
 ///
-/// Visuals only. Fade/slide animation script dibuat nanti (kemungkinan di GameManager_Tp6).
-/// Idempotent: jalankan ulang akan rebuild kedua panel.
-/// Canvas: ScreenSpaceOverlay, CanvasScaler ref 800x600 (match width) -> ukuran di-tune untuk 800-wide.
+/// Two entry points:
+///  - "Game/Apply Objective Redesign (current scene)"  -> GENERIC. Finds every
+///    IObjectivePanel in the open scene, builds the redesign under its Canvas
+///    (sizes auto-scaled to that canvas' reference resolution), adds an
+///    ObjectiveRedesignUI controller, and wires the old panel's `redesign` field.
+///    Use this for Topics 1–5.
+///  - "Game/Setup Topic 6 - Objective Redesign (New Panels)" -> the original
+///    Topic-6-only build under a Canvas literally named "ObjectiveCanvas".
+///
+/// Authored at an 800-wide reference (Topic 6). On other canvases sizes are
+/// multiplied by (referenceResolution.x / 800). Idempotent.
 /// </summary>
 public static class ObjectiveRedesignSetup
 {
@@ -28,12 +33,104 @@ public static class ObjectiveRedesignSetup
     static readonly Color Dim       = new Color(0.055f, 0.043f, 0.035f, 0.55f); // popup backdrop (solid OK)
     static readonly Color SideBG    = new Color(0.070f, 0.055f, 0.045f, 0.55f); // transparan, tembus belakang
 
-    const string PopupName = "ObjectivePopup_Center";
-    const string SideName  = "ObjectiveDetail_Side";
+    const string PopupName      = "ObjectivePopup_Center";
+    const string SideName       = "ObjectiveDetail_Side";
+    const string ControllerName = "ObjectiveRedesignUI";
+    const float  BaselineWidth  = 800f; // Topic 6 reference width the design was authored at
 
+    // Scale factor applied to all authored sizes/positions/fonts (set per canvas).
+    static float S = 1f;
+    static float F(float v) => v * S;
+    static Vector2 V(float x, float y) => new Vector2(x * S, y * S);
+
+    // =====================================================================
+    // GENERIC ENTRY — apply to every objective panel in the open scene
+    // =====================================================================
+    [MenuItem("Game/Apply Objective Redesign (current scene)")]
+    public static void ApplyToCurrentScene()
+    {
+        // Collect old objective panels (anything IObjectivePanel that isn't our own controller).
+        var panels = new List<MonoBehaviour>();
+        foreach (var mb in Object.FindObjectsOfType<MonoBehaviour>(true))
+            if (mb is IObjectivePanel && !(mb is ObjectiveRedesignUI))
+                panels.Add(mb);
+
+        if (panels.Count == 0)
+        {
+            Debug.LogWarning("[ObjectiveRedesign] Tidak ada IObjectivePanel di scene yang terbuka.");
+            return;
+        }
+
+        // Group by parent Canvas so a shared canvas only gets one redesign + controller.
+        var byCanvas = new Dictionary<Canvas, List<MonoBehaviour>>();
+        foreach (var p in panels)
+        {
+            var cv = p.GetComponentInParent<Canvas>(true); // include inactive (embedded/computer canvases load inactive)
+            if (cv == null) { Debug.LogWarning($"[ObjectiveRedesign] '{p.name}' tidak punya parent Canvas — dilewati."); continue; }
+            if (!byCanvas.TryGetValue(cv, out var list)) { list = new List<MonoBehaviour>(); byCanvas[cv] = list; }
+            list.Add(p);
+        }
+
+        int canvases = 0, wired = 0;
+        foreach (var kv in byCanvas)
+        {
+            var controller = BuildUnderCanvas(kv.Key);
+            canvases++;
+            foreach (var panel in kv.Value)
+            {
+                var f = panel.GetType().GetField("redesign");
+                if (f != null) { f.SetValue(panel, controller); EditorUtility.SetDirty(panel); wired++; }
+                else Debug.LogWarning($"[ObjectiveRedesign] '{panel.GetType().Name}' tidak punya field 'redesign' — forwarding tidak aktif.");
+            }
+        }
+
+        var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+        EditorSceneManager.MarkSceneDirty(scene);
+        Debug.Log($"[ObjectiveRedesign] '{scene.name}': {canvases} canvas, {wired} panel di-wire.");
+    }
+
+    static float ComputeScale(Canvas canvas)
+    {
+        var scaler = canvas.GetComponent<CanvasScaler>();
+        if (scaler != null && scaler.uiScaleMode == CanvasScaler.ScaleMode.ScaleWithScreenSize
+            && scaler.referenceResolution.x > 0f)
+            return scaler.referenceResolution.x / BaselineWidth;
+        return 1f;
+    }
+
+    static ObjectiveRedesignUI BuildUnderCanvas(Canvas canvas)
+    {
+        S = ComputeScale(canvas);
+        var t = canvas.transform;
+
+        Remove(t, PopupName);
+        Remove(t, SideName);
+        Remove(t, ControllerName);
+
+        BuildPopup(t);
+        BuildSide(t);
+
+        var ctrlGo = new GameObject(ControllerName, typeof(RectTransform));
+        ctrlGo.transform.SetParent(t, false);
+        var crt = ctrlGo.GetComponent<RectTransform>();
+        crt.anchorMin = Vector2.zero; crt.anchorMax = Vector2.one; crt.offsetMin = Vector2.zero; crt.offsetMax = Vector2.zero;
+
+        var ctrl = ctrlGo.AddComponent<ObjectiveRedesignUI>();
+        ctrl.popupRoot = t.Find(PopupName).gameObject;
+        ctrl.sideRoot  = t.Find(SideName).gameObject;
+        ctrl.popupRoot.SetActive(false);
+        ctrl.sideRoot.SetActive(false);
+        EditorUtility.SetDirty(ctrl);
+        return ctrl;
+    }
+
+    // =====================================================================
+    // TOPIC 6 ENTRY (original) — build under a Canvas named "ObjectiveCanvas"
+    // =====================================================================
     [MenuItem("Game/Setup Topic 6 - Objective Redesign (New Panels)")]
     public static void Build()
     {
+        S = 1f;
         var canvasGo = GameObject.Find("ObjectiveCanvas");
         if (canvasGo == null)
         {
@@ -61,7 +158,7 @@ public static class ObjectiveRedesignSetup
         var root = NewRect(PopupName, canvas);
         Stretch(root, 0, 0, 0, 0);                 // full screen
         var cg = root.gameObject.AddComponent<CanvasGroup>();
-        cg.blocksRaycasts = false;                 // jangan blokir input game (preview)
+        cg.blocksRaycasts = false;
 
         // Backdrop dim (solid OK utk popup)
         var bd = NewRect("Backdrop", root);
@@ -78,26 +175,26 @@ public static class ObjectiveRedesignSetup
         Anchor(card, Center, Center, new Vector2(265f, 60f), Vector2.zero);
         var cardImg = Shape(card, DrawShape.Rectangle, Cream);
         cardImg.OutlineColor = Orange;
-        cardImg.OutlineWidth = 2f;
+        cardImg.OutlineWidth = F(2f);
         Rounded(cardImg, 10f);
 
         var txt = Label("txtObjective", card, "Sapa rekan kerja di pagi hari",
                         17f, DarkText, TextAlignmentOptions.Center, FontStyles.Bold);
         Stretch(txt.rectTransform, 16f, 6f, 16f, 6f);
-        txt.enableAutoSizing = true; txt.fontSizeMin = 11f; txt.fontSizeMax = 18f;
+        txt.enableAutoSizing = true; txt.fontSizeMin = F(11f); txt.fontSizeMax = F(18f);
 
         // Icon bulat + label OBJECTIVE
         var icon = NewRect("IconCircle", root);
         Anchor(icon, Center, Center, new Vector2(26f, 26f), new Vector2(0f, -50f));
         var iconImg = Shape(icon, DrawShape.Circle, Orange);
-        iconImg.StrokeWidth = 2f;
+        iconImg.StrokeWidth = F(2f);
         var glyph = Label("txtIcon", icon, "❐", 12f, Orange, TextAlignmentOptions.Center);
         Stretch(glyph.rectTransform, 0, 0, 0, 0);
 
         var lbl = Label("txtLabel", root, "OBJECTIVE", 11f, Orange,
                         TextAlignmentOptions.Center, FontStyles.Bold);
         Anchor(lbl.rectTransform, Center, Center, new Vector2(220f, 18f), new Vector2(0f, -70f));
-        lbl.characterSpacing = 8f;
+        lbl.characterSpacing = F(8f);
     }
 
     static void Diamond(Transform parent, string name, float size, float stroke, Color color, float falloff)
@@ -106,8 +203,8 @@ public static class ObjectiveRedesignSetup
         Anchor(rt, Center, Center, new Vector2(size, size), Vector2.zero);
         rt.localRotation = Quaternion.Euler(0f, 0f, 45f);
         var img = Shape(rt, DrawShape.Rectangle, color);
-        img.StrokeWidth = stroke;
-        img.FalloffDistance = falloff;
+        img.StrokeWidth = F(stroke);
+        img.FalloffDistance = F(falloff);
         Rounded(img, 6f);
     }
 
@@ -124,7 +221,7 @@ public static class ObjectiveRedesignSetup
         // Card background — TRANSPARAN (tembus ke belakang)
         var bgImg = Shape(root, DrawShape.Rectangle, SideBG);
         bgImg.OutlineColor = new Color(Orange.r, Orange.g, Orange.b, 0.45f);
-        bgImg.OutlineWidth = 1.5f;
+        bgImg.OutlineWidth = F(1.5f);
         Rounded(bgImg, 11f);
 
         // Accent bar oranye (kiri)
@@ -132,8 +229,8 @@ public static class ObjectiveRedesignSetup
         bar.anchorMin = new Vector2(0f, 0f);
         bar.anchorMax = new Vector2(0f, 1f);
         bar.pivot = new Vector2(0f, 0.5f);
-        bar.offsetMin = new Vector2(7f, 11f);   // x=7 dari kiri, bawah inset 11
-        bar.offsetMax = new Vector2(11f, -11f); // width 4 (11-7), atas inset 11
+        bar.offsetMin = V(7f, 11f);   // x=7 dari kiri, bawah inset 11
+        bar.offsetMax = V(11f, -11f); // width 4 (11-7), atas inset 11
         var barImg = Shape(bar, DrawShape.Rectangle, Orange);
         Rounded(barImg, 2f);
 
@@ -141,7 +238,7 @@ public static class ObjectiveRedesignSetup
         var hdr = Label("txtDetailHeader", root, "TARGET DETAIL", 11f, Orange,
                         TextAlignmentOptions.TopLeft, FontStyles.Bold);
         Anchor(hdr.rectTransform, TopLeft, TopLeft, new Vector2(180f, 16f), new Vector2(18f, -13f));
-        hdr.characterSpacing = 4f;
+        hdr.characterSpacing = F(4f);
 
         // Badge "!" (kanan atas)
         var badge = NewRect("Badge", root);
@@ -156,8 +253,8 @@ public static class ObjectiveRedesignSetup
         div.anchorMin = new Vector2(0f, 1f);
         div.anchorMax = new Vector2(1f, 1f);
         div.pivot = new Vector2(0.5f, 1f);
-        div.offsetMin = new Vector2(18f, -34f);
-        div.offsetMax = new Vector2(-14f, -32.5f);
+        div.offsetMin = V(18f, -34f);
+        div.offsetMax = V(-14f, -32.5f);
         var dImg = div.gameObject.AddComponent<Image>();
         dImg.color = new Color(1f, 1f, 1f, 0.15f);
         dImg.raycastTarget = false;
@@ -169,9 +266,9 @@ public static class ObjectiveRedesignSetup
         body.rectTransform.anchorMin = new Vector2(0f, 1f);
         body.rectTransform.anchorMax = new Vector2(1f, 1f);
         body.rectTransform.pivot = new Vector2(0.5f, 1f);
-        body.rectTransform.offsetMin = new Vector2(18f, -98f);
-        body.rectTransform.offsetMax = new Vector2(-14f, -40f);
-        body.enableAutoSizing = true; body.fontSizeMin = 10f; body.fontSizeMax = 13f;
+        body.rectTransform.offsetMin = V(18f, -98f);
+        body.rectTransform.offsetMax = V(-14f, -40f);
+        body.enableAutoSizing = true; body.fontSizeMin = F(10f); body.fontSizeMax = F(13f);
 
         // Location (opsional — boleh dikosongkan nanti)
         var loc = Label("txtDetailLocation", root, "◎  RUANG IT · LANTAI 2",
@@ -180,7 +277,7 @@ public static class ObjectiveRedesignSetup
     }
 
     // =====================================================================
-    // Helpers
+    // Helpers (auto-apply scale S to sizes/positions/paddings/fonts/radii)
     // =====================================================================
     static readonly Vector2 Center    = new Vector2(0.5f, 0.5f);
     static readonly Vector2 TopRight   = new Vector2(1f, 1f);
@@ -200,14 +297,14 @@ public static class ObjectiveRedesignSetup
         return go.GetComponent<RectTransform>();
     }
 
-    // Full-stretch with padding (left, top, right, bottom)
+    // Full-stretch with padding (left, top, right, bottom) — scaled
     static void Stretch(RectTransform rt, float l, float t, float r, float b)
     {
         rt.anchorMin = Vector2.zero;
         rt.anchorMax = Vector2.one;
         rt.pivot = Center;
-        rt.offsetMin = new Vector2(l, b);
-        rt.offsetMax = new Vector2(-r, -t);
+        rt.offsetMin = V(l, b);
+        rt.offsetMax = V(-r, -t);
     }
 
     static void Anchor(RectTransform rt, Vector2 anchor, Vector2 pivot, Vector2 size, Vector2 pos)
@@ -215,8 +312,8 @@ public static class ObjectiveRedesignSetup
         rt.anchorMin = anchor;
         rt.anchorMax = anchor;
         rt.pivot = pivot;
-        rt.sizeDelta = size;
-        rt.anchoredPosition = pos;
+        rt.sizeDelta = new Vector2(size.x * S, size.y * S);
+        rt.anchoredPosition = new Vector2(pos.x * S, pos.y * S);
     }
 
     static MPImage Shape(RectTransform rt, DrawShape shape, Color fill)
@@ -233,7 +330,8 @@ public static class ObjectiveRedesignSetup
     static void Rounded(MPImage img, float radius)
     {
         var r = img.Rectangle;
-        r.CornerRadius = new Vector4(radius, radius, radius, radius);
+        float rr = radius * S;
+        r.CornerRadius = new Vector4(rr, rr, rr, rr);
         img.Rectangle = r;
     }
 
@@ -244,7 +342,7 @@ public static class ObjectiveRedesignSetup
         var rt = NewRect(name, parent);
         var t = rt.gameObject.AddComponent<TextMeshProUGUI>();
         t.text = text;
-        t.fontSize = size;
+        t.fontSize = size * S;
         t.color = color;
         t.alignment = align;
         t.fontStyle = style;
