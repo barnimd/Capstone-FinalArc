@@ -1717,15 +1717,15 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -12.26191, y: -17.86746}
-      - {x: 19.914139, y: -17.964731}
-      - {x: 19.929905, y: -13.9614725}
-      - {x: 11.921459, y: -13.942759}
-      - {x: 11.840923, y: -3.3926497}
-      - {x: 19.356411, y: -3.3828402}
-      - {x: 19.351833, y: 10.098246}
-      - {x: 3.4818, y: 9.985098}
-      - {x: -12.550918, y: 10.152067}
+    - - {x: -12.610001, y: -17.96}
+      - {x: 19.89, y: -17.96}
+      - {x: 19.89, y: -14.459999}
+      - {x: 12.389999, y: -14.459999}
+      - {x: 12.389999, y: -3.209999}
+      - {x: 19.39, y: -3.209999}
+      - {x: 19.39, y: 10.140001}
+      - {x: 3.4899998, y: 10.140001}
+      - {x: -12.610001, y: 10.140001}
   m_UseDelaunayMesh: 0
 --- !u!4 &118890247
 Transform:
@@ -16810,6 +16810,99 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061699628}
   m_CullTransparentMesh: 1
+--- !u!1 &1082685051
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1082685054}
+  - component: {fileID: 1082685053}
+  - component: {fileID: 1082685052}
+  m_Layer: 0
+  m_Name: KaraokeCameraZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1082685052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1082685051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b27ae373775bbc47b81f7200c18d4b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  virtualCamera: {fileID: 1623547563}
+  roomOrthographicSize: 3
+  transitionDuration: 0.35
+--- !u!61 &1082685053
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1082685051}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 8, y: 9.5}
+  m_EdgeRadius: 0
+--- !u!4 &1082685054
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1082685051}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 21, y: 6.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1099700349
 GameObject:
   m_ObjectHideFlags: 0
@@ -43446,3 +43539,4 @@ SceneRoots:
   - {fileID: 1126987210}
   - {fileID: 2068326110}
   - {fileID: 83100721}
+  - {fileID: 1082685054}
