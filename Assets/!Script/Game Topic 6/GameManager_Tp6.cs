@@ -47,6 +47,7 @@ public class GameManager_Tp6 : MonoBehaviour
     private Tp6State _state;
     private int _score;
     private bool _started;
+    private bool _finalized;
 
     // FIX R5: referensi ke tombol OK di feedbackPanel agar bisa di-disable saat auto-dismiss
     private Button _feedbackOkBtn;
@@ -269,24 +270,11 @@ public class GameManager_Tp6 : MonoBehaviour
 
         if (evaluation != null)
         {
-            evaluation.TriggerEvaluation(() =>
-            {
-                if (objectiveUI) objectiveUI.gameObject.SetActive(false);
-                if (desktopCanvas) desktopCanvas.SetActive(false);
-                if (summaryCanvas) summaryCanvas.SetActive(true);
-
-                if (ScoreManager.instance != null)
-                    ScoreManager.instance.ClampScore(0, 100);
-            });
+            evaluation.TriggerEvaluation(() => FinalizeGame(true));
         }
         else
         {
-            if (objectiveUI) objectiveUI.gameObject.SetActive(false);
-            if (desktopCanvas) desktopCanvas.SetActive(false);
-            if (summaryCanvas) summaryCanvas.SetActive(true);
-
-            if (ScoreManager.instance != null)
-                ScoreManager.instance.SetScore(Mathf.Clamp(_score, 0, 100));
+            FinalizeGame(true);
         }
     }
 
@@ -325,11 +313,31 @@ public class GameManager_Tp6 : MonoBehaviour
 
     void EndGame(bool success)
     {
+        FinalizeGame(success);
+    }
+
+    private void FinalizeGame(bool success)
+    {
+        if (_finalized)
+            return;
+
+        _finalized = true;
+
         if (objectiveUI) objectiveUI.gameObject.SetActive(false);
         if (desktopCanvas) desktopCanvas.SetActive(false);
-        if (ScoreManager.instance != null) ScoreManager.instance.SetScore(Mathf.Max(5, _score));
-        if (summaryCanvas && !success) summaryCanvas.SetActive(true);
-        Debug.Log($"[Tp6] {(success ? "SUCCESS" : "FAILED")} Score={_score}");
+
+        int finalScore = success
+            ? Mathf.Clamp(ScoreManager.instance != null ? ScoreManager.instance.score : _score, 0, 100)
+            : Mathf.Clamp(Mathf.Max(5, _score), 0, 100);
+
+        ScoreManager.instance?.SetScore(finalScore);
+
+        if (SummaryManager.instance != null)
+            SummaryManager.instance.TriggerSummary();
+        else if (summaryCanvas != null)
+            summaryCanvas.SetActive(true);
+
+        Debug.Log($"[Tp6] {(success ? "SUCCESS" : "FAILED")} Score={finalScore}");
     }
 
     // ── FIX R5: ShowFB kini menerima flag autoClose ──────────────────────────────────
