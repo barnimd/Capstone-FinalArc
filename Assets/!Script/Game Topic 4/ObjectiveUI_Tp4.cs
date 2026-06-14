@@ -33,6 +33,11 @@ public class ObjectiveUI_Tp4 : MonoBehaviour, IObjectivePanel
             _rect = GetComponent<RectTransform>();
     }
 
+    private void Start()
+    {
+        if (redesign == null) redesign = FindObjectOfType<ObjectiveRedesignUI>(true);
+    }
+
     private void OnDisable()
     {
         if (redesign != null) redesign.HideAll();

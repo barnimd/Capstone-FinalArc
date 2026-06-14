@@ -84,6 +84,11 @@ public class ObjectiveUI_Tp1 : MonoBehaviour, IObjectivePanel
         if (panelRoot != null) panelRoot.SetActive(false);
     }
 
+    private void Start()
+    {
+        if (redesign == null) redesign = FindObjectOfType<ObjectiveRedesignUI>(true);
+    }
+
     private void OnDisable()
     {
         if (redesign != null) redesign.HideAll();

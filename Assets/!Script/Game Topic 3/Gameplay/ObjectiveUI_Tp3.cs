@@ -22,6 +22,11 @@ public class ObjectiveUI_Tp3 : MonoBehaviour, IObjectivePanel
 
     public void ShowObjective(string text) => SetObjective(text);
 
+    private void Start()
+    {
+        if (redesign == null) redesign = FindObjectOfType<ObjectiveRedesignUI>(true);
+    }
+
     private void OnDisable()
     {
         if (redesign != null) redesign.HideAll();

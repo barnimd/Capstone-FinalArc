@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
@@ -32,6 +33,11 @@ public class ObjectiveRedesignUI : MonoBehaviour, IObjectivePanel
     [Header("=== Popup punch ===")]
     [Range(0.5f, 1f)] public float popupStartScale = 0.85f;
 
+    [Header("=== Quest box (collapsed indicator) ===")]
+    public GameObject questButton;            // small box top-right; click to re-summon the side card
+    public float sideVisibleDuration = 10f;   // side card auto-hides after this many seconds
+    public KeyCode toggleKey = KeyCode.Q;     // keyboard toggle (legacy Input)
+
     // resolved refs
     private CanvasGroup _popCg, _sideCg;
     private RectTransform _sideRt, _cardRt;
@@ -39,6 +45,8 @@ public class ObjectiveRedesignUI : MonoBehaviour, IObjectivePanel
     private Vector2 _sideRest;
     private float _slideDistance;
     private Coroutine _routine;
+    private Coroutine _autoHide;
+    private bool _hasObjective;
     private bool _resolved;
 
     private void Awake()
@@ -46,6 +54,18 @@ public class ObjectiveRedesignUI : MonoBehaviour, IObjectivePanel
         Resolve();
         if (popupRoot) popupRoot.SetActive(false);
         if (sideRoot)  sideRoot.SetActive(false);
+        if (questButton != null)
+        {
+            questButton.SetActive(false);
+            var btn = questButton.GetComponent<Button>();
+            if (btn != null) { btn.onClick.RemoveListener(ToggleSidePanel); btn.onClick.AddListener(ToggleSidePanel); }
+        }
+    }
+
+    private void Update()
+    {
+        if (_hasObjective && Input.GetKeyDown(toggleKey))
+            ToggleSidePanel();
     }
 
     private void Resolve()
@@ -105,26 +125,82 @@ public class ObjectiveRedesignUI : MonoBehaviour, IObjectivePanel
         if (!gameObject.activeSelf) gameObject.SetActive(true);
         if (!isActiveAndEnabled) return; // can't run coroutine; caller will retry when enabled
 
+        _hasObjective = true;
+        CancelAutoHide();
         if (_routine != null) StopCoroutine(_routine);
         _routine = StartCoroutine(Sequence());
     }
 
     public void HideAll()
     {
+        CancelAutoHide();
         if (_routine != null) { StopCoroutine(_routine); _routine = null; }
         if (popupRoot) popupRoot.SetActive(false);
         if (sideRoot)  sideRoot.SetActive(false);
+        HideButton();
     }
+
+    /// <summary>Click/key handler: summon the side card if hidden, hide it if shown.</summary>
+    public void ToggleSidePanel()
+    {
+        if (!_hasObjective) return;
+        if (_routine != null) { StopCoroutine(_routine); _routine = null; }
+        CancelAutoHide();
+        if (sideRoot != null && sideRoot.activeSelf)
+            _routine = StartCoroutine(ManualHideRoutine());
+        else
+            _routine = StartCoroutine(ManualShowRoutine());
+    }
+
+    private IEnumerator ManualShowRoutine()
+    {
+        HideButton();
+        yield return SlideSideIn();
+        _routine = null;
+        StartAutoHide();
+    }
+
+    private IEnumerator ManualHideRoutine()
+    {
+        yield return SlideSideOut();
+        _routine = null;
+        ShowButton();
+    }
+
+    private void StartAutoHide()
+    {
+        CancelAutoHide();
+        _autoHide = StartCoroutine(AutoHideRoutine());
+    }
+
+    private void CancelAutoHide()
+    {
+        if (_autoHide != null) { StopCoroutine(_autoHide); _autoHide = null; }
+    }
+
+    private IEnumerator AutoHideRoutine()
+    {
+        float t = 0f;
+        while (t < sideVisibleDuration) { t += Time.unscaledDeltaTime; yield return null; }
+        yield return SlideSideOut();
+        _autoHide = null;
+        ShowButton();
+    }
+
+    private void ShowButton() { if (questButton != null) questButton.SetActive(true); }
+    private void HideButton() { if (questButton != null) questButton.SetActive(false); }
 
     // ── Sequence ───────────────────────────────────────────────────────────
     private IEnumerator Sequence()
     {
+        HideButton();
         if (sideRoot && sideRoot.activeSelf)
             yield return SlideSideOut();
 
         yield return PopupRoutine();
         yield return SlideSideIn();
         _routine = null;
+        StartAutoHide();
     }
 
     private IEnumerator PopupRoutine()

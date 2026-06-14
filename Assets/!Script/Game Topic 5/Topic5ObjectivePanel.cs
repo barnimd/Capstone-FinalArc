@@ -17,6 +17,11 @@ public class Topic5ObjectivePanel : MonoBehaviour, IObjectivePanel
             objectiveText.text = text;
     }
 
+    private void Start()
+    {
+        if (redesign == null) redesign = FindObjectOfType<ObjectiveRedesignUI>(true);
+    }
+
     private void OnDisable()
     {
         if (redesign != null) redesign.HideAll();

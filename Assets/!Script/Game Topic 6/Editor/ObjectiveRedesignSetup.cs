@@ -33,10 +33,11 @@ public static class ObjectiveRedesignSetup
     static readonly Color Dim       = new Color(0.055f, 0.043f, 0.035f, 0.55f); // popup backdrop (solid OK)
     static readonly Color SideBG    = new Color(0.070f, 0.055f, 0.045f, 0.55f); // transparan, tembus belakang
 
-    const string PopupName      = "ObjectivePopup_Center";
-    const string SideName       = "ObjectiveDetail_Side";
-    const string ControllerName = "ObjectiveRedesignUI";
-    const float  BaselineWidth  = 800f; // Topic 6 reference width the design was authored at
+    const string PopupName       = "ObjectivePopup_Center";
+    const string SideName        = "ObjectiveDetail_Side";
+    const string ControllerName  = "ObjectiveRedesignUI";
+    const string QuestButtonName = "ObjectiveQuestButton";
+    const float  BaselineWidth   = 800f; // Topic 6 reference width the design was authored at
 
     // Scale factor applied to all authored sizes/positions/fonts (set per canvas).
     static float S = 1f;
@@ -106,6 +107,7 @@ public static class ObjectiveRedesignSetup
         Remove(t, PopupName);
         Remove(t, SideName);
         Remove(t, ControllerName);
+        Remove(t, QuestButtonName);
 
         BuildPopup(t);
         BuildSide(t);
@@ -120,6 +122,7 @@ public static class ObjectiveRedesignSetup
         ctrl.sideRoot  = t.Find(SideName).gameObject;
         ctrl.popupRoot.SetActive(false);
         ctrl.sideRoot.SetActive(false);
+        EnsureQuestButton(canvas, ctrl);
         EditorUtility.SetDirty(ctrl);
         return ctrl;
     }
@@ -148,6 +151,85 @@ public static class ObjectiveRedesignSetup
 
         EditorSceneManager.MarkSceneDirty(canvasGo.scene);
         Debug.Log("[ObjectiveRedesign] Popup + Side panel dibuat di ObjectiveCanvas.");
+    }
+
+    // =====================================================================
+    // PREFAB — self-contained HUD with its OWN 1920 Canvas (drop-in reuse)
+    // =====================================================================
+    const string PrefabRootName = "ObjectiveRedesignHUD";
+    const string PrefabPath      = "Assets/!Prefab/ObjectiveRedesignHUD.prefab";
+
+    [MenuItem("Game/Create-Update Objective Redesign Prefab")]
+    public static void CreateOrUpdatePrefab()
+    {
+        var root = BuildPrefabRoot();
+        if (!AssetDatabase.IsValidFolder("Assets/!Prefab"))
+            AssetDatabase.CreateFolder("Assets", "!Prefab");
+        var prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+        Object.DestroyImmediate(root);
+        Debug.Log("[ObjectiveRedesign] Prefab " + (prefab != null ? "saved" : "FAILED") + ": " + PrefabPath);
+    }
+
+    static GameObject BuildPrefabRoot()
+    {
+        S = 1920f / BaselineWidth; // 2.4 — prefab carries its own 1920 canvas
+        var root = new GameObject(PrefabRootName,
+            typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+        var canvas = root.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 40;
+        var scaler = root.GetComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920f, 1080f);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.matchWidthOrHeight = 0.5f;
+
+        var t = root.transform;
+        BuildPopup(t);
+        BuildSide(t);
+
+        var ctrl = root.AddComponent<ObjectiveRedesignUI>();
+        ctrl.popupRoot = t.Find(PopupName).gameObject;
+        ctrl.sideRoot  = t.Find(SideName).gameObject;
+        EnsureQuestButton(canvas, ctrl);
+        ctrl.popupRoot.SetActive(false);
+        ctrl.sideRoot.SetActive(false);
+        return root;
+    }
+
+    [MenuItem("Game/Use Objective Redesign Prefab (current scene)")]
+    public static void UsePrefabInCurrentScene()
+    {
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+        if (prefab == null) { Debug.LogWarning("[ObjectiveRedesign] Prefab belum ada — jalankan 'Create-Update Objective Redesign Prefab' dulu."); return; }
+
+        // idempotent: hapus instance prefab lama + objek baked yang lepas
+        foreach (var go in FindAllByName(PrefabRootName)) { if (go) Object.DestroyImmediate(go); }
+        foreach (var n in new[]{ PopupName, SideName, QuestButtonName, ControllerName })
+            foreach (var go in FindAllByName(n)) { if (go) Object.DestroyImmediate(go); }
+
+        var inst = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        var ctrl = inst.GetComponent<ObjectiveRedesignUI>();
+
+        int wired = 0;
+        foreach (var mb in Object.FindObjectsOfType<MonoBehaviour>(true))
+            if (mb is IObjectivePanel && !(mb is ObjectiveRedesignUI))
+            {
+                var f = mb.GetType().GetField("redesign");
+                if (f != null) { f.SetValue(mb, ctrl); EditorUtility.SetDirty(mb); wired++; }
+            }
+
+        var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+        EditorSceneManager.MarkSceneDirty(scene);
+        Debug.Log("[ObjectiveRedesign] Prefab dipasang di '" + scene.name + "', wired " + wired + " panel.");
+    }
+
+    static System.Collections.Generic.List<GameObject> FindAllByName(string name)
+    {
+        var list = new System.Collections.Generic.List<GameObject>();
+        foreach (var tr in Object.FindObjectsOfType<Transform>(true))
+            if (tr != null && tr.name == name) list.Add(tr.gameObject);
+        return list;
     }
 
     // =====================================================================
@@ -274,6 +356,36 @@ public static class ObjectiveRedesignSetup
         var loc = Label("txtDetailLocation", root, "◎  RUANG IT · LANTAI 2",
                         10f, MutedText, TextAlignmentOptions.Left);
         Anchor(loc.rectTransform, BottomLeft, BottomLeft, new Vector2(220f, 14f), new Vector2(18f, 10f));
+    }
+
+    // =====================================================================
+    // QUEST BOX — kotak kecil kanan atas (collapsed). Diklik/key buat munculin side card.
+    // =====================================================================
+    public static void EnsureQuestButton(Canvas canvas, ObjectiveRedesignUI controller)
+    {
+        S = ComputeScale(canvas);
+        var t = canvas.transform;
+        var existing = t.Find(QuestButtonName);
+        var btnGo = existing != null ? existing.gameObject : BuildQuestButton(t);
+        controller.questButton = btnGo;
+        btnGo.SetActive(false);
+        EditorUtility.SetDirty(controller);
+    }
+
+    static GameObject BuildQuestButton(Transform canvas)
+    {
+        var root = NewRect(QuestButtonName, canvas);
+        Anchor(root, TopRight, TopRight, new Vector2(40f, 40f), new Vector2(-14f, -14f));
+        var bg = Shape(root, DrawShape.Rectangle, new Color(SideBG.r, SideBG.g, SideBG.b, 0.85f));
+        bg.raycastTarget = true; // clickable
+        bg.OutlineColor = new Color(Orange.r, Orange.g, Orange.b, 0.7f);
+        bg.OutlineWidth = F(1.5f);
+        Rounded(bg, 9f);
+        var btn = root.gameObject.AddComponent<Button>();
+        btn.targetGraphic = bg;
+        var icon = Label("txtQuestIcon", root, "!", 20f, Orange, TextAlignmentOptions.Center, FontStyles.Bold);
+        Stretch(icon.rectTransform, 0, 0, 0, 0);
+        return root.gameObject;
     }
 
     // =====================================================================
