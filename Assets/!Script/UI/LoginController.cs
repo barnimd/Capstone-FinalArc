@@ -14,6 +14,7 @@ public class LoginController : MonoBehaviour
     [SerializeField] private Button loginButton;
     [SerializeField] private Button goToSignUpButton;
     [SerializeField] private Button googleSignInButton;
+    [SerializeField] private Button playAsGuestButton;
 
     // ─── Google Client ID ─────────────────────────────────────────────────────
 
@@ -44,6 +45,7 @@ public class LoginController : MonoBehaviour
         if (loginButton      != null) loginButton.onClick.AddListener(OnLoginClicked);
         if (goToSignUpButton != null) goToSignUpButton.onClick.AddListener(OnGoToSignUpClicked);
         if (googleSignInButton != null) googleSignInButton.onClick.AddListener(OnGoogleSignInClicked);
+        if (playAsGuestButton != null) playAsGuestButton.onClick.AddListener(OnPlayAsGuestClicked);
 
 #if UNITY_WEBGL && !UNITY_EDITOR
         GoogleAuth_Init(GoogleClientId);
@@ -111,6 +113,11 @@ public class LoginController : MonoBehaviour
     public void OnGoToSignUpClicked()
     {
         AuthUIManager.Instance.TransitionToScene(AuthUIManager.SCENE_SIGNUP);
+    }
+
+    public void OnPlayAsGuestClicked()
+    {
+        AuthUIManager.Instance.TransitionToScene(AuthUIManager.SCENE_GUEST);
     }
 
     private void SetLoading(bool isLoading)

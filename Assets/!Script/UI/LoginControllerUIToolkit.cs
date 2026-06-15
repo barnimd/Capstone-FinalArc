@@ -25,6 +25,7 @@ public class LoginControllerUIToolkit : MonoBehaviour
     private Button        _googleButton;
     private Label         _forgotLink;
     private Label         _signupLink;
+    private Label         _guestLink;
     private Label         _contactLink;
     private Label         _errorLabel;
 
@@ -44,6 +45,7 @@ public class LoginControllerUIToolkit : MonoBehaviour
         _googleButton   = _root.Q<Button>("google-button");
         _forgotLink     = _root.Q<Label>("forgot-link");
         _signupLink     = _root.Q<Label>("signup-link");
+        _guestLink      = _root.Q<Label>("guest-link");
         _contactLink    = _root.Q<Label>("link-contact");
         _errorLabel     = _root.Q<Label>("login-error");
 
@@ -52,6 +54,7 @@ public class LoginControllerUIToolkit : MonoBehaviour
         if (_loginButton  != null) _loginButton.clicked   += OnLoginClicked;
         if (_googleButton != null) _googleButton.clicked  += OnGoogleSignInClicked;
         if (_signupLink   != null) _signupLink.RegisterCallback<ClickEvent>(evt => OnGoToSignUpClicked());
+        if (_guestLink    != null) _guestLink.RegisterCallback<ClickEvent>(evt => OnPlayAsGuestClicked());
         if (_forgotLink   != null) _forgotLink.RegisterCallback<ClickEvent>(evt => Debug.Log("[Login] Forgot password — not implemented"));
         if (_contactLink  != null) _contactLink.RegisterCallback<ClickEvent>(evt => Debug.Log("[Login] Contact support — not implemented"));
 
@@ -118,6 +121,11 @@ public class LoginControllerUIToolkit : MonoBehaviour
     private void OnGoToSignUpClicked()
     {
         AuthUIManager.Instance.TransitionToScene(AuthUIManager.SCENE_SIGNUP);
+    }
+
+    private void OnPlayAsGuestClicked()
+    {
+        AuthUIManager.Instance.TransitionToScene(AuthUIManager.SCENE_GUEST);
     }
 
     private void OnGoogleSignInClicked()

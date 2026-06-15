@@ -26,6 +26,7 @@ public class SignUpControllerUIToolkit : MonoBehaviour
     private Button        _signupButton;
     private Button        _googleButton;
     private Label         _signinLink;
+    private Label         _guestLink;
     private Label         _errorLabel;
     private Label         _strengthLabel;
     private VisualElement[] _strengthSegments = new VisualElement[4];
@@ -43,6 +44,7 @@ public class SignUpControllerUIToolkit : MonoBehaviour
         _signupButton   = _root.Q<Button>("signup-button");
         _googleButton   = _root.Q<Button>("google-button");
         _signinLink     = _root.Q<Label>("signin-link");
+        _guestLink      = _root.Q<Label>("guest-link");
         _errorLabel     = _root.Q<Label>("signup-error");
         _strengthLabel  = _root.Q<Label>("strength-label");
 
@@ -55,6 +57,7 @@ public class SignUpControllerUIToolkit : MonoBehaviour
         if (_signupButton != null) _signupButton.clicked += OnSignUpClicked;
         if (_googleButton != null) _googleButton.clicked += OnGoogleSignUpClicked;
         if (_signinLink   != null) _signinLink.RegisterCallback<ClickEvent>(evt => OnGoToLogin());
+        if (_guestLink    != null) _guestLink.RegisterCallback<ClickEvent>(evt => OnPlayAsGuest());
 
         // Live password strength feedback
         if (_passwordInput != null)
@@ -253,6 +256,11 @@ public class SignUpControllerUIToolkit : MonoBehaviour
     private void OnGoToLogin()
     {
         AuthUIManager.Instance.TransitionToScene(AuthUIManager.SCENE_LOGIN);
+    }
+
+    private void OnPlayAsGuest()
+    {
+        AuthUIManager.Instance.TransitionToScene(AuthUIManager.SCENE_GUEST);
     }
 
     private void OnGoogleSignUpClicked()

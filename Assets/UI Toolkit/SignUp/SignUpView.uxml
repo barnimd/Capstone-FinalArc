@@ -99,6 +99,11 @@
                         <engine:Label text="Sign up with Google" class="google-label" />
                     </engine:Button>
 
+                    <engine:VisualElement style="flex-direction: row; justify-content: center; margin-top: 14px;">
+                        <engine:Label text="Just want to try?" class="topbar-help-text" />
+                        <engine:Label text="Play as Guest" name="guest-link" class="topbar-help-link" style="margin-left: 6px;" />
+                    </engine:VisualElement>
+
                     <engine:Label text="" name="signup-error" class="error" />
                 </engine:VisualElement>
             </engine:VisualElement>

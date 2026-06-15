@@ -55,6 +55,10 @@
                         <ui:Label text="New to this game?" class="login-bottom-text" />
                         <ui:Label text="Make an account" name="signup-link" class="login-link" />
                     </ui:VisualElement>
+                    <ui:VisualElement class="login-bottom">
+                        <ui:Label text="Just want to try?" class="login-bottom-text" />
+                        <ui:Label text="Play as Guest" name="guest-link" class="login-link" />
+                    </ui:VisualElement>
                     <ui:Label name="login-error" class="login-error" />
                 </ui:VisualElement>
             </ui:VisualElement>

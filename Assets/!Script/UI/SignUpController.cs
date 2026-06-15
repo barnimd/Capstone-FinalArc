@@ -20,6 +20,7 @@ public class SignUpController : MonoBehaviour
     [SerializeField] private Button showHidePasswordButton;
     [SerializeField] private Button showHideConfirmPasswordButton;
     [SerializeField] private Button googleSignInButton;
+    [SerializeField] private Button playAsGuestButton;
 
     [Header("Password Visibility Icons")]
     [SerializeField] private Image passwordEyeIcon;
@@ -56,6 +57,7 @@ public class SignUpController : MonoBehaviour
         showHidePasswordButton.onClick.AddListener(TogglePasswordVisibility);
         showHideConfirmPasswordButton.onClick.AddListener(ToggleConfirmPasswordVisibility);
         if (googleSignInButton != null) googleSignInButton.onClick.AddListener(OnGoogleSignInClicked);
+        if (playAsGuestButton != null) playAsGuestButton.onClick.AddListener(OnPlayAsGuestClicked);
 
 #if UNITY_WEBGL && !UNITY_EDITOR
         GoogleAuth_Init(GoogleClientId);
@@ -198,6 +200,11 @@ public class SignUpController : MonoBehaviour
     public void OnGoToLoginClicked()
     {
         AuthUIManager.Instance.TransitionToScene(AuthUIManager.SCENE_LOGIN);
+    }
+
+    public void OnPlayAsGuestClicked()
+    {
+        AuthUIManager.Instance.TransitionToScene(AuthUIManager.SCENE_GUEST);
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────
