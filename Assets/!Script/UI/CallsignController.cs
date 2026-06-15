@@ -56,8 +56,8 @@ public class CallsignController : MonoBehaviour
         if (charCounterText == null) return;
         int len = value != null ? value.Length : 0;
         charCounterText.text = len == 0
-            ? MinLength + "-" + MaxLength + " chars"
-            : len + "/" + MaxLength + " chars";
+            ? MinLength + "-" + MaxLength + " karakter"
+            : len + "/" + MaxLength + " karakter";
     }
 
     public void OnPlayClicked()
@@ -66,25 +66,25 @@ public class CallsignController : MonoBehaviour
 
         if (string.IsNullOrEmpty(callsign))
         {
-            ShowError("Callsign tidak boleh kosong");
+            ShowError("Nama tidak boleh kosong");
             return;
         }
 
         if (callsign.Length < MinLength)
         {
-            ShowError("Callsign minimal " + MinLength + " karakter");
+            ShowError("Nama minimal " + MinLength + " karakter");
             return;
         }
 
         if (callsign.Length > MaxLength)
         {
-            ShowError("Callsign maksimal " + MaxLength + " karakter");
+            ShowError("Nama maksimal " + MaxLength + " karakter");
             return;
         }
 
         if (!Alphanumeric.IsMatch(callsign))
         {
-            ShowError("Callsign hanya boleh huruf dan angka");
+            ShowError("Nama hanya boleh huruf dan angka");
             return;
         }
 
