@@ -13,35 +13,35 @@ MonoBehaviour:
   m_Name: EvaluationData_Tp2
   m_EditorClassIdentifier: 
   questions:
-  - questionText: 'Apakah URL yang terlihat mirip (contoh: go0gle.com) bisa menjadi
-      tanda situs phishing?'
+  - questionText: Apakah kata sandi Anda memiliki minimal 12 karakter?
     choiceA: Ya
     choiceB: Tidak
     correctAnswerIndex: 0
-    explanation: Penyerang sering menggunakan domain yang hampir sama untuk menipu
-      pengguna.
-  - questionText: Apakah semua website dengan tampilan profesional pasti aman untuk
-      login?
-    choiceA: Ya
-    choiceB: Tidak
-    correctAnswerIndex: 1
-    explanation: Tampilan bisa ditiru, tapi keamanan tidak bisa dilihat dari desain
-      saja.
-  - questionText: "Apakah \u201Chttps://\u201D menjamin sebuah website 100% aman
-      dari penipuan?"
-    choiceA: Ya
-    choiceB: Tidak
-    correctAnswerIndex: 1
-    explanation: HTTPS hanya mengamankan koneksi, bukan menjamin keaslian website.
-  - questionText: Apakah link dari iklan atau pesan bisa mengarah ke situs palsu
-      meskipun terlihat normal?
+    explanation: Kata sandi yang lebih panjang lebih sulit ditebak melalui serangan
+      brute force.
+  - questionText: Apakah kata sandi Anda menggunakan kombinasi huruf besar, huruf
+      kecil, angka, dan simbol?
     choiceA: Ya
     choiceB: Tidak
     correctAnswerIndex: 0
-    explanation: Banyak phishing menggunakan link yang disamarkan agar terlihat terpercaya.
-  - questionText: Apakah mengecek domain utama (misalnya .go.id, .com) penting sebelum
-      login?
+    explanation: Variasi karakter membuat password lebih kompleks dan meningkatkan
+      keamanan.
+  - questionText: Apakah Anda menggunakan kata sandi yang berbeda untuk setiap akun?
     choiceA: Ya
     choiceB: Tidak
     correctAnswerIndex: 0
-    explanation: Domain resmi membantu memastikan keaslian website.
+    explanation: Jika satu akun diretas, akun lain tetap aman karena tidak memakai
+      password yang sama.
+  - questionText: Apakah Anda mengganti kata sandi secara rutin, terutama untuk akun
+      penting?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 0
+    explanation: Mengganti password secara berkala membantu mengurangi risiko akses
+      tidak sah.
+  - questionText: Apakah Anda sudah mengaktifkan Multi-Factor Authentication (MFA)
+      pada akun utama Anda?
+    choiceA: Ya
+    choiceB: Tidak
+    correctAnswerIndex: 0
+    explanation: MFA memberikan lapisan keamanan tambahan selain hanya password.
