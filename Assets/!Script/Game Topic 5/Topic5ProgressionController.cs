@@ -124,6 +124,11 @@ public class Topic5ProgressionController : MonoBehaviour
         laptop?.RefreshPrompt();
     }
 
+    private void OnDialogueStarted(VNNPCInteractable source)
+    {
+        objectiveArrow?.Hide();
+    }
+
     private void OnDialogueEnded(VNNPCInteractable source)
     {
         if (source == openingNarration && stage == Stage.Opening)
@@ -246,12 +251,18 @@ public class Topic5ProgressionController : MonoBehaviour
     private void Subscribe(VNNPCInteractable interactable)
     {
         if (interactable != null)
+        {
+            interactable.DialogueStarted += OnDialogueStarted;
             interactable.DialogueEnded += OnDialogueEnded;
+        }
     }
 
     private void Unsubscribe(VNNPCInteractable interactable)
     {
         if (interactable != null)
+        {
+            interactable.DialogueStarted -= OnDialogueStarted;
             interactable.DialogueEnded -= OnDialogueEnded;
+        }
     }
 }

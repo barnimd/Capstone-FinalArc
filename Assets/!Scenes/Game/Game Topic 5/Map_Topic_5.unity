@@ -10447,6 +10447,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2092948171}
+  - {fileID: 2073409285}
   m_Father: {fileID: 57251971}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -43036,17 +43037,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  player: {fileID: 409017829}
+  player: {fileID: 0}
   arrowImage: {fileID: 2073409283}
   rotationOffset: 0
-  displayMode: 0
-  screenEdgeMargin: 52
+  displayMode: 1
+  screenEdgeMargin: 68
   screenEdgeInsets: {x: 0, y: 0, z: 0, w: 0}
   hideWhenTargetVisible: 1
   pinToVisibleTarget: 0
   visibleTargetOffset: {x: 0, y: 44}
   visibleTargetRotation: 180
-  hideWithinWorldDistance: 1.5
+  hideWithinWorldDistance: 1.2
   bounceDuration: 0.4
   bounceCount: 3
   bounceAmplitude: 5
@@ -43063,7 +43064,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.78, b: 0.08, a: 1}
+  m_Color: {r: 1, g: 0.1253229, b: 0.07843137, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -43100,12 +43101,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2092948171}
+  m_Father: {fileID: 641857794}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.93, y: 0.5}
-  m_AnchorMax: {x: 0.93, y: 0.5}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 46, y: 46}
+  m_SizeDelta: {x: 64, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2088374137
 GameObject:
@@ -43304,7 +43305,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 781379993}
-  - {fileID: 2073409285}
   m_Father: {fileID: 641857794}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
