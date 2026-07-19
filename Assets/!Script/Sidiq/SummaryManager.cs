@@ -123,7 +123,14 @@ public class SummaryManager : MonoBehaviour
         if (summaryPanel != null)
         {
             summaryPanel.SetActive(true); // aktifkan CanvasSummaryPanel
-                                          // Force aktifkan SummaryPannel (child index 1, sesuai hierarchy)
+
+            // Paksa panel ini render di ATAS semua canvas lain. Saat game selesai,
+            // DesktopCanvas/WebsiteCanvas TIDAK dimatikan dan punya sorting order lebih
+            // tinggi (sampai 50), jadi tanpa ini CanvasSummaryPanel aktif tapi ketutupan
+            // (tidak kelihatan). Lihat catatan di komentar fadeOverlay di atas.
+            BringSummaryToFront();
+
+            // Force aktifkan SummaryPannel (child index 1, sesuai hierarchy)
             Transform summaryPannel = summaryPanel.transform.Find("SummaryPannel");
             if (summaryPannel != null)
                 summaryPannel.gameObject.SetActive(true);
@@ -144,6 +151,37 @@ public class SummaryManager : MonoBehaviour
             c.a = 0f;
             fadeOverlay.color = c;
         }
+    }
+
+    /// <summary>
+    /// Memastikan CanvasSummaryPanel tampil di paling depan. Menaikkan sorting order
+    /// Canvas-nya jauh di atas canvas lain dan menaruhnya sebagai sibling terakhir.
+    /// Tanpa ini, panel bisa aktif tapi ketutupan canvas game (desktop/website) yang
+    /// masih menyala saat game selesai.
+    /// </summary>
+    private void BringSummaryToFront()
+    {
+        if (summaryPanel == null)
+            return;
+
+        // Ambil Canvas di root panel; kalau tidak ada, cari di child.
+        Canvas canvas = summaryPanel.GetComponent<Canvas>();
+        if (canvas == null)
+            canvas = summaryPanel.GetComponentInChildren<Canvas>(true);
+
+        if (canvas != null)
+        {
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 1000; // lebih tinggi dari semua canvas lain di scene
+        }
+        else
+        {
+            Debug.LogWarning("[Summary] CanvasSummaryPanel tidak punya komponen Canvas — " +
+                             "tidak bisa dipaksa ke depan. Pastikan ada Canvas di panel.");
+        }
+
+        // Jadikan sibling terakhir supaya menang draw-order kalau sorting order sama.
+        summaryPanel.transform.SetAsLastSibling();
     }
 
     // ── Neon score persistence ────────────────────────────────────────────────

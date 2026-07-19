@@ -30,13 +30,29 @@ public class EvaluationManager_Tp4 : MonoBehaviour
 
         _onComplete = onComplete;
 
+        // Failsafe: kalau quiz tidak bisa jalan (panel/data hilang atau tidak ada soal),
+        // JANGAN gantung game — langsung lanjut ke summary supaya CanvasSummaryPanel
+        // tetap muncul. Kalau normal, summary tampil SETELAH player selesai quiz.
+        bool canRunQuiz = evaluationPanel != null
+                          && evaluationData != null
+                          && evaluationData.questions != null
+                          && evaluationData.questions.Length > 0;
+
+        if (!canRunQuiz)
+        {
+            Debug.LogWarning("[EvaluationManager_Tp4] Quiz tidak bisa dimulai " +
+                             "(evaluationPanel/evaluationData/questions kosong) — " +
+                             "skip langsung ke summary.");
+            if (evaluationCanvas != null)
+                evaluationCanvas.SetActive(false);
+            _onComplete?.Invoke();
+            return;
+        }
+
         if (evaluationCanvas != null)
             evaluationCanvas.SetActive(true);
 
-        if (evaluationPanel != null && evaluationData != null)
-            evaluationPanel.MulaiEvaluasi(evaluationData);
-        else
-            Debug.LogError("[EvaluationManager_Tp4] evaluationPanel atau evaluationData belum di-assign!");
+        evaluationPanel.MulaiEvaluasi(evaluationData);
     }
 
     public void SelesaiEvaluasi()
