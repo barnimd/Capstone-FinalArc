@@ -1017,7 +1017,7 @@ MonoBehaviour:
   summaryPanel: {fileID: 1085565947}
   levelCompleteText: {fileID: 1085565951}
   scoreText: {fileID: 1085565950}
-  timeText: {fileID: 0}
+  timeText: {fileID: 1085565900}
   stageId: 
   maxScore: 100
 --- !u!4 &203737221
@@ -22097,8 +22097,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
+--- !u!114 &1085565900 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4719405982901853525, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
+  m_PrefabInstance: {fileID: 1085565946}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!114 &1085565951 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 271749845340500006, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}

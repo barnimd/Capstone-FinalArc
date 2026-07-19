@@ -117,18 +117,7 @@ public class SummaryManager : MonoBehaviour
         // Simpan hasil ke Neon (kalau scene ini punya stageId)
         SubmitResultToNeon(finalScore);
 
-        if (levelCompleteText != null)
-            levelCompleteText.text = "Level Complete!";
-
-        if (scoreText != null)
-            scoreText.text = "Score: " + finalScore;
-
-        if (timeText != null)
-        {
-            int m = Mathf.FloorToInt(elapsed / 60f);
-            int s = Mathf.FloorToInt(elapsed % 60f);
-            timeText.text = $"Time: {m:00}:{s:00}";
-        }
+        PopulateSummaryTexts(summaryPanel, finalScore, elapsed);
 
         // ── 3. Show Summary Panel ─────────────────────────────
         if (summaryPanel != null)
@@ -184,6 +173,40 @@ public class SummaryManager : MonoBehaviour
                     break;
                 case "TimeText":
                     if (timeText == null) timeText = label;
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Finds LevelCompleteText / ScoreText / TimeText by name anywhere under panelRoot
+    /// and fills them in. Shared so other flows (e.g. Topic 1's GameFlowManager, which
+    /// runs its own fade/reveal instead of TriggerSummary()) populate the summary panel
+    /// the same way instead of duplicating this logic.
+    /// </summary>
+    public static void PopulateSummaryTexts(GameObject panelRoot, int finalScore, float elapsedSeconds)
+    {
+        if (panelRoot == null)
+            return;
+
+        TMP_Text[] labels = panelRoot.GetComponentsInChildren<TMP_Text>(true);
+        foreach (TMP_Text label in labels)
+        {
+            if (label == null)
+                continue;
+
+            switch (label.gameObject.name)
+            {
+                case "LevelCompleteText":
+                    label.text = "Level Complete!";
+                    break;
+                case "ScoreText":
+                    label.text = "Score: " + finalScore;
+                    break;
+                case "TimeText":
+                    int m = Mathf.FloorToInt(elapsedSeconds / 60f);
+                    int s = Mathf.FloorToInt(elapsedSeconds % 60f);
+                    label.text = $"Time: {m:00}:{s:00}";
                     break;
             }
         }

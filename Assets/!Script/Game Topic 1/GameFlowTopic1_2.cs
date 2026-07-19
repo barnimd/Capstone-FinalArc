@@ -28,8 +28,16 @@ public class GameFlowManager : MonoBehaviour
     public GameObject contentPanel;
     public float fadeDuration = 1.2f;
     public GameplayManager gameManager;
+
+    [Header("Summary Score")]
+    [Tooltip("Server menolak skor di atas nilai ini. Sama seperti SummaryManager.maxScore.")]
+    public int maxScore = 100;
+
+    private float _startTime;
+
     void Start()
     {
+        _startTime = Time.time;
         CloseAllPanels();
 
         // Guard: hanya jalankan jika field sudah di-assign dan BUKAN DesktopCanvas
@@ -79,6 +87,10 @@ public class GameFlowManager : MonoBehaviour
         blackBackground.color = tempColor;
 
         // 3. Setelah Fade-In selesai, Munculkan Konten Utama
+        float elapsed = Time.time - _startTime;
+        int finalScore = ScoreManager.instance != null ? ScoreManager.instance.ClampScore(0, maxScore) : 0;
+        SummaryManager.PopulateSummaryTexts(contentPanel, finalScore, elapsed);
+
         contentPanel.SetActive(true);
         gameManager.FinishGame();
         Debug.Log("Transition Complete: Canvas Active -> BG Faded -> Content Shown");
