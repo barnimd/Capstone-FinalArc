@@ -56,6 +56,15 @@ public class GameplayManager : MonoBehaviour
         isGameFinished = true;
         isTimerRunning = false;
 
+        // Freeze the player the moment the game ends / summary panel appears, so they can't
+        // keep walking around behind the panel. Uses the same CanMove flag the rest of the
+        // game uses (dialogue, computer, VN) — stops velocity, input, and the walk animation.
+        TopDownPlayerMovement playerMovement = FindObjectOfType<TopDownPlayerMovement>();
+        if (playerMovement != null)
+            playerMovement.CanMove = false;
+        else
+            Debug.LogWarning("[GameplayManager] TopDownPlayerMovement not found — could not freeze player for summary.");
+
         // Ambil skor gabungan dari ScoreManager
         ScoreManager sm = ScoreManager.instance != null ? ScoreManager.instance : FindObjectOfType<ScoreManager>();
         if (sm == null)
@@ -64,23 +73,12 @@ public class GameplayManager : MonoBehaviour
         int finalScore = (sm != null) ? sm.score : 0;
         Debug.Log("[GameplayManager] FinishGame — Final Score = " + finalScore);
 
-        ResolveSummaryTextReferences();
-
-        if (scoreText != null)
-            scoreText.text = "Score: " + finalScore;
-        else
-            Debug.LogWarning("[GameplayManager] scoreText (summary panel) not assigned in Inspector!");
-
-        // Format waktu ke mm:ss (menit:detik)
-        int minutes = Mathf.FloorToInt(elapsedTime / 60f);
-        int seconds = Mathf.FloorToInt(elapsedTime % 60f);
-
-        // {0:00} memastikan formatnya selalu dua digit (contoh: 05:09)
-        // timeText optional — panel summary boleh gak punya label waktu (jangan sampai NPE blokir panel)
-        if (timeText != null)
-            timeText.text = "Waktu Penyelesaian: " + string.Format("{0:00}:{1:00}", minutes, seconds);
-        else
-            Debug.LogWarning("[GameplayManager] timeText not assigned — skipping time display.");
+        // Score, Time, Accuracy, and the player's Name are all filled by the shared summary
+        // populator so every topic's CanvasSummaryPanel stays consistent. Topic 1 has no
+        // quiz, so accuracy is derived from the final score (0–100 scale — score starts at 100
+        // and drops on mistakes). Passing "" clears the "X / N correct" sub-text (no quiz here).
+        int accuracy = Mathf.Clamp(finalScore, 0, 100);
+        SummaryManager.PopulateSummaryTexts(summaryPanel, finalScore, elapsedTime, accuracy, null, "");
 
         // Tampilkan summary panel — sekaligus pastikan SEMUA parent-nya aktif.
         // Kalau nggak, panel "aktif" tapi tetap kehalang parent (root Canvas) yang non-aktif.

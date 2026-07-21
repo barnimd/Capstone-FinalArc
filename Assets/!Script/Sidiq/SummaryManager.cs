@@ -222,10 +222,22 @@ public class SummaryManager : MonoBehaviour
     /// runs its own fade/reveal instead of TriggerSummary()) populate the summary panel
     /// the same way instead of duplicating this logic.
     /// </summary>
-    public static void PopulateSummaryTexts(GameObject panelRoot, int finalScore, float elapsedSeconds)
+    public static void PopulateSummaryTexts(GameObject panelRoot, int finalScore, float elapsedSeconds,
+        int accuracyPercent = -1, string username = null, string accuracySubText = null)
     {
         if (panelRoot == null)
             return;
+
+        // Player name: fall back to the logged-in Firebase user when the caller doesn't pass one.
+        if (string.IsNullOrEmpty(username))
+        {
+            username = (FirebaseManager.Instance != null && !string.IsNullOrEmpty(FirebaseManager.Instance.Username))
+                ? FirebaseManager.Instance.Username
+                : "Player";
+        }
+
+        int m = Mathf.FloorToInt(elapsedSeconds / 60f);
+        int s = Mathf.FloorToInt(elapsedSeconds % 60f);
 
         TMP_Text[] labels = panelRoot.GetComponentsInChildren<TMP_Text>(true);
         foreach (TMP_Text label in labels)
@@ -233,18 +245,31 @@ public class SummaryManager : MonoBehaviour
             if (label == null)
                 continue;
 
+            // The redesigned panel uses tiles with their own SCORE/TIME/ACCURACY labels,
+            // so the value texts hold just the raw value (no "Score:"/"Time:" prefix).
             switch (label.gameObject.name)
             {
                 case "LevelCompleteText":
                     label.text = "Level Complete!";
                     break;
+                case "UsernameBadgeText":
+                    label.text = username;
+                    break;
                 case "ScoreText":
-                    label.text = "Score: " + finalScore;
+                    label.text = finalScore.ToString();
                     break;
                 case "TimeText":
-                    int m = Mathf.FloorToInt(elapsedSeconds / 60f);
-                    int s = Mathf.FloorToInt(elapsedSeconds % 60f);
-                    label.text = $"Time: {m:00}:{s:00}";
+                    label.text = $"{m}:{s:00}";
+                    break;
+                case "AccuracyText":
+                    // Only overwrite when the caller supplies a real value; topics not yet
+                    // wired for accuracy keep whatever the panel already shows.
+                    if (accuracyPercent >= 0)
+                        label.text = accuracyPercent + "%";
+                    break;
+                case "AccuracyTextSubText":
+                    if (accuracySubText != null)
+                        label.text = accuracySubText;
                     break;
             }
         }

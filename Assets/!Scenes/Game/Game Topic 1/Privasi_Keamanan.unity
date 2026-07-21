@@ -221,11 +221,11 @@ PrefabInstance:
     - target: {fileID: 967888152502591315, guid: 21b20f3667e710e428da858a3cb221e7, type: 3}
       propertyPath: scoreText
       value: 
-      objectReference: {fileID: 382843826}
+      objectReference: {fileID: 0}
     - target: {fileID: 967888152502591315, guid: 21b20f3667e710e428da858a3cb221e7, type: 3}
       propertyPath: summaryPanel
       value: 
-      objectReference: {fileID: 382843827}
+      objectReference: {fileID: 382843828}
     - target: {fileID: 967888152502591315, guid: 21b20f3667e710e428da858a3cb221e7, type: 3}
       propertyPath: dialogueManager
       value: 
@@ -2328,9 +2328,10 @@ MonoBehaviour:
   crash: {fileID: 266867093}
   mainCanvas: {fileID: 382843828}
   blackBackground: {fileID: 382843825}
-  contentPanel: {fileID: 382843827}
+  contentPanel: {fileID: 0}
   fadeDuration: 1.2
   gameManager: {fileID: 19900004}
+  maxScore: 100
 --- !u!4 &180900236
 Transform:
   m_ObjectHideFlags: 0
@@ -4852,22 +4853,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &382843826 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8390182075060593370, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
-  m_PrefabInstance: {fileID: 382843822}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &382843827 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4787754482634145770, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
-  m_PrefabInstance: {fileID: 382843822}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &382843828 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5409479713633745855, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
