@@ -81,6 +81,9 @@ public class SummaryManager : MonoBehaviour
         if (_triggered) return; // prevent double-trigger
         _triggered = true;
 
+        // Stop the player immediately so they can't move during the fade or behind the panel.
+        PlayerFreezer.FreezeAll();
+
         float elapsed = Time.time - _startTime;
         StartCoroutine(SummaryRoutine(elapsed));
     }
@@ -117,7 +120,10 @@ public class SummaryManager : MonoBehaviour
         // Simpan hasil ke Neon (kalau scene ini punya stageId)
         SubmitResultToNeon(finalScore);
 
-        PopulateSummaryTexts(summaryPanel, finalScore, elapsed);
+        // Accuracy is derived from the final score (score-derived everywhere, per project decision).
+        // "" clears the "X / N correct" sub-text since accuracy isn't a per-question count here.
+        int accuracy = maxScore > 0 ? Mathf.Clamp(Mathf.RoundToInt(100f * finalScore / maxScore), 0, 100) : 0;
+        PopulateSummaryTexts(summaryPanel, finalScore, elapsed, accuracy, null, "");
 
         // ── 3. Show Summary Panel ─────────────────────────────
         if (summaryPanel != null)

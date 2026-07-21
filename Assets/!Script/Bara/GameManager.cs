@@ -57,13 +57,8 @@ public class GameplayManager : MonoBehaviour
         isTimerRunning = false;
 
         // Freeze the player the moment the game ends / summary panel appears, so they can't
-        // keep walking around behind the panel. Uses the same CanMove flag the rest of the
-        // game uses (dialogue, computer, VN) — stops velocity, input, and the walk animation.
-        TopDownPlayerMovement playerMovement = FindObjectOfType<TopDownPlayerMovement>();
-        if (playerMovement != null)
-            playerMovement.CanMove = false;
-        else
-            Debug.LogWarning("[GameplayManager] TopDownPlayerMovement not found — could not freeze player for summary.");
+        // keep moving behind the panel. Handles whichever movement controller the topic uses.
+        PlayerFreezer.FreezeAll();
 
         // Ambil skor gabungan dari ScoreManager
         ScoreManager sm = ScoreManager.instance != null ? ScoreManager.instance : FindObjectOfType<ScoreManager>();

@@ -168,15 +168,35 @@ public class GameManager_Tp4 : MonoBehaviour
 
         if (!isSuccess && crashOverlay != null)
         {
-            crashOverlay.PlayCrash(() =>
-            {
-                if (summaryCanvas != null) summaryCanvas.SetActive(true);
-            });
+            crashOverlay.PlayCrash(ShowSummary);
         }
         else
         {
-            if (summaryCanvas != null) summaryCanvas.SetActive(true);
+            ShowSummary();
         }
+    }
+
+    // Shows this station's summary panel with Name / Score / Time / Accuracy filled and the
+    // player frozen. Populates directly (each station owns its summaryCanvas) instead of going
+    // through the SummaryManager singleton, which isn't safe with 3 stations in one scene.
+    private void ShowSummary()
+    {
+        if (summaryCanvas == null)
+            return;
+
+        int finalScore = ScoreManager.instance != null ? ScoreManager.instance.score : 0;
+        int accuracy = maxScore > 0 ? Mathf.Clamp(Mathf.RoundToInt(100f * finalScore / maxScore), 0, 100) : 0;
+        // Total time from when the player entered Topic 4 (scene load) until the summary shows —
+        // not per-station, so it reflects the whole run start-to-finish.
+        float elapsed = Time.timeSinceLevelLoad;
+
+        PlayerFreezer.FreezeAll();
+        SummaryManager.PopulateSummaryTexts(summaryCanvas, finalScore, elapsed, accuracy, null, "");
+        summaryCanvas.SetActive(true);
+
+        // Make sure the inner panel is on (matches SummaryManager's own reveal logic).
+        Transform pannel = summaryCanvas.transform.Find("SummaryPannel");
+        if (pannel != null) pannel.gameObject.SetActive(true);
     }
 
     private static void Acak<T>(List<T> list)

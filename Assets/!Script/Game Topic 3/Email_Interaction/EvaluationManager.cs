@@ -96,13 +96,21 @@ public class EvaluationManager : MonoBehaviour
 
     private void TampilkanSummary()
     {
-        if (summaryCanvas != null)
+        // Route through the shared SummaryManager so the panel shows Name / Score / Time /
+        // Accuracy and the player is frozen — consistent with every other topic. The score
+        // was already written to ScoreManager above, and Neon was already saved via
+        // StageManager, so SummaryManager (stageId empty here) won't double-save.
+        if (SummaryManager.instance != null)
+            SummaryManager.instance.TriggerSummary();
+        else if (summaryCanvas != null)
             summaryCanvas.SetActive(true);
     }
 
     private void LangsungKeSummary()
     {
-        if (summaryCanvas != null)
+        if (SummaryManager.instance != null)
+            SummaryManager.instance.TriggerSummary();
+        else if (summaryCanvas != null)
             summaryCanvas.SetActive(true);
     }
 }
