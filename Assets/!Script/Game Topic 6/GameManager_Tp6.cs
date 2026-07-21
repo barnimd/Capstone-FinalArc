@@ -39,6 +39,12 @@ public class GameManager_Tp6 : MonoBehaviour
     public int scoreOrganize = 15, scoreRecovery = 15, scoreBackupYes = 20,
                scoreRestore = 20, scoreSetup = 20;
 
+    [Header("=== Backend / Neon ===")]
+    [Tooltip("Stage ID untuk disimpan ke Neon. Topic 6 = ransomware.")]
+    public string stageId = "ransomware";
+    [Tooltip("Skor akhir di-cap ke nilai ini (semua topik max 100).")]
+    public int maxScore = 100;
+
     [Header("=== Timing ===")]
     public float fbDuration = 2.5f;
 
@@ -333,6 +339,12 @@ public class GameManager_Tp6 : MonoBehaviour
             : Mathf.Clamp(Mathf.Max(5, _score), 0, 100);
 
         ScoreManager.instance?.SetScore(finalScore);
+
+        // Save completion to Neon so Topic 6 counts toward the profile's Level Cleared.
+        if (StageManager.Instance != null)
+            StageManager.Instance.SubmitFinalScore(stageId, finalScore, maxScore, "Topic6");
+        else
+            Debug.LogWarning("[Tp6] StageManager tidak ada — skor tidak tersimpan ke Neon (cuma lokal).");
 
         if (SummaryManager.instance != null)
             SummaryManager.instance.TriggerSummary();

@@ -95,6 +95,25 @@ public class MainMenuController : MonoBehaviour
     private VisualElement _gameProgressList;
     private bool _profilePopulated;
 
+    // Profile — backend stage data (stage_completions). The 6 stages that count toward
+    // "Level Cleared", and the map from a lesson's sceneName to its stage id (for course scores).
+    private static readonly string[] ProfileStageIds =
+        { "phishing", "2fa", "password-security", "malware-awareness", "wifi-security", "ransomware" };
+
+    private static readonly Dictionary<string, string> SceneToStage = new Dictionary<string, string>
+    {
+        { "Privasi_Keamanan", "phishing" },
+        { "Office_Environment", "2fa" },
+        { "Map_Topic_3", "password-security" },
+        { "Map_Topic4", "malware-awareness" },
+        { "Map_Topic_5", "wifi-security" },
+        { "Map_Topic6", "ransomware" },
+    };
+
+    private readonly Dictionary<string, int> _stageScores = new Dictionary<string, int>();
+    private readonly HashSet<string> _stageCompleted = new HashSet<string>();
+    private int _stageResponsesPending;
+
     private string _currentPage = "dashboard";
 
     void OnEnable()
@@ -633,45 +652,110 @@ public class MainMenuController : MonoBehaviour
         if (_profileName != null) _profileName.text = display;
         if (_profileAvatarText != null) _profileAvatarText.text = string.IsNullOrEmpty(display) ? "?" : display.Substring(0, 1).ToUpper();
 
-        // Build course progress (from LessonData)
-        if (_courseProgressList != null)
-        {
-            _courseProgressList.Clear();
-            LessonData[] lessons = Resources.LoadAll<LessonData>("Lessons");
-            System.Array.Sort(lessons, (a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
-            int shown = 0;
-            foreach (LessonData l in lessons)
-            {
-                if (l == null) continue;
-                if (!l.isUnlocked) continue;
-                int pct = 100; // TODO: real per-stage progress from backend
-                _courseProgressList.Add(BuildProgressItem(l.title, pct));
-                shown++;
-                if (shown >= 4) break;
-            }
-        }
-
-        // Build game progress (placeholder for now)
-        if (_gameProgressList != null)
-        {
-            _gameProgressList.Clear();
-            _gameProgressList.Add(BuildProgressItem("Part 1", 85));
-            _gameProgressList.Add(BuildProgressItem("Part 2", 45));
-            _gameProgressList.Add(BuildProgressItem("Part 3", 0));
-        }
-
-        // Placeholders for stat strip (until backend is available)
-        if (_profileLevelCleared != null) _profileLevelCleared.text = "— / 6";
-        if (_profileAchievements != null) _profileAchievements.text = "—";
-        if (_profilePlaytime != null) _profilePlaytime.text = "—";
+        // Loading placeholders until backend responds.
+        if (_profileLevelCleared != null) _profileLevelCleared.text = "… / " + ProfileStageIds.Length;
         if (_profileRank != null) _profileRank.text = "—";
         if (_profileMeta != null) _profileMeta.text = "Joined 2026 · Rank — globally";
 
-        // Fetch real rank + level cleared from global leaderboard
+        // Level Cleared (# completed) and per-course scores both come from stage_completions,
+        // read per stage via checkpoint/load for the logged-in user.
+        FetchStageData();
+
+        // Global Rank from the global leaderboard.
         if (LeaderboardManager.Instance != null)
             LeaderboardManager.Instance.FetchGlobal(100, OnProfileLeaderboardLoaded);
 
         _profilePopulated = true;
+    }
+
+    // Fetches completion + best score for each of the 6 stages, then fills Level Cleared
+    // (count of completed) and Course Progress (each course's score).
+    private void FetchStageData()
+    {
+        _stageScores.Clear();
+        _stageCompleted.Clear();
+
+        if (APIClient.Instance == null)
+        {
+            Debug.LogWarning("[MainMenuController] APIClient missing — profile stage data unavailable");
+            if (_profileLevelCleared != null) _profileLevelCleared.text = "— / " + ProfileStageIds.Length;
+            BuildCourseProgress();
+            return;
+        }
+
+        _stageResponsesPending = ProfileStageIds.Length;
+        foreach (string sid in ProfileStageIds)
+        {
+            string stage = sid; // capture per-iteration
+            APIClient.Instance.CheckpointLoad(stage, (ok, resp, raw) =>
+            {
+                if (ok && resp != null && resp.isCompleted)
+                {
+                    _stageCompleted.Add(stage);
+                    _stageScores[stage] = resp.bestScore ?? 0;
+                }
+                _stageResponsesPending--;
+                if (_stageResponsesPending <= 0)
+                    OnAllStageDataLoaded();
+            });
+        }
+    }
+
+    private void OnAllStageDataLoaded()
+    {
+        if (_profileLevelCleared != null)
+            _profileLevelCleared.text = _stageCompleted.Count + " / " + ProfileStageIds.Length;
+        BuildCourseProgress();
+    }
+
+    // Course Progress: one row per unlocked lesson, showing that stage's score (not a percent).
+    private void BuildCourseProgress()
+    {
+        if (_courseProgressList == null) return;
+        _courseProgressList.Clear();
+
+        LessonData[] lessons = Resources.LoadAll<LessonData>("Lessons");
+        System.Array.Sort(lessons, (a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
+        foreach (LessonData l in lessons)
+        {
+            if (l == null || !l.isUnlocked) continue;
+            string stage = null;
+            if (!string.IsNullOrEmpty(l.sceneName)) SceneToStage.TryGetValue(l.sceneName, out stage);
+            int score = (stage != null && _stageScores.TryGetValue(stage, out int s)) ? s : 0;
+            _courseProgressList.Add(BuildCourseItem(l.title, score));
+        }
+    }
+
+    // Like BuildProgressItem but the value label shows the raw score (e.g. "85"), not "85%".
+    private VisualElement BuildCourseItem(string name, int score)
+    {
+        VisualElement item = new VisualElement();
+        item.AddToClassList("progress-item");
+
+        VisualElement header = new VisualElement();
+        header.AddToClassList("progress-item-header");
+
+        Label nameLabel = new Label(name);
+        nameLabel.AddToClassList("progress-item-name");
+        header.Add(nameLabel);
+
+        Label val = new Label(score.ToString());
+        val.AddToClassList("progress-item-percent");
+        header.Add(val);
+
+        item.Add(header);
+
+        VisualElement bg = new VisualElement();
+        bg.AddToClassList("progress-bar-bg");
+
+        VisualElement fill = new VisualElement();
+        fill.AddToClassList("progress-bar-fill");
+        fill.style.width = new Length(Mathf.Clamp(score, 0, 100), LengthUnit.Percent);
+
+        bg.Add(fill);
+        item.Add(bg);
+
+        return item;
     }
 
     private void OnProfileLeaderboardLoaded(bool ok, GlobalLeaderboardEntryDTO[] entries)

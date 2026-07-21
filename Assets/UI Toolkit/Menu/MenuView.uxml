@@ -79,22 +79,11 @@
                             <ui:Label text="Player Name" name="profile-name" class="profile-name" />
                             <ui:Label text="Joined 2026 · Rank — globally" name="profile-meta" class="profile-meta" />
                         </ui:VisualElement>
-                        <ui:Button name="btn-edit-profile" class="profile-edit-btn">
-                            <ui:Label text="✎ Edit profile" class="profile-edit-btn-label" />
-                        </ui:Button>
                     </ui:VisualElement>
                     <ui:VisualElement class="profile-stats">
                         <ui:VisualElement class="profile-stat-card">
                             <ui:Label text="LEVEL CLEARED" class="stat-label" />
                             <ui:Label text="— / 6" name="profile-level-cleared" class="stat-value" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="profile-stat-card">
-                            <ui:Label text="ACHIEVEMENTS" class="stat-label" />
-                            <ui:Label text="0" name="profile-achievements" class="stat-value" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="profile-stat-card">
-                            <ui:Label text="PLAYTIME" class="stat-label" />
-                            <ui:Label text="—" name="profile-playtime" class="stat-value" />
                         </ui:VisualElement>
                         <ui:VisualElement class="profile-stat-card profile-stat-card-last">
                             <ui:Label text="GLOBAL RANK" class="stat-label" />
@@ -105,10 +94,6 @@
                         <ui:VisualElement class="profile-progress-col">
                             <ui:Label text="Course Progress" class="progress-section-title" />
                             <ui:VisualElement name="course-progress-list" class="progress-list" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="profile-progress-col">
-                            <ui:Label text="Game Progress" class="progress-section-title" />
-                            <ui:VisualElement name="game-progress-list" class="progress-list" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>

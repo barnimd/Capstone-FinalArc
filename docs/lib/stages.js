@@ -6,6 +6,7 @@ export const STAGES = {
   'password-security':  { name: 'Password Security',             maxScore: 1000 },
   'malware-awareness':  { name: 'Malware Awareness',             maxScore: 1000 },
   'wifi-security':      { name: 'Wi-Fi & Website Security',      maxScore: 1000 },
+  'ransomware':         { name: 'Ransomware & Backup',           maxScore: 1000 },
 };
 
 export function isValidStage(stageId) {
