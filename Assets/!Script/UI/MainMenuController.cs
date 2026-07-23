@@ -67,6 +67,13 @@ public class MainMenuController : MonoBehaviour
     private VisualElement _lockedGrid;
     private bool _classCardsBuilt;
 
+    // Admin page (role-gated)
+    private const string RolePrefKey = "SecMind.role";
+    private Button _btnAdmin, _btnManageUsers, _btnManageClass, _btnAdminBackUsers, _btnAdminBackClass;
+    private VisualElement _pageAdmin, _adminHome, _adminManageUsers, _adminManageClass, _adminLevelGrid;
+    private bool _adminGridBuilt;
+    private bool _isAdmin;
+
     // Dashboard page
     private VisualElement _slideshowImage;
     private Button _slideshowPrev;
@@ -133,6 +140,7 @@ public class MainMenuController : MonoBehaviour
         _btnLeaderboard = _root.Q<Button>("btn-leaderboard");
         _btnSettings = _root.Q<Button>("btn-settings");
         _btnHelp = _root.Q<Button>("btn-help");
+        _btnAdmin = _root.Q<Button>("btn-admin");
 
         // Pages
         _pageDashboard = _root.Q<VisualElement>("page-dashboard");
@@ -141,6 +149,17 @@ public class MainMenuController : MonoBehaviour
         _pageLeaderboard = _root.Q<VisualElement>("page-leaderboard");
         _pageSettings = _root.Q<VisualElement>("page-settings");
         _pageHelp = _root.Q<VisualElement>("page-help");
+        _pageAdmin = _root.Q<VisualElement>("page-admin");
+
+        // Admin sub-views + buttons
+        _adminHome = _root.Q<VisualElement>("admin-home");
+        _adminManageUsers = _root.Q<VisualElement>("admin-manage-users");
+        _adminManageClass = _root.Q<VisualElement>("admin-manage-class");
+        _adminLevelGrid = _root.Q<VisualElement>("admin-level-grid");
+        _btnManageUsers = _root.Q<Button>("btn-manage-users");
+        _btnManageClass = _root.Q<Button>("btn-manage-class");
+        _btnAdminBackUsers = _root.Q<Button>("btn-admin-back-users");
+        _btnAdminBackClass = _root.Q<Button>("btn-admin-back-class");
 
         // Leaderboard sub-refs
         _yourRankValue = _root.Q<Label>("your-rank-value");
@@ -192,6 +211,18 @@ public class MainMenuController : MonoBehaviour
         if (_btnLeaderboard != null) _btnLeaderboard.clicked += () => ShowPage("leaderboard");
         if (_btnSettings != null) _btnSettings.clicked += () => ShowPage("settings");
         if (_btnHelp != null) _btnHelp.clicked += () => ShowPage("help");
+        if (_btnAdmin != null) _btnAdmin.clicked += () => ShowPage("admin");
+
+        // Admin sub-navigation
+        if (_btnManageUsers != null) _btnManageUsers.clicked += OpenManageUsers;
+        if (_btnManageClass != null) _btnManageClass.clicked += OpenManageClass;
+        if (_btnAdminBackUsers != null) _btnAdminBackUsers.clicked += ShowAdminHome;
+        if (_btnAdminBackClass != null) _btnAdminBackClass.clicked += ShowAdminHome;
+
+        // Role gating: hide admin button by default, apply cached role, then refresh from server.
+        if (_btnAdmin != null) _btnAdmin.style.display = DisplayStyle.None;
+        ApplyRole(PlayerPrefs.GetString(RolePrefKey, ""));
+        RefreshRoleFromServer();
 
         if (_tabGlobal != null) _tabGlobal.clicked += () => SelectFilterTab(_tabGlobal);
         if (_tabFriends != null) _tabFriends.clicked += () => { SelectFilterTab(_tabFriends); Debug.Log("[MainMenuController] Friends tab — not implemented"); };
@@ -245,6 +276,7 @@ public class MainMenuController : MonoBehaviour
         HideElement(_pageLeaderboard);
         HideElement(_pageSettings);
         HideElement(_pageHelp);
+        HideElement(_pageAdmin);
 
         // 3. Hide all old uGUI canvases
         if (canvasDashboard != null) canvasDashboard.SetActive(false);
@@ -314,6 +346,14 @@ public class MainMenuController : MonoBehaviour
                 else if (canvasGetHelp != null) canvasGetHelp.SetActive(true);
                 else ShowElement(_pageHelp);
                 break;
+
+            case "admin":
+                StopAutoSlide();
+                // Guard: non-admins should never reach this page.
+                if (!_isAdmin) { ShowPage("dashboard"); return; }
+                ShowElement(_pageAdmin);
+                ShowAdminHome();
+                break;
         }
     }
 
@@ -325,6 +365,7 @@ public class MainMenuController : MonoBehaviour
         SetButtonActive(_btnLeaderboard, pageName == "leaderboard");
         SetButtonActive(_btnSettings, pageName == "settings");
         SetButtonActive(_btnHelp, pageName == "help");
+        SetButtonActive(_btnAdmin, pageName == "admin");
     }
 
     private void SetButtonActive(Button btn, bool isActive)
@@ -880,6 +921,139 @@ public class MainMenuController : MonoBehaviour
             });
             card.style.cursor = new StyleCursor();
         }
+
+        return card;
+    }
+
+    // ── Menu Admin (role-gated) ─────────────────────────────────────────────
+
+    // Fetches the user's role from the server (UserSync returns it), caches it,
+    // and reveals/hides the Menu Admin sidebar button accordingly.
+    private void RefreshRoleFromServer()
+    {
+        if (APIClient.Instance == null || FirebaseManager.Instance == null || !FirebaseManager.Instance.IsAuthenticated)
+        {
+            Debug.LogWarning("[MainMenuController] Not authenticated — using cached role only");
+            return;
+        }
+
+        string displayName = FirebaseManager.Instance.Username;
+        APIClient.Instance.UserSync(displayName, (ok, resp, raw) =>
+        {
+            if (!ok || resp == null || resp.user == null)
+            {
+                Debug.LogWarning("[MainMenuController] UserSync failed, keeping cached role: " + raw);
+                return;
+            }
+
+            string role = string.IsNullOrEmpty(resp.user.role) ? "user" : resp.user.role;
+            PlayerPrefs.SetString(RolePrefKey, role);
+            PlayerPrefs.Save();
+            ApplyRole(role);
+            Debug.Log($"[MainMenuController] Role = {role} (isAdmin={_isAdmin})");
+        });
+    }
+
+    private void ApplyRole(string role)
+    {
+        _isAdmin = !string.IsNullOrEmpty(role) && role == "admin";
+        if (_btnAdmin != null)
+            _btnAdmin.style.display = _isAdmin ? DisplayStyle.Flex : DisplayStyle.None;
+
+        // If a non-admin somehow sits on the admin page, kick back to dashboard.
+        if (!_isAdmin && _currentPage == "admin")
+            ShowPage("dashboard");
+    }
+
+    private void ShowAdminHome()
+    {
+        SetAdminSubviews(home: true, users: false, cls: false);
+    }
+
+    private void OpenManageUsers()
+    {
+        SetAdminSubviews(home: false, users: true, cls: false);
+    }
+
+    private void OpenManageClass()
+    {
+        SetAdminSubviews(home: false, users: false, cls: true);
+        BuildAdminLevelGridIfNeeded();
+    }
+
+    private void SetAdminSubviews(bool home, bool users, bool cls)
+    {
+        ToggleHidden(_adminHome, !home);
+        ToggleHidden(_adminManageUsers, !users);
+        ToggleHidden(_adminManageClass, !cls);
+    }
+
+    private void ToggleHidden(VisualElement el, bool hidden)
+    {
+        if (el == null) return;
+        if (hidden) el.AddToClassList("hidden");
+        else el.RemoveFromClassList("hidden");
+    }
+
+    // Builds the Manage Class level grid (gambar 1) from LessonData — reuses the
+    // lesson-card look and adds an Unlocked/Locked status pill per level.
+    private void BuildAdminLevelGridIfNeeded()
+    {
+        if (_adminGridBuilt) return;
+        if (_adminLevelGrid == null)
+        {
+            Debug.LogWarning("[MainMenuController] admin-level-grid not found in UXML");
+            return;
+        }
+
+        LessonData[] lessons = Resources.LoadAll<LessonData>("Lessons");
+        if (lessons == null || lessons.Length == 0)
+        {
+            Debug.LogWarning("[MainMenuController] No LessonData found in Resources/Lessons");
+            return;
+        }
+
+        System.Array.Sort(lessons, (a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
+
+        int idx = 1;
+        foreach (LessonData data in lessons)
+        {
+            if (data == null) continue;
+            _adminLevelGrid.Add(BuildAdminLevelCard(data, idx++));
+        }
+
+        _adminGridBuilt = true;
+        Debug.Log($"[MainMenuController] Built {lessons.Length} admin level cards");
+    }
+
+    private VisualElement BuildAdminLevelCard(LessonData data, int index)
+    {
+        VisualElement card = new VisualElement();
+        card.AddToClassList("lesson-card");
+        card.AddToClassList("admin-level-card");
+        if (!data.isUnlocked) card.AddToClassList("locked");
+
+        Label number = new Label(index.ToString("D2"));
+        number.AddToClassList("lesson-number");
+        card.Add(number);
+
+        VisualElement icon = new VisualElement();
+        icon.AddToClassList("lesson-icon");
+        if (data.icon != null)
+            icon.style.backgroundImage = new StyleBackground(data.icon);
+        card.Add(icon);
+
+        Label title = new Label(data.title);
+        title.AddToClassList("lesson-title");
+        card.Add(title);
+
+        // Status pill — shows current lock state. Toggling is a follow-up (shell only).
+        Button status = new Button();
+        status.AddToClassList("admin-status-btn");
+        status.AddToClassList(data.isUnlocked ? "admin-status-unlocked" : "admin-status-locked");
+        status.text = data.isUnlocked ? "Unlocked" : "Locked";
+        status.clicked += () => Debug.Log($"[MainMenuController] (Admin) toggle lock for '{data.title}' — belum diimplementasikan");
+        card.Add(status);
 
         return card;
     }

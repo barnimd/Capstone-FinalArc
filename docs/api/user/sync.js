@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         SET display_name = COALESCE(EXCLUDED.display_name, users.display_name),
             email        = COALESCE(EXCLUDED.email, users.email),
             last_login   = NOW()
-      RETURNING user_id, display_name, email, created_at, last_login
+      RETURNING user_id, display_name, email, role, created_at, last_login
     `;
     return res.status(200).json({ success: true, user: rows[0] });
   } catch (err) {

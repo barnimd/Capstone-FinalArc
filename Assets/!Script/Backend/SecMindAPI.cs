@@ -47,6 +47,7 @@ public class UserRecord
     public string user_id;
     public string display_name;
     public string email;
+    public string role;          // "user" (default) or "admin" — gates the Menu Admin sidebar
     public string created_at;
     public string last_login;
 }

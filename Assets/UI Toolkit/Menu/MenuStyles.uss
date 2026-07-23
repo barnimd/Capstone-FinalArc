@@ -1036,3 +1036,129 @@ Button {
 }
 
 .modal-button:hover { background-color: rgb(212, 100, 28); }
+
+/* ── Menu Admin page ─────────────────────────────────────── */
+
+/* Generic hide utility (used by admin sub-views) */
+.hidden { display: none; }
+
+/* Distinct tint for the admin sidebar button */
+.sidebar-btn-admin { background-color: rgb(50, 40, 22); }
+.sidebar-btn-admin:hover { background-color: rgb(70, 56, 30); }
+
+.admin-page {
+    flex-grow: 1;
+    background-color: rgb(26, 22, 18);
+    border-radius: 24px;
+    padding: 32px 40px;
+}
+
+.admin-home { flex-grow: 1; }
+
+.admin-header { margin-bottom: 24px; }
+
+.admin-cards-row {
+    flex-direction: row;
+}
+
+.admin-card {
+    width: 300px;
+    background-color: rgb(42, 36, 25);
+    border-radius: 20px;
+    padding: 28px;
+    margin-right: 20px;
+    align-items: flex-start;
+    flex-direction: column;
+    border-width: 0;
+    transition-property: background-color;
+    transition-duration: 0.15s;
+}
+
+.admin-card:hover { background-color: rgb(58, 51, 40); }
+
+.admin-card-icon-box {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background-color: rgb(232, 120, 38);
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.admin-card-icon {
+    font-size: 24px;
+    color: rgb(240, 230, 210);
+    -unity-text-align: middle-center;
+    width: 56px;
+    height: 56px;
+}
+
+.admin-card-title {
+    color: rgb(240, 230, 210);
+    font-size: 20px;
+    -unity-font-style: bold;
+    margin-bottom: 8px;
+}
+
+.admin-card-desc {
+    color: rgb(107, 93, 82);
+    font-size: 13px;
+    white-space: normal;
+    margin-bottom: 18px;
+}
+
+.admin-card-open {
+    color: rgb(232, 120, 38);
+    font-size: 13px;
+    -unity-font-style: bold;
+}
+
+.admin-subview { flex-grow: 1; }
+
+.admin-back-btn {
+    background-color: rgb(42, 36, 25);
+    border-radius: 12px;
+    padding: 8px 16px;
+    margin-bottom: 16px;
+    align-self: flex-start;
+    border-width: 0;
+}
+
+.admin-back-btn:hover { background-color: rgb(58, 51, 40); }
+
+.admin-back-label {
+    color: rgb(240, 230, 210);
+    font-size: 13px;
+    -unity-font-style: bold;
+}
+
+.admin-placeholder {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+}
+
+.admin-placeholder-text {
+    color: rgb(107, 93, 82);
+    font-size: 14px;
+}
+
+/* Admin level card = class lesson card + a status pill at the bottom */
+.admin-level-card { height: 250px; }
+
+.admin-status-btn {
+    border-radius: 10px;
+    padding: 7px 0;
+    margin-top: 10px;
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+    font-size: 12px;
+    border-width: 0;
+    color: rgb(240, 230, 210);
+}
+
+.admin-status-unlocked { background-color: rgb(58, 51, 40); }
+.admin-status-locked { background-color: rgb(178, 58, 44); }
+.admin-status-btn:hover { background-color: rgb(232, 120, 38); }

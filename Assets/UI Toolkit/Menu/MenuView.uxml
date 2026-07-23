@@ -19,6 +19,10 @@
                 <ui:VisualElement class="sidebar-btn-icon" style="background-image: url(&quot;project://database/Assets/Icon/podium.png?fileID=2800000&amp;guid=534b376d7e99def4781c2267f172ba37&amp;type=3#podium&quot;);" />
                 <ui:Label text="Leaderboard" class="sidebar-btn-label" />
             </ui:Button>
+            <ui:Button name="btn-admin" class="sidebar-btn sidebar-btn-admin" style="display: none;">
+                <ui:VisualElement class="sidebar-btn-icon" style="background-image: url(&quot;project://database/Assets/Icon/user%201.png?fileID=2800000&amp;guid=e989fd1c6c1375941a783d06fd8251db&amp;type=3#user 1&quot;);" />
+                <ui:Label text="Menu Admin" class="sidebar-btn-label" />
+            </ui:Button>
             <ui:VisualElement class="sidebar-spacer" />
             <ui:Button name="btn-settings" class="sidebar-btn sidebar-btn-secondary">
                 <ui:VisualElement class="sidebar-btn-icon" style="background-image: url(&quot;project://database/Assets/Icon/gear.png?fileID=2800000&amp;guid=e8ec879ed3f148b40bb14c908647109a&amp;type=3#gear&quot;);" />
@@ -209,6 +213,56 @@
                             <ui:Label name="modal-desc" class="modal-desc" />
                             <ui:Button text="OK" name="modal-close-btn" class="modal-button" />
                         </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="page-admin" class="page admin-page hidden">
+                    <ui:VisualElement name="admin-home" class="admin-home">
+                        <ui:VisualElement class="admin-header">
+                            <ui:Label text="ADMIN" class="label-eyebrow" />
+                            <ui:Label text="Menu Admin" class="title" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="admin-cards-row">
+                            <ui:Button name="btn-manage-users" class="admin-card">
+                                <ui:VisualElement class="admin-card-icon-box">
+                                    <ui:Label text="👥" class="admin-card-icon" />
+                                </ui:VisualElement>
+                                <ui:Label text="Manage Users" class="admin-card-title" />
+                                <ui:Label text="Lihat dan kelola semua akun pengguna terdaftar." class="admin-card-desc" />
+                                <ui:Label text="Open  →" class="admin-card-open" />
+                            </ui:Button>
+                            <ui:Button name="btn-manage-class" class="admin-card">
+                                <ui:VisualElement class="admin-card-icon-box">
+                                    <ui:Label text="📚" class="admin-card-icon" />
+                                </ui:VisualElement>
+                                <ui:Label text="Manage Class" class="admin-card-title" />
+                                <ui:Label text="Atur level: buka atau kunci topik pembelajaran." class="admin-card-desc" />
+                                <ui:Label text="Open  →" class="admin-card-open" />
+                            </ui:Button>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="admin-manage-users" class="admin-subview hidden">
+                        <ui:Button name="btn-admin-back-users" class="admin-back-btn">
+                            <ui:Label text="←  Kembali" class="admin-back-label" />
+                        </ui:Button>
+                        <ui:VisualElement class="admin-header">
+                            <ui:Label text="ADMIN · USERS" class="label-eyebrow" />
+                            <ui:Label text="Manage Users" class="title" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="admin-placeholder">
+                            <ui:Label text="Daftar pengguna akan tampil di sini. (Coming soon)" class="admin-placeholder-text" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="admin-manage-class" class="admin-subview hidden">
+                        <ui:Button name="btn-admin-back-class" class="admin-back-btn">
+                            <ui:Label text="←  Kembali" class="admin-back-label" />
+                        </ui:Button>
+                        <ui:VisualElement class="admin-header">
+                            <ui:Label text="ADMIN · CLASS" class="label-eyebrow" />
+                            <ui:Label text="Manage Class" class="title" />
+                        </ui:VisualElement>
+                        <ui:ScrollView class="class-scroll">
+                            <ui:VisualElement name="admin-level-grid" class="lesson-grid" />
+                        </ui:ScrollView>
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
