@@ -33,14 +33,16 @@ public class LessonCard : MonoBehaviour
             }
         }
 
+        bool unlocked = data.IsUnlocked;
+
         if (lockOverlay != null)
-            lockOverlay.SetActive(!data.isUnlocked);
+            lockOverlay.SetActive(!unlocked);
 
         if (button != null)
         {
-            button.interactable = data.isUnlocked;
+            button.interactable = unlocked;
 
-            if (data.isUnlocked && !string.IsNullOrEmpty(data.sceneName))
+            if (unlocked && !string.IsNullOrEmpty(data.sceneName))
             {
                 string scene = data.sceneName;
                 button.onClick.AddListener(() => SceneManager.LoadScene(scene));

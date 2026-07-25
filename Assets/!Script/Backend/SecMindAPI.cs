@@ -21,6 +21,7 @@ public static class SecMindAPI
         public const string Leaderboard       = "/api/leaderboard";
         public const string LeaderboardGlobal = "/api/leaderboard/global";
         public const string Chat              = "/api/chat";
+        public const string AdminStageLock    = "/api/admin/stage-lock";
     }
 }
 
@@ -32,6 +33,22 @@ public class StageInfo
     public string stageId;
     public string name;
     public int    maxScore;
+    public bool   locked;        // admin-controlled, from the stage_locks table
+}
+
+[Serializable]
+public class StageLockRequest
+{
+    public string stageId;
+    public bool   locked;
+}
+
+[Serializable]
+public class StageLockResponse
+{
+    public bool   success;
+    public string stageId;
+    public bool   locked;
 }
 
 [Serializable]

@@ -70,6 +70,10 @@ public class APIClient : MonoBehaviour
     public void GetGlobalLeaderboard(int limit, Action<bool, GlobalLeaderboardResponse, string> cb)
         => Get($"{SecMindAPI.Paths.LeaderboardGlobal}?limit={limit}", cb);
 
+    /// <summary>Admin only — server rejects with 403 unless users.role = 'admin'.</summary>
+    public void SetStageLock(string stageId, bool locked, Action<bool, StageLockResponse, string> cb)
+        => Post(SecMindAPI.Paths.AdminStageLock, new StageLockRequest { stageId = stageId, locked = locked }, cb);
+
     // ── Core ────────────────────────────────────────────────────────────────
 
     private IEnumerator SendRequest<TBody, TResp>(string method, string path, TBody body, Action<bool, TResp, string> callback)

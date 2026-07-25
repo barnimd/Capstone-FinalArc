@@ -32,8 +32,8 @@ public class ClassPageManager : MonoBehaviour
         {
             if (data == null) continue;
 
-            Transform targetGrid = data.isUnlocked ? unlockedGrid : lockedGrid;
-            int cardIndex = data.isUnlocked ? unlockedIndex++ : lockedIndex++;
+            Transform targetGrid = data.IsUnlocked ? unlockedGrid : lockedGrid;
+            int cardIndex = data.IsUnlocked ? unlockedIndex++ : lockedIndex++;
 
             if (targetGrid == null) continue;
 

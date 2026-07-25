@@ -103,19 +103,9 @@ public class MainMenuController : MonoBehaviour
     private bool _profilePopulated;
 
     // Profile — backend stage data (stage_completions). The 6 stages that count toward
-    // "Level Cleared", and the map from a lesson's sceneName to its stage id (for course scores).
+    // "Level Cleared". Lesson → stage id mapping lives in LessonLocks.
     private static readonly string[] ProfileStageIds =
         { "phishing", "2fa", "password-security", "malware-awareness", "wifi-security", "ransomware" };
-
-    private static readonly Dictionary<string, string> SceneToStage = new Dictionary<string, string>
-    {
-        { "Privasi_Keamanan", "phishing" },
-        { "Office_Environment", "2fa" },
-        { "Map_Topic_3", "password-security" },
-        { "Map_Topic4", "malware-awareness" },
-        { "Map_Topic_5", "wifi-security" },
-        { "Map_Topic6", "ransomware" },
-    };
 
     private readonly Dictionary<string, int> _stageScores = new Dictionary<string, int>();
     private readonly HashSet<string> _stageCompleted = new HashSet<string>();
@@ -224,6 +214,9 @@ public class MainMenuController : MonoBehaviour
         ApplyRole(PlayerPrefs.GetString(RolePrefKey, ""));
         RefreshRoleFromServer();
 
+        // Pull the admin-set lock state so the Class page is correct on first open.
+        RefreshLocksFromServer();
+
         if (_tabGlobal != null) _tabGlobal.clicked += () => SelectFilterTab(_tabGlobal);
         if (_tabFriends != null) _tabFriends.clicked += () => { SelectFilterTab(_tabFriends); Debug.Log("[MainMenuController] Friends tab — not implemented"); };
         if (_tabWeek != null) _tabWeek.clicked += () => { SelectFilterTab(_tabWeek); Debug.Log("[MainMenuController] This Week tab — not implemented"); };
@@ -306,7 +299,10 @@ public class MainMenuController : MonoBehaviour
                 if (classMigrated)
                 {
                     ShowElement(_pageClass);
+                    // Paint from the cached state immediately, then correct it from the
+                    // server so an admin's lock lands without a restart.
                     BuildClassCardsIfNeeded();
+                    RefreshLocksFromServer();
                 }
                 else if (canvasClass != null) canvasClass.SetActive(true);
                 else ShowElement(_pageClass);
@@ -759,9 +755,8 @@ public class MainMenuController : MonoBehaviour
         System.Array.Sort(lessons, (a, b) => string.Compare(a.name, b.name, System.StringComparison.Ordinal));
         foreach (LessonData l in lessons)
         {
-            if (l == null || !l.isUnlocked) continue;
-            string stage = null;
-            if (!string.IsNullOrEmpty(l.sceneName)) SceneToStage.TryGetValue(l.sceneName, out stage);
+            if (l == null || !l.IsUnlocked) continue;
+            string stage = LessonLocks.StageIdForScene(l.sceneName);
             int score = (stage != null && _stageScores.TryGetValue(stage, out int s)) ? s : 0;
             _courseProgressList.Add(BuildCourseItem(l.title, score));
         }
@@ -873,20 +868,51 @@ public class MainMenuController : MonoBehaviour
         foreach (LessonData data in lessons)
         {
             if (data == null) continue;
-            int displayIdx = data.isUnlocked ? unlockedIdx++ : lockedIdx++;
+            bool unlocked = data.IsUnlocked;
+            int displayIdx = unlocked ? unlockedIdx++ : lockedIdx++;
             VisualElement card = BuildLessonCard(data, displayIdx);
-            (data.isUnlocked ? _unlockedGrid : _lockedGrid).Add(card);
+            (unlocked ? _unlockedGrid : _lockedGrid).Add(card);
         }
 
         _classCardsBuilt = true;
         Debug.Log($"[MainMenuController] Built {lessons.Length} lesson cards");
     }
 
+    // Drops the cached Class cards so they rebuild with the current lock state
+    // (called after a server refresh or an admin toggle).
+    private void RebuildClassCards()
+    {
+        _classCardsBuilt = false;
+        if (_unlockedGrid != null) _unlockedGrid.Clear();
+        if (_lockedGrid != null) _lockedGrid.Clear();
+        if (_currentPage == "class") BuildClassCardsIfNeeded();
+    }
+
+    private void RebuildAdminGrid()
+    {
+        _adminGridBuilt = false;
+        if (_adminLevelGrid != null) _adminLevelGrid.Clear();
+        if (_currentPage == "admin") BuildAdminLevelGridIfNeeded();
+    }
+
+    // Fetches lock state for every stage, then redraws whatever grid is on screen.
+    private void RefreshLocksFromServer()
+    {
+        LessonLocks.Refresh(ok =>
+        {
+            if (!ok) return;
+            RebuildClassCards();
+            RebuildAdminGrid();
+        });
+    }
+
     private VisualElement BuildLessonCard(LessonData data, int index)
     {
+        bool unlocked = data.IsUnlocked;
+
         VisualElement card = new VisualElement();
         card.AddToClassList("lesson-card");
-        if (!data.isUnlocked) card.AddToClassList("locked");
+        if (!unlocked) card.AddToClassList("locked");
 
         Label number = new Label(index.ToString("D2"));
         number.AddToClassList("lesson-number");
@@ -902,7 +928,7 @@ public class MainMenuController : MonoBehaviour
         title.AddToClassList("lesson-title");
         card.Add(title);
 
-        if (!data.isUnlocked)
+        if (!unlocked)
         {
             VisualElement lockBadge = new VisualElement();
             lockBadge.AddToClassList("lock-badge");
@@ -979,6 +1005,7 @@ public class MainMenuController : MonoBehaviour
     {
         SetAdminSubviews(home: false, users: false, cls: true);
         BuildAdminLevelGridIfNeeded();
+        RefreshLocksFromServer();
     }
 
     private void SetAdminSubviews(bool home, bool users, bool cls)
@@ -1031,7 +1058,6 @@ public class MainMenuController : MonoBehaviour
         VisualElement card = new VisualElement();
         card.AddToClassList("lesson-card");
         card.AddToClassList("admin-level-card");
-        if (!data.isUnlocked) card.AddToClassList("locked");
 
         Label number = new Label(index.ToString("D2"));
         number.AddToClassList("lesson-number");
@@ -1047,15 +1073,40 @@ public class MainMenuController : MonoBehaviour
         title.AddToClassList("lesson-title");
         card.Add(title);
 
-        // Status pill — shows current lock state. Toggling is a follow-up (shell only).
+        // Status pill — click writes the new lock state to the server. The pill is
+        // disabled until the server answers, and only then does the UI flip, so a
+        // rejected call (e.g. role revoked) can't show a state that isn't real.
         Button status = new Button();
         status.AddToClassList("admin-status-btn");
-        status.AddToClassList(data.isUnlocked ? "admin-status-unlocked" : "admin-status-locked");
-        status.text = data.isUnlocked ? "Unlocked" : "Locked";
-        status.clicked += () => Debug.Log($"[MainMenuController] (Admin) toggle lock for '{data.title}' — belum diimplementasikan");
+        status.clicked += () =>
+        {
+            bool unlockedNow = data.IsUnlocked;
+            status.SetEnabled(false);
+            LessonLocks.SetLocked(data, unlockedNow, ok =>
+            {
+                status.SetEnabled(true);
+                if (!ok)
+                {
+                    Debug.LogWarning($"[MainMenuController] (Admin) toggle for '{data.title}' failed — state unchanged");
+                    return;
+                }
+                ApplyAdminStatus(card, status, data.IsUnlocked);
+                RebuildClassCards();
+                Debug.Log($"[MainMenuController] (Admin) '{data.title}' -> {(data.IsUnlocked ? "Unlocked" : "Locked")}");
+            });
+        };
+        ApplyAdminStatus(card, status, data.IsUnlocked);
         card.Add(status);
 
         return card;
+    }
+
+    private static void ApplyAdminStatus(VisualElement card, Button status, bool unlocked)
+    {
+        card.EnableInClassList("locked", !unlocked);
+        status.EnableInClassList("admin-status-unlocked", unlocked);
+        status.EnableInClassList("admin-status-locked", !unlocked);
+        status.text = unlocked ? "Unlocked" : "Locked";
     }
 
     // ── Leaderboard row builder ─────────────────────────────────────────────
