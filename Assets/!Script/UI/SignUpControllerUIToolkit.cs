@@ -12,6 +12,9 @@ public class SignUpControllerUIToolkit : MonoBehaviour
 {
     private const string GoogleClientId = "211220332327-0o4c2mi8drpum0crjfvt8uosord5s65r.apps.googleusercontent.com";
 
+    // Jeda supaya pesan sukses sempat kebaca sebelum pindah scene
+    private const float SuccessDelay = 1.2f;
+
 #if UNITY_WEBGL && !UNITY_EDITOR
     [DllImport("__Internal")] private static extern void GoogleAuth_Init(string clientId);
     [DllImport("__Internal")] private static extern void GoogleAuth_SignIn(string gameObjectName);
@@ -29,6 +32,7 @@ public class SignUpControllerUIToolkit : MonoBehaviour
     private Label         _guestLink;
     private Label         _errorLabel;
     private Label         _strengthLabel;
+    private bool          _isSubmitting;
     private VisualElement[] _strengthSegments = new VisualElement[4];
 
     void OnEnable()
@@ -174,6 +178,8 @@ public class SignUpControllerUIToolkit : MonoBehaviour
 
     private void OnSignUpClicked()
     {
+        if (_isSubmitting) return;
+
         string email    = _emailInput   != null ? _emailInput.value?.Trim()    : "";
         string nickname = _nicknameInput!= null ? _nicknameInput.value?.Trim() : "";
         string password = _passwordInput!= null ? _passwordInput.value         : "";
@@ -222,14 +228,15 @@ public class SignUpControllerUIToolkit : MonoBehaviour
 
         FirebaseManager.Instance.SignUpWithEmail(email, password, nickname, (success, errorResp) =>
         {
-            SetLoading(false);
             if (success)
             {
-                AuthUIManager.Instance.ShowSuccess("Akun berhasil dibuat!");
-                StartCoroutine(DelayedTransition(AuthUIManager.SCENE_LOGIN, 1.5f));
+                // Tombol tetap disabled selama jeda biar gak double submit
+                ShowSuccess("Akun berhasil dibuat! Menuju login...");
+                StartCoroutine(DelayedTransition(AuthUIManager.SCENE_LOGIN, SuccessDelay));
             }
             else
             {
+                SetLoading(false);
                 ShowError(ParseError(errorResp));
             }
         });
@@ -282,8 +289,9 @@ public class SignUpControllerUIToolkit : MonoBehaviour
             AuthUIManager.Instance.ShowLoading(false);
             if (success)
             {
-                AuthUIManager.Instance.ShowSuccess("Login berhasil!");
-                StartCoroutine(DelayedTransition(AuthUIManager.SCENE_GAME, 1.5f));
+                SetLoading(true);
+                ShowSuccess("Login berhasil! Menuju menu...");
+                StartCoroutine(DelayedTransition(AuthUIManager.SCENE_GAME, SuccessDelay));
             }
             else
             {
@@ -303,6 +311,7 @@ public class SignUpControllerUIToolkit : MonoBehaviour
 
     private void SetLoading(bool isLoading)
     {
+        _isSubmitting = isLoading;
         if (_signupButton != null) _signupButton.SetEnabled(!isLoading);
         if (_googleButton != null) _googleButton.SetEnabled(!isLoading);
     }
@@ -311,6 +320,15 @@ public class SignUpControllerUIToolkit : MonoBehaviour
     {
         if (_errorLabel == null) return;
         _errorLabel.text = msg;
+        _errorLabel.RemoveFromClassList("success");
+        _errorLabel.AddToClassList("visible");
+    }
+
+    private void ShowSuccess(string msg)
+    {
+        if (_errorLabel == null) return;
+        _errorLabel.text = msg;
+        _errorLabel.AddToClassList("success");
         _errorLabel.AddToClassList("visible");
     }
 
@@ -319,6 +337,7 @@ public class SignUpControllerUIToolkit : MonoBehaviour
         if (_errorLabel == null) return;
         _errorLabel.text = "";
         _errorLabel.RemoveFromClassList("visible");
+        _errorLabel.RemoveFromClassList("success");
     }
 
     private string ExtractJsonField(string json, string key)

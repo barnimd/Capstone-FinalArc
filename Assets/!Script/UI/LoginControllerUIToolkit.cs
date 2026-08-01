@@ -12,6 +12,9 @@ public class LoginControllerUIToolkit : MonoBehaviour
 {
     private const string GoogleClientId = "211220332327-0o4c2mi8drpum0crjfvt8uosord5s65r.apps.googleusercontent.com";
 
+    // Jeda supaya pesan "Login berhasil" sempat kebaca sebelum pindah scene
+    private const float SuccessDelay = 1.2f;
+
 #if UNITY_WEBGL && !UNITY_EDITOR
     [DllImport("__Internal")] private static extern void GoogleAuth_Init(string clientId);
     [DllImport("__Internal")] private static extern void GoogleAuth_SignIn(string gameObjectName);
@@ -28,6 +31,7 @@ public class LoginControllerUIToolkit : MonoBehaviour
     private Label         _guestLink;
     private Label         _contactLink;
     private Label         _errorLabel;
+    private bool          _isSubmitting;
 
     void OnEnable()
     {
@@ -76,6 +80,8 @@ public class LoginControllerUIToolkit : MonoBehaviour
 
     private void OnLoginClicked()
     {
+        if (_isSubmitting) return;
+
         string username = _nicknameInput != null ? _nicknameInput.value?.Trim() : "";
         string password = _passwordInput != null ? _passwordInput.value : "";
 
@@ -94,13 +100,15 @@ public class LoginControllerUIToolkit : MonoBehaviour
 
         FirebaseManager.Instance.SignInWithUsernameAndPassword(username, password, (success, error) =>
         {
-            SetLoading(false);
             if (success)
             {
-                AuthUIManager.Instance.TransitionToScene(AuthUIManager.SCENE_GAME);
+                // Tetap disable tombol supaya user gak spam login pas transisi
+                ShowSuccess("Login berhasil! Menuju menu...");
+                StartCoroutine(DelayedTransition(AuthUIManager.SCENE_GAME, SuccessDelay));
             }
             else
             {
+                SetLoading(false);
                 ShowError(ParseError(error));
             }
         });
@@ -148,8 +156,9 @@ public class LoginControllerUIToolkit : MonoBehaviour
             AuthUIManager.Instance.ShowLoading(false);
             if (success)
             {
-                AuthUIManager.Instance.ShowSuccess("Login berhasil!");
-                StartCoroutine(DelayedTransition(AuthUIManager.SCENE_GAME, 1.5f));
+                SetLoading(true);
+                ShowSuccess("Login berhasil! Menuju menu...");
+                StartCoroutine(DelayedTransition(AuthUIManager.SCENE_GAME, SuccessDelay));
             }
             else
             {
@@ -175,6 +184,15 @@ public class LoginControllerUIToolkit : MonoBehaviour
     {
         if (_errorLabel == null) return;
         _errorLabel.text = msg;
+        _errorLabel.RemoveFromClassList("success");
+        _errorLabel.AddToClassList("visible");
+    }
+
+    private void ShowSuccess(string msg)
+    {
+        if (_errorLabel == null) return;
+        _errorLabel.text = msg;
+        _errorLabel.AddToClassList("success");
         _errorLabel.AddToClassList("visible");
     }
 
@@ -183,10 +201,12 @@ public class LoginControllerUIToolkit : MonoBehaviour
         if (_errorLabel == null) return;
         _errorLabel.text = "";
         _errorLabel.RemoveFromClassList("visible");
+        _errorLabel.RemoveFromClassList("success");
     }
 
     private void SetLoading(bool isLoading)
     {
+        _isSubmitting = isLoading;
         if (_loginButton  != null) _loginButton.SetEnabled(!isLoading);
         if (_googleButton != null) _googleButton.SetEnabled(!isLoading);
     }

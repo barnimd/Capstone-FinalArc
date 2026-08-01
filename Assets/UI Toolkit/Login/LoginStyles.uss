@@ -313,3 +313,9 @@ Button { border-width: 0; }
 .login-error.visible {
     display: flex;
 }
+
+.login-error.success {
+    color: rgb(46, 184, 114);
+    -unity-font-style: bold;
+    font-size: 13px;
+}
