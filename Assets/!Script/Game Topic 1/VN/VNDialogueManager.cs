@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// Visual-Novel style dialogue manager for Topic 1.
+/// Shared Visual-Novel style dialogue manager used by Topic 1-6 maps.
 ///
 /// When triggered:
 ///   1. Fades in a full-screen VN canvas.
@@ -12,7 +12,7 @@ using TMPro;
 ///   3. Shows player portrait on the LEFT and NPC portrait on the RIGHT.
 ///   4. Highlights the active speaker (the other portrait dims).
 ///   5. Types the line text in a bottom dialogue box with speaker name.
-///   6. Click / Space advances. End-of-line choices show Accept / Reject buttons.
+///   6. Click / Space advances; holding Ctrl fast-forwards. Choices always wait for input.
 ///   7. On end, hides the VN canvas and unlocks player movement,
 ///      so the 2D pixel game world is visible again.
 /// </summary>
@@ -71,6 +71,11 @@ public class VNDialogueManager : MonoBehaviour
     public float typingSpeed = 0.035f;
     [Tooltip("Earliest time after a line starts where a click is allowed to skip.")]
     public float skipDelay = 0.4f;
+
+    [Header("Fast Forward")]
+    [Tooltip("Seconds between lines while Left Ctrl or Right Ctrl is held.")]
+    [Min(0.01f)]
+    [SerializeField] private float fastForwardLineInterval = 0.15f;
 
     [Header("Fade In / Out (cinematic black overlay)")]
     [Tooltip("Optional. Fullscreen black Image used to fade the screen to black " +
@@ -142,6 +147,9 @@ public class VNDialogueManager : MonoBehaviour
     private string fullSentence;
     private float lineStartTime;
     private float nextClickTime;
+    private float nextFastForwardTime;
+    private bool wasFastForwardHeld;
+    private bool fastForwardBlockedUntilRelease;
 
     private PlayerMovement playerMovement;
     private VNNPCInteractable activeNPC;
@@ -428,15 +436,17 @@ public class VNDialogueManager : MonoBehaviour
         if (continueIndicator != null) continueIndicator.SetActive(false);
 
         // Voice acting — stop previous clip then play this line's clip (if assigned)
+        bool fastForwarding = IsFastForwardActive();
+
         if (voiceSource != null)
         {
             voiceSource.Stop();
-            if (line.voiceClip != null)
+            if (!fastForwarding && line.voiceClip != null)
                 voiceSource.PlayOneShot(line.voiceClip);
         }
 
         // Single click SFX on each new line (not per character)
-        if (sfxSource != null && keypressClip != null)
+        if (!fastForwarding && sfxSource != null && keypressClip != null)
             sfxSource.PlayOneShot(keypressClip, keypressVolume);
 
         // Type
@@ -490,6 +500,7 @@ public class VNDialogueManager : MonoBehaviour
 
     void FinishTyping()
     {
+        typingCo = null;
         isTyping = false;
         if (dialogueText != null) dialogueText.text = fullSentence;
         if (continueIndicator != null) continueIndicator.SetActive(true);
@@ -525,17 +536,70 @@ public class VNDialogueManager : MonoBehaviour
                 if (rejectButtonText != null) rejectButtonText.text = current.rejectText;
             }
             if (continueIndicator != null) continueIndicator.SetActive(false);
+
+            // Never cross a choice automatically. If Ctrl is still held,
+            // require a release before fast-forward can resume in the branch.
+            if (IsFastForwardKeyHeld())
+                fastForwardBlockedUntilRelease = true;
         }
     }
 
     void Update()
     {
+        bool fastForwardHeld = IsFastForwardKeyHeld();
+
+        if (!fastForwardHeld)
+        {
+            wasFastForwardHeld = false;
+            fastForwardBlockedUntilRelease = false;
+        }
+
         if (vnRoot == null || !vnRoot.activeInHierarchy) return;
-        if (acceptButton != null && acceptButton.gameObject.activeInHierarchy) return;
+
+        if (AreChoiceButtonsVisible())
+        {
+            if (fastForwardHeld)
+                fastForwardBlockedUntilRelease = true;
+            return;
+        }
 
         // Don't accept input while fading in or out.
         if (isFadingOut) return;
         if (fadeOverlay != null && fadeOverlay.color.a > 0.01f) return;
+
+        if (fastForwardHeld)
+        {
+            if (fastForwardBlockedUntilRelease) return;
+
+            if (!wasFastForwardHeld)
+            {
+                wasFastForwardHeld = true;
+                nextFastForwardTime = Time.time;
+                StopFastForwardAudio();
+            }
+
+            // Ctrl bypasses the normal skip delay. Reveal the current sentence
+            // first, then advance at a controlled interval while it stays held.
+            if (isTyping)
+            {
+                if (typingCo != null)
+                {
+                    StopCoroutine(typingCo);
+                    typingCo = null;
+                }
+
+                StopFastForwardAudio();
+                FinishTyping();
+                nextFastForwardTime = Time.time + fastForwardLineInterval;
+            }
+            else if (Time.time >= nextFastForwardTime)
+            {
+                NextLine();
+                nextFastForwardTime = Time.time + fastForwardLineInterval;
+            }
+
+            return;
+        }
 
         if (!Input.GetMouseButtonDown(0) && !Input.GetKeyDown(KeyCode.Space)) return;
         if (Time.time < nextClickTime) return;
@@ -548,7 +612,11 @@ public class VNDialogueManager : MonoBehaviour
         {
             if (Time.time >= lineStartTime + skipDelay)
             {
-                if (typingCo != null) StopCoroutine(typingCo);
+                if (typingCo != null)
+                {
+                    StopCoroutine(typingCo);
+                    typingCo = null;
+                }
                 FinishTyping();
                 nextClickTime = Time.time + 0.25f;
             }
@@ -558,6 +626,32 @@ public class VNDialogueManager : MonoBehaviour
             NextLine();
             nextClickTime = Time.time + 0.25f;
         }
+    }
+
+    bool IsFastForwardKeyHeld()
+    {
+        return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+    }
+
+    bool IsFastForwardActive()
+    {
+        return IsFastForwardKeyHeld() && !fastForwardBlockedUntilRelease;
+    }
+
+    bool AreChoiceButtonsVisible()
+    {
+        bool acceptVisible = acceptButton != null && acceptButton.gameObject.activeInHierarchy;
+        bool rejectVisible = rejectButton != null && rejectButton.gameObject.activeInHierarchy;
+        return acceptVisible || rejectVisible;
+    }
+
+    void StopFastForwardAudio()
+    {
+        if (voiceSource != null)
+            voiceSource.Stop();
+
+        if (sfxSource != null && sfxSource != voiceSource)
+            sfxSource.Stop();
     }
 
     void NextLine()
@@ -650,6 +744,9 @@ public class VNDialogueManager : MonoBehaviour
         current = null;
         isFadingOut = false;
         fadeCo = null;
+        nextFastForwardTime = 0f;
+        wasFastForwardHeld = false;
+        fastForwardBlockedUntilRelease = false;
     }
 
     // -----------------------------------------------------------------
