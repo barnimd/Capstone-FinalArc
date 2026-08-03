@@ -44,6 +44,11 @@ public class WebsiteSecurityController : MonoBehaviour
     public float attackPanelDuration = 3f;
     public float instantHackDuration = 2f;
 
+    [Header("=== Success Panel Fade ===")]
+    public float successPanelFadeInDuration = 0.35f;
+    public float successPanelFadeOutDuration = 0.35f;
+    public float successPanelHoldDuration = 1.5f;
+
     private bool _vpnActivated;
     private System.Action<bool> _onComplete;
 
@@ -145,7 +150,11 @@ public class WebsiteSecurityController : MonoBehaviour
     private IEnumerator SuccessRoutine()
     {
         successPanel.SetActive(true);
-        yield return new WaitForSeconds(2f);
+        yield return FadeCanvasGroup(successPanel, 0f, 1f, successPanelFadeInDuration);
+
+        yield return new WaitForSeconds(successPanelHoldDuration);
+
+        yield return FadeCanvasGroup(successPanel, 1f, 0f, successPanelFadeOutDuration);
         successPanel.SetActive(false);
 
         feedbackCanvas.SetActive(true);
@@ -154,7 +163,7 @@ public class WebsiteSecurityController : MonoBehaviour
         {
             feedbackPanel.SetActive(true);
             txtFeedbackTitle.text = "MISI SELESAI!";
-            txtFeedbackDetail.text = "Kamu berhasil melindungi koneksi dengan VPN.\n\nData login kamu aman dari serangan MITM!";
+            txtFeedbackDetail.text = "Kamu berhasil melindungi koneksi kamu dengan VPN.\n\nVPN membuat data kamu tetap aman saat menggunakan Wi-Fi publik,\n\nsehingga mengurangi risiko serangan hacker.";
         }
         else
         {
@@ -193,5 +202,22 @@ public class WebsiteSecurityController : MonoBehaviour
             feedbackCanvas.SetActive(false);
 
         _onComplete?.Invoke(_vpnActivated);
+    }
+
+    private IEnumerator FadeCanvasGroup(GameObject target, float from, float to, float duration)
+    {
+        if (target == null) yield break;
+
+        CanvasGroup cg = target.GetComponent<CanvasGroup>();
+        if (cg == null) cg = target.AddComponent<CanvasGroup>();
+
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            cg.alpha = Mathf.Lerp(from, to, Mathf.Clamp01(t / duration));
+            yield return null;
+        }
+        cg.alpha = to;
     }
 }
