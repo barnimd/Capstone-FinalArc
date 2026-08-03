@@ -108,7 +108,7 @@ public static class VNSystemSetup
         // Continue indicator (optional little arrow text)
         GameObject contGo = NewUI("ContinueIndicator", boxGo.transform);
         TextMeshProUGUI contTmp = contGo.AddComponent<TextMeshProUGUI>();
-        contTmp.text = "▼";
+        contTmp.text = ">";
         contTmp.fontSize = 28;
         contTmp.color = Color.white;
         contTmp.alignment = TextAlignmentOptions.Center;
