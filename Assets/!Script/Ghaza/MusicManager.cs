@@ -56,6 +56,9 @@ public class MusicManager : MonoBehaviour
         audioSource.loop   = true;
         audioSource.volume = masterVolume;
 
+        ApplyMusicSetting();
+        GameSettings.OnChanged += ApplyMusicSetting;
+
         if (defaultClip != null)
             Play(defaultClip);
 
@@ -64,8 +67,17 @@ public class MusicManager : MonoBehaviour
 
     void OnDestroy()
     {
+        GameSettings.OnChanged -= ApplyMusicSetting;
+
         if (Instance == this)
             SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>Mute / unmute sesuai checkbox "Background Music" di Settings.</summary>
+    private void ApplyMusicSetting()
+    {
+        if (audioSource == null) return;
+        audioSource.mute = !GameSettings.MusicEnabled;
     }
 
     // A scene without an override is intentionally silent (menu, login, etc.).

@@ -438,15 +438,18 @@ public class VNDialogueManager : MonoBehaviour
         // Voice acting — stop previous clip then play this line's clip (if assigned)
         bool fastForwarding = IsFastForwardActive();
 
+        // Checkbox "Dialogue" di Settings mematikan voice + klik ketik
+        bool dialogueAudioOn = GameSettings.DialogueEnabled;
+
         if (voiceSource != null)
         {
             voiceSource.Stop();
-            if (!fastForwarding && line.voiceClip != null)
+            if (dialogueAudioOn && !fastForwarding && line.voiceClip != null)
                 voiceSource.PlayOneShot(line.voiceClip);
         }
 
         // Single click SFX on each new line (not per character)
-        if (!fastForwarding && sfxSource != null && keypressClip != null)
+        if (dialogueAudioOn && !fastForwarding && sfxSource != null && keypressClip != null)
             sfxSource.PlayOneShot(keypressClip, keypressVolume);
 
         // Type
