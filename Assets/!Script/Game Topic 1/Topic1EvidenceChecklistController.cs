@@ -22,6 +22,7 @@ public class Topic1EvidenceChecklistController : MonoBehaviour
     private bool? lockedDecision;
     private bool selectedSafe;
     private PlayerMovement playerMovement;
+    private readonly List<string> recorderFactPairs = new List<string>();
 
     public bool IsOpen => canvasRoot != null && canvasRoot.activeInHierarchy;
 
@@ -70,6 +71,7 @@ public class Topic1EvidenceChecklistController : MonoBehaviour
     private void Submit(bool safe)
     {
         selectedSafe = safe;
+        recorderFactPairs.Clear();
         int found = 0;
         int selected = 0;
         for (int i = 0; i < evidenceToggles.Count; i++)
@@ -79,7 +81,21 @@ public class Topic1EvidenceChecklistController : MonoBehaviour
 
             selected++;
             if (currentCase.IsRedFlag(i))
+            {
                 found++;
+                AddRecorderFact("selected_red_flag", currentCase.GetEvidenceId(i));
+            }
+            else
+            {
+                AddRecorderFact("selected_non_flag", currentCase.GetEvidenceId(i));
+            }
+        }
+
+        if (currentCase.redFlagIndices != null)
+        {
+            foreach (int redFlagIndex in currentCase.redFlagIndices)
+                if (redFlagIndex >= 0 && redFlagIndex < evidenceToggles.Count && !evidenceToggles[redFlagIndex].isOn)
+                    AddRecorderFact("missed_red_flag", currentCase.GetEvidenceId(redFlagIndex));
         }
 
         int totalFlags = currentCase.redFlagIndices != null ? currentCase.redFlagIndices.Length : 0;
@@ -91,6 +107,17 @@ public class Topic1EvidenceChecklistController : MonoBehaviour
         feedbackText.text = evidenceResult + "\n\n" + outcome;
         decisionRoot.SetActive(false);
         feedbackRoot.SetActive(true);
+    }
+
+    public string[] GetRecorderFactPairs()
+    {
+        return recorderFactPairs.ToArray();
+    }
+
+    private void AddRecorderFact(string key, string value)
+    {
+        recorderFactPairs.Add(key);
+        recorderFactPairs.Add(value);
     }
 
     private void Complete()

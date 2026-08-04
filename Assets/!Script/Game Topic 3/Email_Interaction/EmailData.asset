@@ -13,7 +13,12 @@ MonoBehaviour:
   m_Name: EmailData
   m_EditorClassIdentifier: 
   semuaEmail:
-  - namaPengirim: BeliJual
+  - contextId: belijual_password_expiry
+    riskIndicatorIds:
+    - lookalike_domain
+    - account_pressure
+    - reply_for_password_change
+    namaPengirim: BeliJual
     subjek: Password akan Expired dalam 30 Hari
     waktu: 10:44
     emailPengirim: security@bel1jual.com
@@ -24,7 +29,9 @@ MonoBehaviour:
       akan otomatis memblokir akun yang tidak mengganti password dalam waktu 30 hari
       kedepan. Klik balas dibawah ini untuk mengganti password kamu.
     isPhishing: 1
-  - namaPengirim: LapakKomputer
+  - contextId: lapakkomputer_promotion
+    riskIndicatorIds: []
+    namaPengirim: LapakKomputer
     subjek: Tawaran
     waktu: 10:44
     emailPengirim: info@lapakkomputer.com
@@ -33,7 +40,12 @@ MonoBehaviour:
     isiEmail: Halo, kami memiliki penawaran spesial untuk kamu. Dapatkan diskon 20%
       untuk semua produk komputer minggu ini. Kunjungi toko kami sekarang.
     isPhishing: 0
-  - namaPengirim: BRI Bank
+  - contextId: bri_account_closure
+    riskIndicatorIds:
+    - urgency
+    - unofficial_domain
+    - sensitive_data_request
+    namaPengirim: BRI Bank
     subjek: URGENT - Rekening kamu akan ditutup
     waktu: 09:15
     emailPengirim: alert@bri-bank-id.com
@@ -43,7 +55,13 @@ MonoBehaviour:
       karena tidak memenuhi persyaratan KYC terbaru. Balas email ini dengan nomor
       rekening, nama lengkap, dan PIN ATM kamu untuk menghindari penutupan rekening.
     isPhishing: 1
-  - namaPengirim: GoJek Promo
+  - contextId: gojek_prize
+    riskIndicatorIds:
+    - lookalike_domain
+    - prize_lure
+    - sensitive_data_request
+    - urgency
+    namaPengirim: GoJek Promo
     subjek: Kamu menang GoPay Rp 5.000.000! Klaim sekarang
     waktu: 11:00
     emailPengirim: promo@g0jek-hadiah.com
@@ -54,7 +72,9 @@ MonoBehaviour:
       ini dengan nama lengkap, nomor HP, dan nomor rekening bank. Hadiah hangus dalam
       24 jam jika tidak diklaim.
     isPhishing: 1
-  - namaPengirim: Ahmad
+  - contextId: ahmad_meeting
+    riskIndicatorIds: []
+    namaPengirim: Ahmad
     subjek: Meeting Besok - Jangan lupa meeting jam 10 pagi
     waktu: 08:30
     emailPengirim: ahmad@perusahaan.com
@@ -64,7 +84,9 @@ MonoBehaviour:
       10:00 pagi. Mohon hadir tepat waktu dan siapkan laporan progres mingguan. Terima
       kasih, Ahmad.
     isPhishing: 0
-  - namaPengirim: HR Department
+  - contextId: hr_salary_slip
+    riskIndicatorIds: []
+    namaPengirim: HR Department
     subjek: Slip Gaji Bulan Ini Sudah Tersedia
     waktu: 08:00
     emailPengirim: hr@perusahaan.com
@@ -74,7 +96,12 @@ MonoBehaviour:
       Silakan login ke sistem HRIS perusahaan untuk melihat detailnya. Hubungi HR
       jika ada pertanyaan. Salam, HR Department.
     isPhishing: 0
-  - namaPengirim: Tokopedia
+  - contextId: tokopedia_account_verification
+    riskIndicatorIds:
+    - lookalike_domain
+    - account_pressure
+    - credential_request
+    namaPengirim: Tokopedia
     subjek: Akun kamu akan diblokir! Verifikasi sekarang
     waktu: 14:22
     emailPengirim: noreply@t0kopedia.com
@@ -84,7 +111,9 @@ MonoBehaviour:
       akun kamu. Untuk menghindari pemblokiran permanen, segera verifikasi identitas
       kamu. Klik balas dan kirimkan username serta password kamu untuk konfirmasi.
     isPhishing: 1
-  - namaPengirim: Budi
+  - contextId: budi_proposal_revision
+    riskIndicatorIds: []
+    namaPengirim: Budi
     subjek: Revisi Dokumen Proposal
     waktu: 14:22
     emailPengirim: budi@perusahaan.com

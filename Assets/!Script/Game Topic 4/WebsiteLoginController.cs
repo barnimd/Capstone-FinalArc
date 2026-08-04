@@ -81,9 +81,13 @@ public class WebsiteLoginController : MonoBehaviour
         if (_roundURLs == null || _roundURLs.Count == 0) return;
 
         URLEntry entry = _roundURLs[_currentRound];
-        PlayerRunRecorder.Record(
-            "website.round_" + (_currentRound + 1) + (entry.isPhishing ? ".phishing" : ".legitimate"),
-            "login");
+        PlayerRunRecorder.RecordDetailed(
+            "website." + ResolveContextId(entry),
+            "login",
+            entry.isPhishing ? "game_over" : "legitimate_login",
+            0,
+            "classification", entry.isPhishing ? "phishing" : "legitimate",
+            "round", "round_" + (_currentRound + 1));
 
         if (entry.isPhishing)
         {
@@ -106,9 +110,13 @@ public class WebsiteLoginController : MonoBehaviour
         if (_roundURLs == null || _roundURLs.Count == 0) return;
 
         URLEntry entry = _roundURLs[_currentRound];
-        PlayerRunRecorder.Record(
-            "website.round_" + (_currentRound + 1) + (entry.isPhishing ? ".phishing" : ".legitimate"),
-            "cancel");
+        PlayerRunRecorder.RecordDetailed(
+            "website." + ResolveContextId(entry),
+            "cancel",
+            entry.isPhishing ? "phishing_avoided" : "legitimate_missed",
+            0,
+            "classification", entry.isPhishing ? "phishing" : "legitimate",
+            "round", "round_" + (_currentRound + 1));
 
         _currentRound++;
 
@@ -184,5 +192,12 @@ public class WebsiteLoginController : MonoBehaviour
     {
         websitePanelRoot.SetActive(false);
         feedbackPanel.SetActive(false);
+    }
+
+    private static string ResolveContextId(URLEntry entry)
+    {
+        return entry != null && !string.IsNullOrWhiteSpace(entry.contextId)
+            ? entry.contextId
+            : "unknown_url";
     }
 }

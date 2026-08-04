@@ -14,8 +14,8 @@ Yang sudah selesai:
 - Pilihan penting pemain dicatat sebagai event terstruktur dan dikirim sebagai konteks AI.
 - Backend session, chat, validasi, fallback, penyimpanan Neon, dan cleanup session sudah dibuat.
 - Autentikasi memakai Firebase ID token.
-- Unit test backend lulus **7/7**.
-- Kompilasi C# lulus dengan **0 error dan 0 warning**.
+- Unit test backend semantic-context lulus **15/15**.
+- Kompilasi C# lulus dengan **0 error**. Warning lama dari dependency/serialized field masih ada.
 
 Yang masih harus dilakukan sebelum production:
 
@@ -36,7 +36,7 @@ Yang masih harus dilakukan sebelum production:
 Gameplay Topic 1–6
         |
         v
-PlayerRunRecorder mencatat eventId + choiceId + waktu
+PlayerRunRecorder mencatat contentVersion + eventId + choiceId + outcomeId + scoreDelta + fakta aman + waktu
         |
         v
 SummaryManager membuka PostGameAICoachController
@@ -57,6 +57,10 @@ Backend memvalidasi JSON sebelum dikirim ke Unity
 ```
 
 Unity tidak menerima API key, system prompt, atau riwayat user lain. Semua hal sensitif tetap berada di server.
+
+### Semantic context v2
+
+`contentVersion` aktif adalah `v2-2026-08-04`. Backend memperkaya stable ID menjadi scenario, pilihan yang diambil, semua pilihan alternatif, assessment, outcome, evidence catalog, risk indicators, dan fakta run. Legacy ID dari WebGL lama tetap diterima selama rollout, tetapi build baru harus mengirim versi v2.
 
 ## 3. Stage ID yang Dipakai
 
@@ -108,7 +112,17 @@ Jangan mengganti stage ID hanya di salah satu sisi. Payload akan ditolak jika st
 | `Assets/!Script/Sidiq/SummaryManager.cs` | Menghubungkan summary bersama dengan `PostGameAICoachController`. |
 | `Assets/!Script/Sidiq/Editor/SummaryPanelRedesignSetup.cs` | Menyesuaikan ukuran summary, menghapus Next Level, dan mengubah Replay menjadi Retry. |
 
-Tidak ada data dialog, skor, branching VN, atau file scene yang diubah khusus untuk fitur ini. UI chat dibuat saat runtime agar semua summary yang memakai manager bersama memperoleh layout yang sama.
+Semantic-context v2 juga memperbarui data pendukung game: minimum Strong Topic 2 menjadi 12 karakter, penjelasan URL Topic 4 diisi, SSID Topic 5 diselaraskan dengan cerita kafe, dan validasi backup Topic 6 diselaraskan dengan label UI. Branching VN tidak diubah.
+
+File tambahan yang berubah pada semantic-context v2:
+
+- Topic 1: `Topic1EvidenceCase`, `Topic1EvidenceChecklistController`, dan tiga evidence asset untuk stable evidence ID serta red flag yang dipilih/terlewat.
+- Topic 2: `PasswordValidator` dan `MFAFlowController` untuk kriteria password privacy-safe, outcome, serta jumlah attempt/resend OTP tanpa merekam kode.
+- Topic 3: `EmailData`, `EmailDetailButtons`, dan `EmailManager` untuk stable template ID dan risk indicator.
+- Topic 4: `URLData_Tp4`, `PopupData_Tp4`, controller website/popup, dan asset datanya untuk stable ID serta penjelasan URL.
+- Topic 5: progression, Wi-Fi selector, VPN controller, dan scene computer untuk clue, pilihan Mas Anto, SSID asli, dan outcome.
+- Topic 6: backup, recovery, scene computer, serta scene builder untuk lokasi/jadwal yang benar-benar dipilih.
+- Evaluasi Topic 2–6 sekarang mengirim pilihan A/B dan correct choice, bukan hanya `correct/incorrect`.
 
 ### 4.3 File backend baru
 
@@ -119,6 +133,7 @@ Tidak ada data dialog, skor, branching VN, atau file scene yang diubah khusus un
 | `docs/api/ai/session.js` | Mengambil ulang session aktif dan message history berdasarkan `runId`. |
 | `docs/api/cron/cleanup-ai-sessions.js` | Menghapus session kedaluwarsa; message ikut terhapus melalui cascade. |
 | `docs/lib/ai-coach.js` | Konfigurasi prompt Topic 1–6, validasi run, sanitasi input/output, dan fallback response. |
+| `docs/lib/game-context-catalog.js` | Katalog v2 untuk scenario, pilihan, alternatif, evidence, outcome, serta evaluasi Topic 1–6. |
 | `docs/lib/deepseek.js` | Client DeepSeek dengan timeout 20 detik, satu retry, JSON Output, dan validasi response. |
 | `docs/db/schema_ai_coach.sql` | Membuat tabel `ai_sessions`, `ai_messages`, constraint, dan index. |
 | `docs/test/ai-coach.test.js` | Unit test payload, keamanan event, prompt, output JSON, dan batas pesan. |
@@ -155,6 +170,8 @@ Backend menerapkan batas berikut:
 - Maksimal tiga pertanyaan lanjutan per run.
 - Pesan user maksimal 400 karakter.
 - Maksimal 100 keputusan gameplay per run.
+- Maksimal 12 fakta privacy-safe per keputusan.
+- Event dan choice harus terdaftar pada katalog topic.
 - Durasi maksimal payload adalah 24 jam.
 - Session berlaku tujuh hari.
 - AI hanya boleh menjawab materi topic yang baru diselesaikan.
@@ -203,7 +220,7 @@ Menyimpan:
 - Respons AI dalam teks dan JSON tervalidasi.
 - Waktu pembuatan.
 
-Recorder tidak mengambil password yang diketik, credential, isi email, atau teks bebas dari gameplay. Chat yang sengaja dikirim pemain tetap disimpan sebagai message session selama masa retensi.
+Recorder tidak mengambil password yang diketik, kode OTP, credential, isi email, atau teks bebas dari gameplay. Hanya ID template, indikator risiko, bucket panjang password, boolean kriteria, jumlah percobaan OTP yang dibatasi, pilihan, outcome, dan perubahan skor yang dikirim. Chat yang sengaja dikirim pemain tetap disimpan sebagai message session selama masa retensi.
 
 ## 7. Migrasi Neon
 
@@ -319,7 +336,7 @@ dotnet build Capstone-FinalArc.sln --no-restore
 
 Expected result:
 
-- Backend: 7 test passed.
+- Backend: 15 test passed.
 - C#: 0 errors.
 
 ### Tahap B — Database dan Preview backend
@@ -434,10 +451,10 @@ Topic-specific evidence yang harus muncul minimal sekali:
 | Topic | Contoh event |
 |---|---|
 | Topic 1 | `evidence.*`, `installer.untrusted`, `file_request.computer`, atau `vn.*` |
-| Topic 2 | `password.strength`, `mfa.choice`, atau `vn.*` |
-| Topic 3 | `email.phishing`, `email.legitimate`, atau `evaluation.*` |
+| Topic 2 | `password.creation`, `password.outcome`, `mfa.choice`, `mfa.verification`, atau `evaluation.*` |
+| Topic 3 | `email.<template_id>` atau `evaluation.*` |
 | Topic 4 | `website.*`, `popup.*`, atau `evaluation.*` |
-| Topic 5 | `wifi.selection`, `vpn.choice`, `public_wifi.login`, atau `wifi.investigation_response` |
+| Topic 5 | `wifi.clue.*`, `wifi.mas_anto_response`, `wifi.selection`, `vpn.choice`, atau `public_wifi.login` |
 | Topic 6 | `file.*`, `backup.*`, atau `evaluation.*` |
 
 ## 13. Endpoint Reference

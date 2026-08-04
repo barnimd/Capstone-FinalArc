@@ -13,36 +13,64 @@ MonoBehaviour:
   m_Name: URLData_Tp4
   m_EditorClassIdentifier: 
   phishingURLs:
-  - url: https://go0gle.com/login
+  - contextId: google_lookalike
+    riskIndicatorIds:
+    - lookalike_domain
+    - credential_form
+    url: https://go0gle.com/login
     siteName: Google
     isPhishing: 1
-    explanation: 
-  - url: http://microsoft/logn
+    explanation: Domain go0gle.com mengganti huruf o dengan angka 0 dan bukan domain resmi Google.
+  - contextId: microsoft_missing_tld
+    riskIndicatorIds:
+    - missing_https
+    - malformed_domain
+    - misspelled_path
+    url: http://microsoft/logn
     siteName: Microsoft
     isPhishing: 1
-    explanation: 
-  - url: http://secure-bank.tk.com
+    explanation: Alamat tidak memakai HTTPS, tidak memiliki domain resmi Microsoft, dan path login salah eja.
+  - contextId: secure_bank_deceptive_subdomain
+    riskIndicatorIds:
+    - missing_https
+    - deceptive_subdomain
+    - unrelated_domain
+    url: http://secure-bank.tk.com
     siteName: Bank
     isPhishing: 1
-    explanation: 
-  - url: http://paypa1.com
+    explanation: Nama secure-bank hanya subdomain; domain utamanya adalah tk.com dan bukan domain bank resmi.
+  - contextId: paypal_lookalike
+    riskIndicatorIds:
+    - missing_https
+    - lookalike_domain
+    url: http://paypa1.com
     siteName: Paypa1
     isPhishing: 1
-    explanation: 
-  - url: http://faceb00k.com
+    explanation: Domain paypa1.com memakai angka 1 untuk meniru huruf l pada nama PayPal dan tidak memakai HTTPS.
+  - contextId: facebook_lookalike
+    riskIndicatorIds:
+    - missing_https
+    - lookalike_domain
+    url: http://faceb00k.com
     siteName: Faceb00k
     isPhishing: 1
-    explanation: 
+    explanation: Domain faceb00k.com memakai angka 0 untuk meniru huruf o dan tidak memakai HTTPS.
   legitimateURLs:
-  - url: https://google.com
+  - contextId: google_official
+    riskIndicatorIds: []
+    url: https://google.com
     siteName: Google
     isPhishing: 0
-    explanation: 
-  - url: https://github.com
+    explanation: Koneksi memakai HTTPS dan domain utamanya adalah google.com.
+  - contextId: github_official
+    riskIndicatorIds: []
+    url: https://github.com
     siteName: Github
     isPhishing: 0
-    explanation: 
-  - url: https://microsoft.com
+    explanation: Koneksi memakai HTTPS dan domain utamanya adalah github.com.
+  - contextId: microsoft_official
+    riskIndicatorIds: []
+    url: https://microsoft.com
     siteName: Microsoft
     isPhishing: 0
-    explanation: 
+    explanation: Koneksi memakai HTTPS dan domain utamanya adalah microsoft.com.

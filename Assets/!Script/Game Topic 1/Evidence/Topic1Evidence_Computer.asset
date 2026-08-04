@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e7bb3955bbc5fb479681c5d8e5a9bfd, type: 3}
   m_Name: Topic1Evidence_Computer
   m_EditorClassIdentifier: 
+  contextId: computer
   title: Tinjau Permintaan File
   scenario: Tinjau kembali permintaan pengiriman file yang muncul pada komputer.
     Tandai red flag yang seharusnya diperiksa.
@@ -20,6 +21,11 @@ MonoBehaviour:
   - Identitas dan kewenangan peminta belum diverifikasi.
   - Permintaan mendorong pengiriman langsung tanpa jalur resmi.
   - Permintaan muncul melalui aplikasi chat kantor.
+  evidenceIds:
+  - sensitive_financial_file
+  - unverified_authority
+  - bypasses_official_channel
+  - office_chat_channel
   redFlagIndices: 000000000100000002000000
   safeActionText: Tolak pengiriman
   unsafeActionText: Kirim file

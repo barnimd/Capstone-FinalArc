@@ -104,10 +104,14 @@ public class EvaluationPanel_Tp4 : MonoBehaviour
         if (_data == null) return;
 
         int jawabanBenar = _data.questions[_currentQuestionIndex].correctAnswerIndex;
-        PlayerRunRecorder.Record(
+        bool correct = _playerAnswers[_currentQuestionIndex] == jawabanBenar;
+        PlayerRunRecorder.RecordDetailed(
             "evaluation.question_" + (_currentQuestionIndex + 1),
-            _playerAnswers[_currentQuestionIndex] == jawabanBenar ? "correct" : "incorrect");
-        if (_playerAnswers[_currentQuestionIndex] == jawabanBenar)
+            "choice_" + (char)('a' + _playerAnswers[_currentQuestionIndex]),
+            correct ? "correct" : "incorrect",
+            0,
+            "correct_choice", "choice_" + (char)('a' + jawabanBenar));
+        if (correct)
             _correctCount++;
 
         _currentQuestionIndex++;

@@ -194,8 +194,8 @@ namespace GameTopic2
                 return 0f;
             }
 
-            // Length contributes up to 0.5 (maxes out at 8 chars)
-            float lengthScore = Mathf.Clamp01(password.Length / 8f) * 0.5f;
+            // Length contributes up to 0.5 (maxes out at the taught 12-char minimum)
+            float lengthScore = Mathf.Clamp01(password.Length / 12f) * 0.5f;
 
             // Complexity contributes up to 0.5 (each criterion = ~0.167)
             float complexityScore = 0f;
@@ -243,12 +243,34 @@ namespace GameTopic2
         /// <param name="enableMFA">True if the player chose to enable MFA, false otherwise.</param>
         public void OnMFAChosen(bool enableMFA)
         {
-            PlayerRunRecorder.Record("password.strength", CurrentStrength.ToString().ToLowerInvariant());
-            PlayerRunRecorder.Record("mfa.choice", enableMFA ? "enabled" : "skipped");
+            string passwordText = passwordInput != null ? passwordInput.text : "";
+            bool hasUppercase = passwordText.Any(char.IsUpper);
+            bool hasLowercase = passwordText.Any(char.IsLower);
+            bool hasNumber = passwordText.Any(char.IsDigit);
+            bool hasSymbol = passwordText.Any(c => "!@#$%^&*()_+-=[]{}|;:',.<>?/~`".Contains(c));
+            string strengthId = CurrentStrength.ToString().ToLowerInvariant();
+            string outcomeId = ResolveSecurityOutcome(enableMFA);
+            int passwordScore = CurrentStrength == PasswordStrength.Strong ? scoreStrong :
+                                CurrentStrength == PasswordStrength.Medium ? scoreMedium : scoreWeak;
+
+            PlayerRunRecorder.RecordDetailed(
+                "password.creation",
+                strengthId,
+                "classified",
+                passwordScore,
+                "length_bucket", GetLengthBucket(passwordText.Length),
+                "has_uppercase", hasUppercase ? "yes" : "no",
+                "has_lowercase", hasLowercase ? "yes" : "no",
+                "has_number", hasNumber ? "yes" : "no",
+                "has_symbol", hasSymbol ? "yes" : "no");
+            PlayerRunRecorder.RecordDetailed(
+                "mfa.choice",
+                enableMFA ? "enable" : "skip",
+                enableMFA ? "protected" : "single_factor",
+                enableMFA ? scoreMFABonus : 0);
+            PlayerRunRecorder.RecordDetailed("password.outcome", outcomeId, outcomeId, 0);
             if (mfaChoicePanel != null)
                 mfaChoicePanel.SetActive(false);
-
-            string passwordText = passwordInput != null ? passwordInput.text : "";
 
             // Update MFA state on manager before notifying renewal
             if (desktopManager != null)
@@ -262,6 +284,24 @@ namespace GameTopic2
             }
 
             TriggerOutcome(enableMFA);
+        }
+
+        private string ResolveSecurityOutcome(bool mfaEnabled)
+        {
+            if (CurrentStrength == PasswordStrength.Strong ||
+                (CurrentStrength == PasswordStrength.Medium && mfaEnabled))
+                return "success";
+            if (CurrentStrength == PasswordStrength.Weak && !mfaEnabled)
+                return "instant_hack";
+            return "brute_force";
+        }
+
+        private static string GetLengthBucket(int length)
+        {
+            if (length < 6) return "under_6";
+            if (length < 8) return "6_to_7";
+            if (length < 12) return "8_to_11";
+            return "12_plus";
         }
 
         /// <summary>
@@ -312,7 +352,7 @@ namespace GameTopic2
         /// 
         /// 🔴 Weak: kurang dari 6 karakter ATAU tidak ada complexity sama sekali
         ///
-        /// 🟢 Strong: 8+ karakter AND ada angka AND ada simbol AND ada huruf besar
+        /// 🟢 Strong: 12+ karakter AND ada angka AND ada simbol AND ada huruf besar
         ///
         /// 🟡 Medium: antara Weak dan Strong (6+ karakter dengan sebagian criteria)
         /// </summary>
@@ -336,8 +376,9 @@ namespace GameTopic2
             if (hasSymbols) complexityCount++;
             if (hasCapitals) complexityCount++;
 
-            // Strong: 8+ chars with all three complexity criteria
-            if (length >= 8 && hasNumbers && hasSymbols && hasCapitals)
+            // Strong: 12+ chars with all three complexity criteria.
+            // This matches the minimum length taught by EvaluationData_Tp2.
+            if (length >= 12 && hasNumbers && hasSymbols && hasCapitals)
             {
                 return PasswordStrength.Strong;
             }

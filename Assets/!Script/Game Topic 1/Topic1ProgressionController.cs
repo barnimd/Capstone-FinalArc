@@ -140,7 +140,16 @@ public class Topic1ProgressionController : MonoBehaviour
 
         evidenceChecklist.ShowDecision(evidenceCase, safe =>
         {
-            PlayerRunRecorder.Record("evidence." + (evidenceCase != null ? evidenceCase.name : "unknown"), safe ? "safe" : "unsafe");
+            int scoreDelta = !safe && evidenceCase != pakBudiCase ? evidenceCase.unsafePenalty : 0;
+            string contextId = !string.IsNullOrWhiteSpace(evidenceCase.contextId)
+                ? evidenceCase.contextId
+                : evidenceCase.name;
+            PlayerRunRecorder.RecordDetailed(
+                "evidence." + contextId,
+                safe ? "refuse_and_verify" : "comply",
+                safe ? "safe" : "unsafe",
+                scoreDelta,
+                evidenceChecklist.GetRecorderFactPairs());
             if (!safe && evidenceCase != pakBudiCase && ScoreManager.instance != null)
                 ScoreManager.instance.AddScore(evidenceCase.unsafePenalty);
 
@@ -159,7 +168,11 @@ public class Topic1ProgressionController : MonoBehaviour
 
     private void OnInstallerCompleted(bool installed)
     {
-        PlayerRunRecorder.Record("installer.untrusted", installed ? "installed" : "cancelled");
+        PlayerRunRecorder.RecordDetailed(
+            "installer.untrusted",
+            installed ? "install" : "cancel",
+            installed ? "malware_exposure" : "safe",
+            installed ? -25 : 0);
         if (stage != Stage.PakBudiInstaller)
             return;
 
@@ -183,7 +196,11 @@ public class Topic1ProgressionController : MonoBehaviour
 
     private void OnComputerDecision(bool safe)
     {
-        PlayerRunRecorder.Record("file_request.computer", safe ? "refused" : "sent");
+        PlayerRunRecorder.RecordDetailed(
+            "file_request.computer",
+            safe ? "refuse" : "send",
+            safe ? "safe" : "sensitive_data_exposed",
+            safe ? 0 : -25);
         if (stage != Stage.Computer)
             return;
 
@@ -194,7 +211,16 @@ public class Topic1ProgressionController : MonoBehaviour
         objectivePanel?.HideImmediate();
 
         if (evidenceChecklist != null && computerCase != null)
-            evidenceChecklist.ShowReview(computerCase, safe, _ => CompleteLevel());
+            evidenceChecklist.ShowReview(computerCase, safe, _ =>
+            {
+                PlayerRunRecorder.RecordDetailed(
+                    "evidence.computer",
+                    safe ? "refuse" : "send",
+                    safe ? "safe" : "unsafe",
+                    0,
+                    evidenceChecklist.GetRecorderFactPairs());
+                CompleteLevel();
+            });
         else
             CompleteLevel();
     }

@@ -286,7 +286,7 @@ public static class GameTopic6SceneSetup
         Txt(s.transform, "LocLbl", "Backup Location:", 14, Color.white, -140, 80, 180, 24).alignment = TextAlignmentOptions.Right;
         ctrl.ddLocation = Drop(s.transform, "LocDD", 50, 80, new[] { "Same Disk (unsafe)", "💾 External Drive (safe)", "☁ Cloud (safe)" });
         Txt(s.transform, "SchedLbl", "Backup Schedule:", 14, Color.white, -140, 20, 180, 24).alignment = TextAlignmentOptions.Right;
-        ctrl.ddSchedule = Drop(s.transform, "SchedDD", 50, 20, new[] { "Never (unsafe)", "Weekly", "Daily (safe)" });
+        ctrl.ddSchedule = Drop(s.transform, "SchedDD", 50, 20, new[] { "Never (unsafe)", "Weekly (unsafe)", "Daily (safe)" });
         ctrl.setupPanel = s;
         ctrl.btnSave = Btn(s.transform, "BtnSave", "💾 Save Backup Config", new Color(1f, 0.76f, 0.2f), 0, -60, 220, 44);
     }

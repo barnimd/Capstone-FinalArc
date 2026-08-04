@@ -114,7 +114,7 @@ public class WebsiteSecurityController : MonoBehaviour
         if (toggleVPN != null && !toggleVPN.isOn) return;
 
         _vpnActivated = true;
-        PlayerRunRecorder.Record("vpn.choice", "enabled");
+        PlayerRunRecorder.RecordDetailed("vpn.choice", "enable", "protected_connection", 0);
         popupToggleVpn.SetActive(false);
 
         if (objectiveUI != null)
@@ -126,7 +126,7 @@ public class WebsiteSecurityController : MonoBehaviour
     private void OnCloseClicked()
     {
         _vpnActivated = false;
-        PlayerRunRecorder.Record("vpn.choice", "skipped");
+        PlayerRunRecorder.RecordDetailed("vpn.choice", "skip", "unprotected_connection", 0);
         popupPanel.SetActive(false);
 
         if (objectiveUI != null)
@@ -137,7 +137,11 @@ public class WebsiteSecurityController : MonoBehaviour
 
     private void OnLoginClicked()
     {
-        PlayerRunRecorder.Record("public_wifi.login", _vpnActivated ? "with_vpn" : "without_vpn");
+        PlayerRunRecorder.RecordDetailed(
+            "public_wifi.login",
+            _vpnActivated ? "with_vpn" : "without_vpn",
+            _vpnActivated ? "credentials_protected" : "credentials_intercepted",
+            0);
         loginPanel.SetActive(false);
 
         if (_vpnActivated)

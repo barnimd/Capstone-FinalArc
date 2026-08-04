@@ -246,7 +246,7 @@ public class GameManager_Tp6 : MonoBehaviour
         }
         else
         {
-            ShowFB("Your backup is not reliable", "External Drive + Daily schedule = safe.", autoClose: false);
+            ShowFB("Your backup is not reliable", "External Drive atau Cloud + Daily schedule = safe.", autoClose: false);
             yield return new WaitForSeconds(fbDuration);
             HideFB();
             GoToState(Tp6State.Failed);
@@ -289,13 +289,25 @@ public class GameManager_Tp6 : MonoBehaviour
     // ── Callbacks dari controller ────────────────────────────────────────────────────
     public void OnImportantLost()
     {
-        PlayerRunRecorder.Record("file.organization", "important_file_lost");
+        PlayerRunRecorder.RecordDetailed(
+            "file.organization",
+            "important_project_moved",
+            "scenario_forced_loss",
+            scoreOrganize,
+            "file_id", "important_project",
+            "scenario_mechanic", "forced_to_trash");
         if (_state == Tp6State.Organize) GoToState(Tp6State.Recovery);
     }
 
-    public void OnRecoveryAttempted()
+    public void OnRecoveryAttempted(string fileName)
     {
-        PlayerRunRecorder.Record("file.recovery", "attempted");
+        string fileId = string.IsNullOrWhiteSpace(fileName) ? "unknown_file" : fileName;
+        bool restoredImportant = string.Equals(fileName, "Important_Project", System.StringComparison.OrdinalIgnoreCase);
+        PlayerRunRecorder.RecordDetailed(
+            "file.recovery",
+            fileId,
+            restoredImportant ? "important_file_restored" : "other_file_restored",
+            scoreRecovery);
         // FIX: Izinkan lanjut ke Crash dari state Organize maupun Recovery
         if (_state == Tp6State.Recovery || _state == Tp6State.Organize)
         {
@@ -306,15 +318,21 @@ public class GameManager_Tp6 : MonoBehaviour
     // FIX R5: ShowFB sekarang punya parameter autoClose untuk mengontrol tombol OK
     public void OnBackupQuestionNo()
     {
-        PlayerRunRecorder.Record("backup.exists", "no");
+        PlayerRunRecorder.RecordDetailed("backup.exists", "no", "permanent_data_loss", 0);
         ShowFB("Data cannot be recovered", "Tanpa backup, semua data hilang permanen!", autoClose: true);
         Invoke(nameof(DoneFail), fbDuration);
     }
 
     // FIX R7-A: simpan hasil config, lanjut ke Simulation bukan langsung ke Success/Failed
-    public void OnBackupSetupDone(bool correct)
+    public void OnBackupSetupDone(bool correct, string locationId, string scheduleId)
     {
-        PlayerRunRecorder.Record("backup.configuration", correct ? "reliable" : "unreliable");
+        PlayerRunRecorder.RecordDetailed(
+            "backup.configuration",
+            correct ? "reliable" : "unreliable",
+            correct ? "simulation_passed" : "simulation_failed",
+            correct ? scoreSetup : 0,
+            "location", locationId,
+            "schedule", scheduleId);
         _backupConfigCorrect = correct;
         // Langsung masuk Simulation — Simulation yang memutuskan Success atau Failed
         GoToState(Tp6State.Simulation);

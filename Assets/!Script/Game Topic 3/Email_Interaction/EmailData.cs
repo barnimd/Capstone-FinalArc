@@ -6,6 +6,12 @@ using UnityEngine;
 [System.Serializable]
 public class EmailEntry
 {
+    [Header("=== AI Coach Context ===")]
+    [Tooltip("Stable template ID. Do not change after release.")]
+    public string contextId;
+    [Tooltip("Privacy-safe risk indicator IDs used by the post-game coach.")]
+    public string[] riskIndicatorIds;
+
     [Header("=== Tampilan List (Kotak Masuk) ===")]
     public string namaPengirim;   // contoh: "Ahmad", "BeliJual"
     public string subjek;         // contoh: "Meeting Besok - Jangan lupa..."

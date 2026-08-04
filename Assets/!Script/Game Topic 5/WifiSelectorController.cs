@@ -35,9 +35,9 @@ public class WifiSelectorController : MonoBehaviour
     public ObjectiveUI_Tp4 objectiveUI;
 
     [Header("=== Wi-Fi Data ===")]
-    [TextArea(1, 2)] public string correctWifiName = "Office_Secure_5G";
-    [TextArea(1, 2)] public string fakeWifiName_1    = "Offce_Secure_5G";
-    [TextArea(1, 2)] public string fakeWifiName_2    = "Office_Secre_5G";
+    [TextArea(1, 2)] public string correctWifiName = "CafeBean_Free";
+    [TextArea(1, 2)] public string fakeWifiName_1    = "CafeBean_Free_5G";
+    [TextArea(1, 2)] public string fakeWifiName_2    = "FREE_CAFE_WIFI";
 
     private List<WifiOption> _wifiOptions;
     private int _selectedIndex = -1;
@@ -191,7 +191,13 @@ public class WifiSelectorController : MonoBehaviour
     {
         if (_selectedIndex < 0) return;
         bool isCorrect = _wifiOptions[_selectedIndex].isCorrect;
-        PlayerRunRecorder.Record("wifi.selection", isCorrect ? "office_secure" : "lookalike_network");
+        string selectedNetworkId = ResolveNetworkId(_wifiOptions[_selectedIndex].name);
+        PlayerRunRecorder.RecordDetailed(
+            "wifi.selection",
+            selectedNetworkId,
+            isCorrect ? "trusted_network" : "rogue_network_game_over",
+            0,
+            "classification", isCorrect ? "legitimate" : "lookalike");
         confirmationPanel.SetActive(false);
         popupListWifi.SetActive(false);
 
@@ -235,5 +241,13 @@ public class WifiSelectorController : MonoBehaviour
             int j = Random.Range(0, i + 1);
             (list[i], list[j]) = (list[j], list[i]);
         }
+    }
+
+    private string ResolveNetworkId(string networkName)
+    {
+        if (networkName == correctWifiName) return "cafebean_free";
+        if (networkName == fakeWifiName_1) return "cafebean_free_5g";
+        if (networkName == fakeWifiName_2) return "free_cafe_wifi";
+        return "unknown_network";
     }
 }

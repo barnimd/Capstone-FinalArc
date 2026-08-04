@@ -29,6 +29,7 @@ public class AICoachResponse
 public class AISessionStartRequest
 {
     public string runId;
+    public string contentVersion;
     public string stageId;
     public int score;
     public int maxScore;
@@ -96,6 +97,7 @@ public class DeepSeekChatService : MonoBehaviour
         AISessionStartRequest request = new AISessionStartRequest
         {
             runId = run.runId,
+            contentVersion = run.contentVersion,
             stageId = run.stageId,
             score = run.score,
             maxScore = run.maxScore,

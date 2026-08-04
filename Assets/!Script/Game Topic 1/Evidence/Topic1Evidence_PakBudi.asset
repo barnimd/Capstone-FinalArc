@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e7bb3955bbc5fb479681c5d8e5a9bfd, type: 3}
   m_Name: Topic1Evidence_PakBudi
   m_EditorClassIdentifier: 
+  contextId: pak_budi
   title: Verifikasi Permintaan Instalasi
   scenario: Pak Budi meminta software akuntansi dari email segera dipasang. Tandai
     informasi yang merupakan red flag.
@@ -20,6 +21,11 @@ MonoBehaviour:
   - Sumber file hanya disebut sebagai teman di Finance.
   - Ada tekanan waktu sebelum meeting.
   - Pak Budi memang bekerja di kantor ini.
+  evidenceIds:
+  - unofficial_software_source
+  - unverified_sender_claim
+  - time_pressure
+  - known_employee
   redFlagIndices: 000000000100000002000000
   safeActionText: Tolak dan verifikasi file
   unsafeActionText: Instal software tersebut

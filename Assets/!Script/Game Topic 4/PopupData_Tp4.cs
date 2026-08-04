@@ -3,6 +3,12 @@ using UnityEngine;
 [System.Serializable]
 public class PopupEntry
 {
+    [Tooltip("Stable ID used by the post-game AI context catalog.")]
+    public string contextId;
+
+    [Tooltip("Privacy-safe indicators used by the post-game coach.")]
+    public string[] riskIndicatorIds;
+
     [Tooltip("Judul popup, contoh: WARNING - Virus Detected!")]
     public string title;
 

@@ -164,11 +164,25 @@ public class Topic5ProgressionController : MonoBehaviour
         {
             buDewiCompleted = true;
             SetInteractable(buDewi, false);
+            PlayerRunRecorder.RecordDetailed(
+                "wifi.clue.bu_dewi",
+                "assist_victim",
+                "victim_warned",
+                5,
+                "fake_network", "cafebean_free_5g",
+                "exposed_data", "contract_document");
             if (ScoreManager.instance != null)
                 ScoreManager.instance.AddScore(5);
         }
         else if (source == budi && stage == Stage.Investigation)
         {
+            PlayerRunRecorder.RecordDetailed(
+                "wifi.clue.budi",
+                "investigate",
+                "router_operator_located",
+                0,
+                "observed_device", "portable_router",
+                "location", "karaoke_room");
             stage = Stage.KaraokeNarration;
             SetInteractable(budi, false);
             SetInteractable(karaokeNarration, true);
@@ -176,6 +190,11 @@ public class Topic5ProgressionController : MonoBehaviour
         }
         else if (source == karaokeNarration && stage == Stage.KaraokeNarration)
         {
+            PlayerRunRecorder.RecordDetailed(
+                "wifi.clue.karaoke",
+                "inspect_device",
+                "rogue_access_point_confirmed",
+                0);
             stage = Stage.MasAnto;
             SetInteractable(karaokeNarration, false);
             SetInteractable(masAnto, true);
@@ -204,7 +223,16 @@ public class Topic5ProgressionController : MonoBehaviour
     private void ResolveMasAntoChoice(int choice)
     {
         stage = Stage.Resolution;
-        PlayerRunRecorder.Record("wifi.investigation_response", choice == 0 ? "choice_a" : choice == 1 ? "choice_b" : "choice_c");
+        string choiceId = choice == 0 ? "report_to_staff" :
+                          choice == 1 ? "threaten_to_report" : "ask_motive";
+        string outcomeId = choice == 0 ? "device_secured" :
+                           choice == 1 ? "operator_left" : "no_official_consequence";
+        int scoreDelta = choice == 0 ? 10 : choice == 1 ? 5 : 0;
+        PlayerRunRecorder.RecordDetailed(
+            "wifi.mas_anto_response",
+            choiceId,
+            outcomeId,
+            scoreDelta);
 
         VNDialogueData resolution = choice == 0
             ? choiceADialogue

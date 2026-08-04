@@ -5,17 +5,28 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [Serializable]
+public class PlayerRunFact
+{
+    public string key;
+    public string value;
+}
+
+[Serializable]
 public class PlayerRunDecision
 {
     public string eventId;
     public string choiceId;
+    public string outcomeId;
+    public int scoreDelta;
     public float elapsedSeconds;
+    public List<PlayerRunFact> facts = new List<PlayerRunFact>();
 }
 
 [Serializable]
 public class PlayerRunSnapshot
 {
     public string runId;
+    public string contentVersion;
     public string stageId;
     public int score;
     public int maxScore;
@@ -30,6 +41,8 @@ public class PlayerRunSnapshot
 public class PlayerRunRecorder : MonoBehaviour
 {
     private const int MaxDecisions = 100;
+    private const int MaxFactsPerDecision = 12;
+    private const string ContentVersion = "v2-2026-08-04";
     public static PlayerRunRecorder Instance { get; private set; }
 
     private PlayerRunSnapshot _run;
@@ -84,6 +97,7 @@ public class PlayerRunRecorder : MonoBehaviour
         _run = new PlayerRunSnapshot
         {
             runId = Guid.NewGuid().ToString(),
+            contentVersion = ContentVersion,
             stageId = normalized,
             decisions = new List<PlayerRunDecision>()
         };
@@ -95,23 +109,56 @@ public class PlayerRunRecorder : MonoBehaviour
     public static void Record(string eventId, string choiceId)
     {
         PlayerRunRecorder recorder = Ensure();
-        recorder?.RecordDecision(eventId, choiceId);
+        recorder?.RecordDecision(eventId, choiceId, null, 0, null);
     }
 
-    public void RecordDecision(string eventId, string choiceId)
+    public static void RecordDetailed(
+        string eventId,
+        string choiceId,
+        string outcomeId,
+        int scoreDelta,
+        params string[] factPairs)
+    {
+        PlayerRunRecorder recorder = Ensure();
+        recorder?.RecordDecision(eventId, choiceId, outcomeId, scoreDelta, factPairs);
+    }
+
+    public void RecordDecision(
+        string eventId,
+        string choiceId,
+        string outcomeId,
+        int scoreDelta,
+        string[] factPairs)
     {
         if (_run == null || _completed || _run.decisions.Count >= MaxDecisions)
             return;
 
         string safeEvent = NormalizeId(eventId);
         string safeChoice = NormalizeId(choiceId);
+        string safeOutcome = NormalizeId(outcomeId);
         if (string.IsNullOrEmpty(safeEvent) || string.IsNullOrEmpty(safeChoice))
             return;
+
+        List<PlayerRunFact> safeFacts = new List<PlayerRunFact>();
+        if (factPairs != null)
+        {
+            int pairCount = Mathf.Min(factPairs.Length / 2, MaxFactsPerDecision);
+            for (int i = 0; i < pairCount; i++)
+            {
+                string key = NormalizeId(factPairs[i * 2]);
+                string value = NormalizeId(factPairs[i * 2 + 1]);
+                if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
+                    safeFacts.Add(new PlayerRunFact { key = key, value = value });
+            }
+        }
 
         _run.decisions.Add(new PlayerRunDecision
         {
             eventId = safeEvent,
             choiceId = safeChoice,
+            outcomeId = safeOutcome,
+            scoreDelta = Mathf.Clamp(scoreDelta, -100, 100),
+            facts = safeFacts,
             elapsedSeconds = Mathf.Max(0f, Time.time - _startedAt)
         });
     }

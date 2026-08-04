@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum PlayerAction    { None, Balas, Hapus, Laporkan }
@@ -32,12 +33,32 @@ public class EmailManager : MonoBehaviour
         }
     }
 
-    public void RecordDecision(PlayerAction action, bool isPhishing)
+    public void RecordDecision(PlayerAction action, EmailEntry entry)
     {
+        bool isPhishing = entry != null && entry.isPhishing;
         DecisionOutcome outcome = EvaluateOutcome(action, isPhishing);
-        PlayerRunRecorder.Record(
-            isPhishing ? "email.phishing" : "email.legitimate",
-            action.ToString().ToLowerInvariant() + "." + outcome.ToString().ToLowerInvariant());
+        List<string> facts = new List<string>
+        {
+            "classification", isPhishing ? "phishing" : "legitimate"
+        };
+        if (entry != null && entry.riskIndicatorIds != null)
+        {
+            foreach (string riskId in entry.riskIndicatorIds)
+            {
+                facts.Add("risk_indicator");
+                facts.Add(riskId);
+            }
+        }
+
+        string contextId = entry != null && !string.IsNullOrWhiteSpace(entry.contextId)
+            ? entry.contextId
+            : isPhishing ? "unknown_phishing" : "unknown_legitimate";
+        PlayerRunRecorder.RecordDetailed(
+            "email." + contextId,
+            action.ToString().ToLowerInvariant(),
+            outcome.ToString().ToLowerInvariant(),
+            0,
+            facts.ToArray());
 
         switch (outcome)
         {

@@ -109,6 +109,6 @@ public class TrashController : MonoBehaviour
         _done = true;
         FileSystemManager.Instance.RestoreFile(_selected);
         trashPanel.SetActive(false);
-        GameManager_Tp6.Instance.OnRecoveryAttempted();
+        GameManager_Tp6.Instance.OnRecoveryAttempted(_selected);
     }
 }

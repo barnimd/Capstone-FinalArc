@@ -13,7 +13,11 @@ MonoBehaviour:
   m_Name: PopupData_Tp4
   m_EditorClassIdentifier: 
   phishingPopups:
-  - title: Warning - Virus Terdeteksi
+  - contextId: fake_virus_cleanup
+    riskIndicatorIds:
+    - scare_tactic
+    - urgent_cleanup_action
+    title: Warning - Virus Terdeteksi
     message: 'Komputer Anda terinfeksi 5 virus berbahaya!
 
       Klik tombol di bawah
@@ -26,7 +30,11 @@ MonoBehaviour:
     wrongActionLabel: Bersihkan Sekarang
     explanation: 'Ini popup phishing. System warning asli tidak akan meminta kamu
       klik tombol "Bersihkan" dari browser. '
-  - title: PERINGATAN KEAMANAN KRITIS
+  - contextId: fake_defender_scan
+    riskIndicatorIds:
+    - impersonated_security_tool
+    - scare_tactic
+    title: PERINGATAN KEAMANAN KRITIS
     message: 'Windows Defender telah mendeteksi 5 ancaman pada komputer Anda.
 
       Trojan:CoinMiner
@@ -42,7 +50,11 @@ MonoBehaviour:
     wrongActionLabel: Pindai Sekarang
     explanation: Ini adalah popup antivirus palsu. Notifikasi Windows Defender yang
       asli muncul melalui aplikasi Keamanan Windows, bukan sebagai popup di browser.
-  - title: SELAMAT! Anda Pemenang!
+  - contextId: fake_iphone_prize
+    riskIndicatorIds:
+    - prize_lure
+    - unexpected_popup
+    title: SELAMAT! Anda Pemenang!
     message: 'Anda terpilih sebagai pemenang iPhone 15!
 
       Klik "Klaim" dan isi
@@ -52,7 +64,12 @@ MonoBehaviour:
     wrongActionLabel: Klaim Hadiah
     explanation: Ini popup phishing. Giveaway asli tidak muncul tiba-tiba lewat popup
       browser.
-  - title: Microsoft Security Alert
+  - contextId: fake_microsoft_support
+    riskIndicatorIds:
+    - impersonated_vendor
+    - phone_support_scam
+    - scare_tactic
+    title: Microsoft Security Alert
     message: 'Akun Microsoft Anda telah dibobol dari lokasi asing!
 
       Hubungi
@@ -65,7 +82,9 @@ MonoBehaviour:
     explanation: Ini popup phishing. Microsoft tidak akan menampilkan nomor telepon
       lewat popup browser.
   legitimatePopups:
-  - title: Windows Update
+  - contextId: windows_update
+    riskIndicatorIds: []
+    title: Windows Update
     message: 'Update penting tersedia untuk perangkat Anda.
 
       Windows perlu
@@ -78,7 +97,9 @@ MonoBehaviour:
     wrongActionLabel: Tolak
     explanation: 'Ini popup system yang legitimate. Windows secara berkala mengirim
       update keamanan. '
-  - title: Penyimpanan Hampir Penuh
+  - contextId: storage_low
+    riskIndicatorIds: []
+    title: Penyimpanan Hampir Penuh
     message: 'Ruang disk Anda tersisa kurang dari 5 GB.
 
       Beberapa aplikasi
@@ -91,7 +112,9 @@ MonoBehaviour:
     wrongActionLabel: Abaikan
     explanation: 'Ini notifikasi system asli. Windows akan memberi tahu ketika penyimpanan
       menipis. '
-  - title: Windows Firewall
+  - contextId: windows_firewall
+    riskIndicatorIds: []
+    title: Windows Firewall
     message: 'Beberapa fitur aplikasi ini diblokir oleh Windows Firewall.
 
       Nama:

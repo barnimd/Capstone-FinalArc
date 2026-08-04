@@ -3,6 +3,12 @@ using UnityEngine;
 [System.Serializable]
 public class URLEntry
 {
+    [Tooltip("Stable ID used by the post-game AI context catalog.")]
+    public string contextId;
+
+    [Tooltip("Privacy-safe indicators such as lookalike_domain or missing_https.")]
+    public string[] riskIndicatorIds;
+
     [Tooltip("URL lengkap yang ditampilkan di address bar, contoh: https://go0gle.com/login")]
     public string url;
 

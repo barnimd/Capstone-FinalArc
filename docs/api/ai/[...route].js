@@ -56,7 +56,7 @@ async function handleSessionStart(req, res) {
       INSERT INTO ai_sessions
         (id, run_id, user_id, stage_id, score, max_score, duration_seconds, run_context, prompt_version, question_count, created_at, expires_at)
       VALUES
-        (${sessionId}, ${run.runId}, ${uid}, ${run.stageId}, ${run.score}, ${run.maxScore}, ${run.durationSeconds}, ${JSON.stringify(run)}, 'v1', 0, NOW(), NOW() + INTERVAL '7 days')
+        (${sessionId}, ${run.runId}, ${uid}, ${run.stageId}, ${run.score}, ${run.maxScore}, ${run.durationSeconds}, ${JSON.stringify(run)}, 'v2', 0, NOW(), NOW() + INTERVAL '7 days')
     `;
 
     let opening;

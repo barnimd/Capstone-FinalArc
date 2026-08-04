@@ -40,6 +40,8 @@ namespace GameTopic2
 
         // The currently valid 6-digit code. Empty string means no code is active.
         private string _validCode = "";
+        private int _verificationAttempts;
+        private int _resendCount;
 
         // ─────────────────────── UNITY LIFECYCLE ───────────────────────
 
@@ -70,6 +72,7 @@ namespace GameTopic2
         /// </summary>
         public void OnNantiSajaClicked()
         {
+            RecordVerification("skipped", "not_verified");
             _validCode = "";
             gameObject.SetActive(false);
 
@@ -85,6 +88,7 @@ namespace GameTopic2
         /// </summary>
         public void OnKirimUlangClicked()
         {
+            _resendCount++;
             // Close existing popup first, then generate new code
             if (mfaKodePanel != null)
                 mfaKodePanel.SetActive(false);
@@ -113,6 +117,8 @@ namespace GameTopic2
 
             if (entered == _validCode)
             {
+                _verificationAttempts++;
+                RecordVerification("verified", "otp_verified");
                 // Code is correct — MFA activated
                 _validCode = "";
                 gameObject.SetActive(false);
@@ -124,6 +130,7 @@ namespace GameTopic2
             }
             else
             {
+                _verificationAttempts++;
                 // Wrong code
                 ShowInputError("Kode tidak valid. Coba kirim ulang atau masukan kode kembali.");
             }
@@ -162,6 +169,8 @@ namespace GameTopic2
         {
             ResetInputField();
             _validCode = "";
+            _verificationAttempts = 0;
+            _resendCount = 0;
 
             if (mfaKodePanel != null)  mfaKodePanel.SetActive(false);
 
@@ -196,6 +205,22 @@ namespace GameTopic2
         /// <summary>
         /// Clears the input field and resets the placeholder to its default text and color.
         /// </summary>
+        private void RecordVerification(string choiceId, string outcomeId)
+        {
+            PlayerRunRecorder.RecordDetailed(
+                "mfa.verification",
+                choiceId,
+                outcomeId,
+                0,
+                "attempt_count", CountBucket(_verificationAttempts),
+                "resend_count", CountBucket(_resendCount));
+        }
+
+        private static string CountBucket(int count)
+        {
+            return count >= 5 ? "5_plus" : count.ToString();
+        }
+
         private void ResetInputField()
         {
             if (codeInputField == null) return;

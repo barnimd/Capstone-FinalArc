@@ -17,14 +17,11 @@ public class BackupController : MonoBehaviour
     public TMP_Dropdown ddLocation, ddSchedule;
     public Button btnSave;
 
-    // FIX R6: track sumber recovery yang dipilih player
-    private bool _choseCloud;
-
     void Awake()
     {
         if (btnYes) btnYes.onClick.AddListener(() =>
         {
-            PlayerRunRecorder.Record("backup.exists", "yes");
+            PlayerRunRecorder.RecordDetailed("backup.exists", "yes", "recovery_available", 20);
             questionPanel.SetActive(false);
             GameManager_Tp6.Instance.GoToState(Tp6State.RecoveryChoice);
         });
@@ -38,16 +35,14 @@ public class BackupController : MonoBehaviour
         // FIX R6: catat pilihan sumber backup sebelum lanjut
         if (btnCloud) btnCloud.onClick.AddListener(() =>
         {
-            _choseCloud = true;
-            PlayerRunRecorder.Record("backup.recovery_source", "cloud");
+            PlayerRunRecorder.RecordDetailed("backup.recovery_source", "cloud", "restore_started", 20);
             recoveryPanel.SetActive(false);
             GameManager_Tp6.Instance.GoToState(Tp6State.BackupSetup);
         });
 
         if (btnExternal) btnExternal.onClick.AddListener(() =>
         {
-            _choseCloud = false;
-            PlayerRunRecorder.Record("backup.recovery_source", "external_drive");
+            PlayerRunRecorder.RecordDetailed("backup.recovery_source", "external_drive", "restore_started", 20);
             recoveryPanel.SetActive(false);
             GameManager_Tp6.Instance.GoToState(Tp6State.BackupSetup);
         });
@@ -78,12 +73,15 @@ public class BackupController : MonoBehaviour
         int sched = ddSchedule ? ddSchedule.value : 0;
 
         bool locationSafe = (loc == 1 || loc == 2);
-        bool scheduleSafe = (sched == 1 || sched == 2);
+        bool scheduleSafe = sched == 2;
         bool correct = locationSafe && scheduleSafe;
+
+        string locationId = loc == 1 ? "external_drive" : loc == 2 ? "cloud" : "same_disk";
+        string scheduleId = sched == 2 ? "daily" : sched == 1 ? "weekly" : "never";
 
         // FIX: Tutup panel setup setelah user menekan tombol Save
         if (setupPanel) setupPanel.SetActive(false);
 
-        GameManager_Tp6.Instance.OnBackupSetupDone(correct);
+        GameManager_Tp6.Instance.OnBackupSetupDone(correct, locationId, scheduleId);
     }
 }

@@ -43,11 +43,9 @@ public class EmailDetailButtons : MonoBehaviour
         btnHasilOk.onClick.AddListener(OnHasilOk);
     }
 
-    private bool EmailSaatIniPhishing()
+    private EmailEntry EmailSaatIni()
     {
-        if (emailRandomizer == null) return false;
-        var entry = emailRandomizer.GetEmailTerbuka();
-        return entry != null && entry.isPhishing;
+        return emailRandomizer != null ? emailRandomizer.GetEmailTerbuka() : null;
     }
 
     // ─────────────────────────────────────────────
@@ -59,9 +57,10 @@ public class EmailDetailButtons : MonoBehaviour
             pesan: "Apakah kamu yakin ingin membalas email ini?",
             onYes: () =>
             {
-                bool phishing = EmailSaatIniPhishing();
+                EmailEntry entry = EmailSaatIni();
+                bool phishing = entry != null && entry.isPhishing;
                 if (EmailManager.Instance != null)
-                    EmailManager.Instance.RecordDecision(PlayerAction.Balas, phishing);
+                    EmailManager.Instance.RecordDecision(PlayerAction.Balas, entry);
 
                 if (phishing)
                     TampilHasil("Kamu telah membalas email Phishing!\nLain kali harap lebih berhati-hati.");
@@ -80,9 +79,9 @@ public class EmailDetailButtons : MonoBehaviour
             pesan: "Apakah kamu yakin ingin menghapus email ini?",
             onYes: () =>
             {
-                bool phishing = EmailSaatIniPhishing();
+                EmailEntry entry = EmailSaatIni();
                 if (EmailManager.Instance != null)
-                    EmailManager.Instance.RecordDecision(PlayerAction.Hapus, phishing);
+                    EmailManager.Instance.RecordDecision(PlayerAction.Hapus, entry);
 
                 TampilHasil("Email telah dihapus.");
             }
@@ -98,9 +97,10 @@ public class EmailDetailButtons : MonoBehaviour
             pesan: "Apakah kamu yakin ingin melaporkan email ini sebagai Phishing?",
             onYes: () =>
             {
-                bool phishing = EmailSaatIniPhishing();
+                EmailEntry entry = EmailSaatIni();
+                bool phishing = entry != null && entry.isPhishing;
                 if (EmailManager.Instance != null)
-                    EmailManager.Instance.RecordDecision(PlayerAction.Laporkan, phishing);
+                    EmailManager.Instance.RecordDecision(PlayerAction.Laporkan, entry);
 
                 if (phishing)
                     TampilHasil("Benar! Ini adalah email Phishing.\nTerima kasih sudah melaporkannya!");
