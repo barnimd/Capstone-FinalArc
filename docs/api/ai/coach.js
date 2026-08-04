@@ -1,7 +1,16 @@
 import crypto from 'node:crypto';
 import { verifyToken } from '../../lib/auth.js';
 import { sql } from '../../lib/db.js';
-import { buildRunContext, cleanUserMessage, fallbackCoachResponse, validateRunPayload, MAX_QUESTIONS } from '../../lib/ai-coach.js';
+import {
+  buildFollowupMessages,
+  buildRunContext,
+  cleanUserMessage,
+  fallbackCoachResponse,
+  fallbackQuestionResponse,
+  questionAllowsRepeat,
+  validateRunPayload,
+  MAX_QUESTIONS,
+} from '../../lib/ai-coach.js';
 import { requestCoachResponse } from '../../lib/deepseek.js';
 
 /**
@@ -55,7 +64,7 @@ async function handleSessionStart(req, res) {
       INSERT INTO ai_sessions
         (id, run_id, user_id, stage_id, score, max_score, duration_seconds, run_context, prompt_version, question_count, created_at, expires_at)
       VALUES
-        (${sessionId}, ${run.runId}, ${uid}, ${run.stageId}, ${run.score}, ${run.maxScore}, ${run.durationSeconds}, ${JSON.stringify(run)}, 'v2', 0, NOW(), NOW() + INTERVAL '7 days')
+        (${sessionId}, ${run.runId}, ${uid}, ${run.stageId}, ${run.score}, ${run.maxScore}, ${run.durationSeconds}, ${JSON.stringify(run)}, 'v3', 0, NOW(), NOW() + INTERVAL '7 days')
     `;
 
     let opening;
@@ -65,7 +74,7 @@ async function handleSessionStart(req, res) {
       opening = result.response;
       usage = result.usage;
     } catch (error) {
-      console.error('[ai/session/start] DeepSeek fallback:', error.message);
+      console.error('[ai/session/start] DeepSeek fallback:', error.code ?? 'request_failed');
       opening = fallbackCoachResponse(run.stageId, run);
     }
 
@@ -97,31 +106,64 @@ async function handleChat(req, res) {
 
     const reserved = await sql`UPDATE ai_sessions SET question_count = question_count + 1 WHERE id = ${sessionId} AND user_id = ${uid} AND question_count < ${MAX_QUESTIONS} RETURNING question_count`;
     if (reserved.length === 0) return res.status(429).json({ success: false, error: 'Question limit reached', remainingQuestions: 0 });
-    await sql`INSERT INTO ai_messages (session_id, role, content_text, created_at) VALUES (${sessionId}, 'user', ${message}, NOW())`;
-
     const historyRows = await sql`SELECT role, content_text, content_json FROM ai_messages WHERE session_id = ${sessionId} ORDER BY id DESC LIMIT 7`;
-    const history = historyRows.reverse().map((row) => ({ role: row.role, content: row.role === 'assistant' && row.content_json ? JSON.stringify(row.content_json) : row.content_text }));
+    const chronologicalRows = [...historyRows].reverse();
+    const history = chronologicalRows.map((row) => {
+      const storedResponse = row.role === 'assistant' ? parseStoredCoachResponse(row) : null;
+      return { role: row.role, content: storedResponse ? JSON.stringify(storedResponse) : row.content_text };
+    });
+    const previousResponses = chronologicalRows.filter((row) => row.role === 'assistant').map(parseStoredCoachResponse).filter(Boolean);
+    const previousUserMessage = historyRows.find((row) => row.role === 'user')?.content_text ?? '';
+    const allowRepeat = questionAllowsRepeat(message, previousUserMessage);
     const run = typeof session.run_context === 'string' ? JSON.parse(session.run_context) : session.run_context;
 
     let response;
     let usage = null;
     try {
-      const result = await requestCoachResponse(session.stage_id, [{ role: 'user', content: `Gameplay context JSON: ${buildRunContext(run)}` }, ...history]);
+      const result = await requestCoachResponse(
+        session.stage_id,
+        buildFollowupMessages(run, history, message),
+        { previousResponses, allowRepeat }
+      );
       response = result.response;
       usage = result.usage;
     } catch (error) {
-      console.error('[ai/chat] DeepSeek fallback:', error.message);
-      response = fallbackCoachResponse(session.stage_id, run);
+      console.error('[ai/chat] DeepSeek fallback:', error.code ?? 'request_failed');
+      response = fallbackQuestionResponse(session.stage_id, run, message, previousResponses, allowRepeat);
+      if (!response) {
+        const rolledBack = await sql`
+          UPDATE ai_sessions
+          SET question_count = GREATEST(question_count - 1, 0)
+          WHERE id = ${sessionId} AND user_id = ${uid}
+          RETURNING question_count
+        `;
+        const restoredCount = Number(rolledBack[0]?.question_count ?? Math.max(0, Number(reserved[0].question_count) - 1));
+        console.error('[ai/chat] No confident local fallback:', error.code ?? 'request_failed');
+        return res.status(200).json({
+          success: false,
+          error: 'AI coach belum dapat menjawab. Coba kirim lagi—kuota tidak berkurang.',
+          retryable: true,
+          remainingQuestions: Math.max(0, MAX_QUESTIONS - restoredCount),
+        });
+      }
+      console.warn('[ai/chat] Served contextual local fallback:', error.code ?? 'request_failed');
     }
 
+    await sql`INSERT INTO ai_messages (session_id, role, content_text, created_at) VALUES (${sessionId}, 'user', ${message}, NOW())`;
     await sql`INSERT INTO ai_messages (session_id, role, content_text, content_json, created_at) VALUES (${sessionId}, 'assistant', ${response.answer}, ${JSON.stringify(response)}, NOW())`;
     if (usage) await sql`UPDATE ai_sessions SET prompt_tokens = prompt_tokens + ${Number(usage.prompt_tokens ?? 0)}, completion_tokens = completion_tokens + ${Number(usage.completion_tokens ?? 0)} WHERE id = ${sessionId}`;
     const count = Number(reserved[0].question_count);
-    return res.status(200).json({ success: true, response, remainingQuestions: Math.max(0, MAX_QUESTIONS - count) });
+    return res.status(200).json({ success: true, response, retryable: false, remainingQuestions: Math.max(0, MAX_QUESTIONS - count) });
   } catch (error) {
     console.error('[ai/chat]', error);
     return res.status(500).json({ success: false, error: 'Failed to process AI message' });
   }
+}
+
+function parseStoredCoachResponse(row) {
+  if (!row?.content_json) return null;
+  if (typeof row.content_json === 'object') return row.content_json;
+  try { return JSON.parse(row.content_json); } catch { return null; }
 }
 
 // ── GET /api/ai/session?runId=<uuid> ────────────────────────────────────────

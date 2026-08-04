@@ -14,7 +14,7 @@ Yang sudah selesai:
 - Pilihan penting pemain dicatat sebagai event terstruktur dan dikirim sebagai konteks AI.
 - Backend session, chat, validasi, fallback, penyimpanan Neon, dan cleanup session sudah dibuat.
 - Autentikasi memakai Firebase ID token.
-- Unit test backend semantic-context lulus **15/15**.
+- Unit test backend semantic-context dan anti-repeat lulus **20/20**.
 - Kompilasi C# lulus dengan **0 error**. Warning lama dari dependency/serialized field masih ada.
 
 Yang masih harus dilakukan sebelum production:
@@ -128,13 +128,10 @@ File tambahan yang berubah pada semantic-context v2:
 
 | File | Fungsi |
 |---|---|
-| `docs/api/ai/session/start.js` | Membuat atau memulihkan session berdasarkan `userId + runId`, membuat opening debrief, dan menyimpannya. |
-| `docs/api/ai/chat.js` | Menerima pertanyaan lanjutan, memastikan session milik user, membatasi tiga pertanyaan, dan menyimpan history. |
-| `docs/api/ai/session.js` | Mengambil ulang session aktif dan message history berdasarkan `runId`. |
-| `docs/api/cron/cleanup-ai-sessions.js` | Menghapus session kedaluwarsa; message ikut terhapus melalui cascade. |
-| `docs/lib/ai-coach.js` | Konfigurasi prompt Topic 1–6, validasi run, sanitasi input/output, dan fallback response. |
+| `docs/api/ai/coach.js` | Satu Vercel function untuk session start, follow-up chat, restore session, dan cleanup agar tetap di bawah limit function. |
+| `docs/lib/ai-coach.js` | Konfigurasi prompt Topic 1–6, validasi run, sanitasi output, deteksi duplikat, serta fallback opening/follow-up. |
 | `docs/lib/game-context-catalog.js` | Katalog v2 untuk scenario, pilihan, alternatif, evidence, outcome, serta evaluasi Topic 1–6. |
-| `docs/lib/deepseek.js` | Client DeepSeek dengan timeout 20 detik, satu retry, JSON Output, dan validasi response. |
+| `docs/lib/deepseek.js` | Client DeepSeek dengan timeout 20 detik, corrective retry, JSON Output, dan pemeriksaan respons duplikat. |
 | `docs/db/schema_ai_coach.sql` | Membuat tabel `ai_sessions`, `ai_messages`, constraint, dan index. |
 | `docs/test/ai-coach.test.js` | Unit test payload, keamanan event, prompt, output JSON, dan batas pesan. |
 | `docs/vercel.json` | Menjadwalkan cleanup session setiap hari. |
@@ -192,10 +189,10 @@ Backend menerapkan batas berikut:
 - `answer` maksimal tiga kalimat.
 - `evidence` maksimal dua item.
 - `nextAction` tepat satu tindakan praktis.
-- HTML, Markdown, link, dan key tambahan ditolak.
+- HTML, Markdown, dan link ditolak. Extra key diabaikan; hanya empat field resmi yang diteruskan ke Unity.
 - Default bahasa adalah Indonesia; bahasa Inggris digunakan jika pemain bertanya dalam bahasa Inggris.
 
-Jika DeepSeek timeout, key tidak ada, response terpotong, atau JSON gagal validasi, server memakai fallback aman. Karena fallback tetap mengembalikan HTTP sukses, cek log Vercel untuk memastikan respons benar-benar berasal dari DeepSeek.
+Jika DeepSeek timeout, mengembalikan JSON kosong/invalid, atau mengulang jawaban lama, server melakukan satu corrective retry. Follow-up kemudian memakai fallback lokal hanya jika pertanyaan cocok jelas dengan decision. Jika tidak ada kecocokan, kuota dikembalikan dan Unity meminta pemain mengirim ulang.
 
 ## 6. Data yang Disimpan
 
@@ -303,9 +300,10 @@ Backend saat ini memakai:
 - Thinking: disabled
 - JSON Output: enabled
 - Temperature: `0.2`
-- Maksimum output: `256` tokens
+- Maksimum output: `384` tokens
 - Timeout: 20 detik
-- Retry: satu kali
+- Retry: satu kali dengan corrective prompt berdasarkan alasan penolakan
+- Duplicate guard: exact match atau bigram similarity minimal `85%`, kecuali pemain meminta pengulangan
 
 Konfigurasi model, thinking toggle, dan `response_format: {"type":"json_object"}` sesuai dokumentasi API resmi DeepSeek per 4 Agustus 2026:
 
@@ -336,7 +334,7 @@ dotnet build Capstone-FinalArc.sln --no-restore
 
 Expected result:
 
-- Backend: 15 test passed.
+- Backend: 20 test passed.
 - C#: 0 errors.
 
 ### Tahap B — Database dan Preview backend
@@ -508,7 +506,7 @@ Periksa:
 - Migrasi `ai_sessions` dan `ai_messages` sudah dijalankan.
 - Vercel Function Logs untuk error SQL asli.
 
-### UI sukses tetapi jawaban generik
+### UI sukses tetapi memakai fallback lokal
 
 Kemungkinan backend memakai fallback. Cari log:
 
@@ -517,7 +515,11 @@ Kemungkinan backend memakai fallback. Cari log:
 [ai/chat] DeepSeek fallback
 ```
 
-Periksa API key, quota/saldo, akses model, timeout, dan validitas JSON respons.
+Log juga menyebut alasan seperti `empty_json`, `schema_invalid`, `duplicate_response`, `timeout`, atau HTTP upstream. Fallback follow-up harus membahas decision yang ditanyakan; fallback opening yang berisi skor tidak boleh dipakai untuk follow-up.
+
+### Pesan “Coba kirim lagi — kuota tidak berkurang”
+
+DeepSeek gagal dua kali dan matcher lokal tidak cukup yakin menentukan decision yang dimaksud. Ini recoverable: pertanyaan gagal tidak disimpan, `question_count` dikembalikan, dan input Unity diaktifkan kembali.
 
 ### HTTP 429
 

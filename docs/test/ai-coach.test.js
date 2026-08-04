@@ -1,6 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildRunContext, buildSystemPrompt, cleanUserMessage, fallbackCoachResponse, parseCoachResponse, validateRunPayload } from '../lib/ai-coach.js';
+import {
+  buildFollowupMessages,
+  buildRunContext,
+  buildSystemPrompt,
+  cleanUserMessage,
+  fallbackCoachResponse,
+  fallbackQuestionResponse,
+  isDuplicateCoachResponse,
+  parseCoachResponse,
+  questionAllowsRepeat,
+  validateRunPayload,
+} from '../lib/ai-coach.js';
+import { requestCoachResponse } from '../lib/deepseek.js';
 
 const validRun = {
   runId: '123e4567-e89b-12d3-a456-426614174000',
@@ -18,6 +30,15 @@ const validRun = {
     facts: [{ key: 'classification', value: 'legitimate' }],
   }],
 };
+
+const topic5Run = validateRunPayload({
+  ...validRun,
+  decisions: [
+    { eventId: 'wifi.mas_anto_response', choiceId: 'threaten_to_report', outcomeId: 'operator_left', scoreDelta: 5, elapsedSeconds: 10, facts: [] },
+    { eventId: 'vpn.choice', choiceId: 'skip', outcomeId: 'unprotected_connection', scoreDelta: 0, elapsedSeconds: 20, facts: [] },
+    { eventId: 'public_wifi.login', choiceId: 'without_vpn', outcomeId: 'credentials_intercepted', scoreDelta: 0, elapsedSeconds: 30, facts: [] },
+  ],
+}).value;
 
 test('accepts a bounded six-topic run payload', () => {
   const result = validateRunPayload(validRun);
@@ -129,7 +150,90 @@ test('validates and sanitizes structured DeepSeek output', () => {
   assert.deepEqual(parsed, { answer: 'Good choice.', evidence: ['VPN enabled'], nextAction: 'Keep VPN active.', outOfScope: false });
   assert.equal(parseCoachResponse('{bad json'), null);
   assert.equal(parseCoachResponse(JSON.stringify({ answer: 'Visit https://bad.test', evidence: [], nextAction: 'Open it.', outOfScope: false })), null);
-  assert.equal(parseCoachResponse(JSON.stringify({ answer: 'Fine.', evidence: [], nextAction: 'Act.', outOfScope: false, extra: true })), null);
+  assert.deepEqual(
+    parseCoachResponse(JSON.stringify({ answer: 'Fine.', evidence: [], nextAction: 'Act.', outOfScope: false, extra: true })),
+    { answer: 'Fine.', evidence: [], nextAction: 'Act.', outOfScope: false }
+  );
+});
+
+test('follow-up messages keep the latest question last', () => {
+  const history = [
+    { role: 'assistant', content: '{"answer":"opening"}' },
+    { role: 'user', content: 'pertanyaan lama' },
+  ];
+  const messages = buildFollowupMessages(topic5Run, history, 'pilihan saya di Mas Anto bagaimana?');
+  assert.match(messages[0].content, /Gameplay context JSON/);
+  assert.deepEqual(messages.slice(1, 3), history);
+  assert.match(messages.at(-1).content, /LATEST PLAYER QUESTION/);
+  assert.match(messages.at(-1).content, /Mas Anto/);
+});
+
+test('contextual fallback answers Mas Anto instead of repeating the score debrief', () => {
+  const response = fallbackQuestionResponse('wifi-security', topic5Run, 'pilihan saya di Mas Anto bagaimana?');
+  assert.ok(response);
+  assert.match(response.answer, /Matikan sekarang/);
+  assert.doesNotMatch(response.answer, /80\/100|keputusan yang tercatat/);
+  assert.match(response.nextAction, /panggil staff/i);
+});
+
+test('contextual fallback finds VPN and rejects an unrelated ambiguous question', () => {
+  const vpn = fallbackQuestionResponse('wifi-security', topic5Run, 'bagaimana pilihan VPN saya?');
+  assert.ok(vpn);
+  assert.match(vpn.answer, /Lewati VPN/);
+  assert.match(vpn.nextAction, /Aktifkan VPN/);
+  assert.equal(fallbackQuestionResponse('wifi-security', topic5Run, 'menurut kamu bagaimana?'), null);
+});
+
+test('duplicate responses are rejected unless the player asks to repeat', () => {
+  const first = fallbackQuestionResponse('wifi-security', topic5Run, 'bagaimana pilihan VPN saya?');
+  assert.equal(isDuplicateCoachResponse(first, [first]), true);
+  assert.equal(fallbackQuestionResponse('wifi-security', topic5Run, 'bagaimana pilihan VPN saya?', [first]), null);
+  assert.ok(fallbackQuestionResponse('wifi-security', topic5Run, 'ulangi pilihan VPN saya', [first], true));
+  assert.equal(questionAllowsRepeat('ulangi penjelasannya', 'bagaimana pilihan VPN saya?'), true);
+  assert.equal(questionAllowsRepeat('gimana pilihan saya di VPN?', 'bagaimana pilihan VPN saya?'), true);
+  assert.equal(questionAllowsRepeat('bagaimana pilihan Mas Anto?', 'bagaimana pilihan VPN saya?'), false);
+});
+
+test('DeepSeek retry receives a corrective prompt after a duplicate response', async () => {
+  const previous = {
+    answer: 'Jawaban lama tentang VPN.',
+    evidence: ['VPN dilewati.'],
+    nextAction: 'Aktifkan VPN.',
+    outOfScope: false,
+  };
+  const fresh = {
+    answer: 'Pilihan Mas Anto memerlukan laporan kepada staf.',
+    evidence: ['Perangkat rogue access point ditemukan.'],
+    nextAction: 'Laporkan perangkat kepada staf.',
+    outOfScope: false,
+  };
+  const originalFetch = global.fetch;
+  const originalKey = process.env.DEEPSEEK_API_KEY;
+  const requests = [];
+  let call = 0;
+  process.env.DEEPSEEK_API_KEY = 'test-key';
+  global.fetch = async (_url, options) => {
+    requests.push(JSON.parse(options.body));
+    const content = JSON.stringify(call++ === 0 ? previous : fresh);
+    return { ok: true, json: async () => ({ choices: [{ finish_reason: 'stop', message: { content } }], usage: {} }) };
+  };
+
+  try {
+    const result = await requestCoachResponse(
+      'wifi-security',
+      buildFollowupMessages(topic5Run, [], 'bagaimana pilihan Mas Anto?'),
+      { previousResponses: [previous], allowRepeat: false }
+    );
+    assert.deepEqual(result.response, fresh);
+    assert.equal(requests.length, 2);
+    assert.equal(requests[0].max_tokens, 384);
+    assert.match(requests[1].messages.at(-1).content, /REPAIR REQUIRED/);
+    assert.match(requests[1].messages.at(-1).content, /duplicate_response/);
+  } finally {
+    global.fetch = originalFetch;
+    if (originalKey == null) delete process.env.DEEPSEEK_API_KEY;
+    else process.env.DEEPSEEK_API_KEY = originalKey;
+  }
 });
 
 test('system prompt contains topic grounding and JSON rules', () => {

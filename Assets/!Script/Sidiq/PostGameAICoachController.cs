@@ -207,21 +207,32 @@ public class PostGameAICoachController : MonoBehaviour
         string message = _input != null ? _input.text.Trim() : "";
         if (string.IsNullOrEmpty(message)) return;
         _input.text = "";
-        AppendBubble(message, true);
+        RectTransform pendingBubble = AppendBubble(message, true);
         _statusText.text = "Thinking...";
         SetInputActive(false);
         _service.SendQuestion(message, (ok, response, remaining, error) =>
         {
-            _statusText.text = ok ? "" : "Message could not be answered";
+            bool canRetry = !ok && _service.LastFailureRetryable && remaining > 0;
+            if (canRetry)
+            {
+                if (pendingBubble != null)
+                    Destroy(pendingBubble.gameObject);
+                if (_input != null)
+                    _input.text = message;
+            }
+
+            _statusText.text = ok ? "" : canRetry
+                ? "Coba kirim lagi - kuota tidak berkurang"
+                : "Message could not be answered";
             AppendBubble(ok && response != null ? response.ToDisplayText() : "⚠ " + (error ?? "Please try again."), false);
             UpdateRemaining(remaining);
-            SetInputActive(ok && remaining > 0);
+            SetInputActive((ok || canRetry) && remaining > 0);
         });
     }
 
-    private void AppendBubble(string value, bool isUser)
+    private RectTransform AppendBubble(string value, bool isUser)
     {
-        if (_messageContainer == null) return;
+        if (_messageContainer == null) return null;
         RectTransform bubble = CreateRect(isUser ? "PlayerMessage" : "AIMessage", _messageContainer);
         Image background = bubble.gameObject.AddComponent<Image>();
         background.color = isUser ? new Color(0.34f, 0.20f, 0.10f, 1f) : BgDark;
@@ -232,6 +243,7 @@ public class PostGameAICoachController : MonoBehaviour
         LayoutElement element = bubble.gameObject.AddComponent<LayoutElement>();
         element.preferredHeight = height;
         StartCoroutine(ScrollBottom());
+        return bubble;
     }
 
     private IEnumerator ScrollBottom()

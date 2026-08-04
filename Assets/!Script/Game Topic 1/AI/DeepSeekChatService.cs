@@ -70,6 +70,7 @@ public class AIQuestionResponse
     public AICoachResponse response;
     public int remainingQuestions;
     public string error;
+    public bool retryable;
 }
 
 /// <summary>
@@ -82,6 +83,7 @@ public class DeepSeekChatService : MonoBehaviour
     public string SessionId { get; private set; }
     public int RemainingQuestions { get; private set; }
     public AIStoredMessage[] RestoredMessages { get; private set; }
+    public bool LastFailureRetryable { get; private set; }
 
     public void StartSession(PlayerRunSnapshot run, Action<bool, AICoachResponse, int, string> callback)
     {
@@ -125,6 +127,7 @@ public class DeepSeekChatService : MonoBehaviour
 
     public void SendQuestion(string message, Action<bool, AICoachResponse, int, string> callback)
     {
+        LastFailureRetryable = false;
         string trimmed = message?.Trim();
         if (IsWaiting || string.IsNullOrEmpty(trimmed))
             return;
@@ -147,10 +150,15 @@ public class DeepSeekChatService : MonoBehaviour
                 IsWaiting = false;
                 if (!ok || response == null || !response.success)
                 {
-                    if (response != null) RemainingQuestions = response.remainingQuestions;
+                    if (response != null)
+                    {
+                        RemainingQuestions = response.remainingQuestions;
+                        LastFailureRetryable = response.retryable;
+                    }
                     callback?.Invoke(false, null, RemainingQuestions, response?.error ?? ExtractError(raw));
                     return;
                 }
+                LastFailureRetryable = false;
                 RemainingQuestions = response.remainingQuestions;
                 callback?.Invoke(true, response.response, RemainingQuestions, null);
             });
@@ -168,6 +176,7 @@ public class DeepSeekChatService : MonoBehaviour
         SessionId = null;
         RemainingQuestions = 0;
         RestoredMessages = null;
+        LastFailureRetryable = false;
     }
 
     private static AICoachResponse FindLastAssistant(AIStoredMessage[] messages)

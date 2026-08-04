@@ -6,6 +6,16 @@ export const MAX_QUESTIONS = 3;
 export const MAX_MESSAGE_LENGTH = 400;
 export const SESSION_RETENTION_DAYS = 7;
 
+const SEARCH_STOP_WORDS = new Set([
+  'ada', 'agar', 'akan', 'aku', 'apa', 'apakah', 'atau', 'bagaimana', 'bisa', 'buat',
+  'dalam', 'dan', 'dari', 'dengan', 'di', 'gimana', 'ini', 'itu', 'jadi', 'jika',
+  'kalau', 'ke', 'kenapa', 'kok', 'lagi', 'lalu', 'mau', 'mengapa', 'oke', 'pada',
+  'pilih', 'pilihan', 'saat', 'saya', 'setelah', 'sudah', 'tentang', 'terus', 'untuk',
+  'yang', 'yg', 'the', 'a', 'an', 'is', 'are', 'my', 'what', 'why', 'how', 'after',
+]);
+
+const REPEAT_REQUEST = /\b(ulang|ulangi|jelaskan lagi|coba lagi|repeat|again|rephrase)\b/i;
+
 const BASE_RULES = `
 You are SecMind AI Coach, a post-game cybersecurity tutor.
 Answer only about the completed topic and the supplied gameplay context.
@@ -15,6 +25,8 @@ Never invent a score, choice, or event. If evidence is missing, say it was not r
 Use selectedChoice, availableChoices, evidenceCatalog, riskIndicators, and facts from the enriched gameplay context when explaining a decision.
 Do not blame the player for an event marked as a scenario mechanic.
 When discussing an incorrect choice, state the recorded cue that was missed and compare it with the best available choice.
+For follow-up questions, answer the latest player question directly. Do not restate the score or opening debrief unless the player asks for it.
+Do not reuse a previous answer for a different question. Focus on the decision, person, or security control named in the latest question.
 Refuse requests for operational phishing, malware, credential theft, exploitation, or evasion and redirect to defensive practice.
 Return JSON only, without Markdown, HTML, links, or additional keys.
 When discussing a website, mention only the domain without http:// or https:// so it is not rendered as a clickable link.
@@ -159,13 +171,23 @@ export function buildRunContext(run) {
   });
 }
 
+export function buildFollowupMessages(run, history, latestQuestion) {
+  const prior = Array.isArray(history) ? history : [];
+  return [
+    { role: 'user', content: `Gameplay context JSON: ${buildRunContext(run)}` },
+    ...prior,
+    {
+      role: 'user',
+      content: `LATEST PLAYER QUESTION:\n${latestQuestion}\nAnswer this question directly. Do not repeat the opening debrief or an earlier answer unless the player explicitly asks you to repeat it.`,
+    },
+  ];
+}
+
 export function parseCoachResponse(raw) {
   if (typeof raw !== 'string' || !raw.trim()) return null;
   let parsed;
   try { parsed = JSON.parse(raw); } catch { return null; }
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null;
-  const keys = Object.keys(parsed).sort();
-  if (keys.join(',') !== 'answer,evidence,nextAction,outOfScope') return null;
   const answer = cleanText(parsed.answer, 600);
   const nextAction = cleanText(parsed.nextAction, 240);
   const evidence = Array.isArray(parsed.evidence) ? parsed.evidence.slice(0, 2).map((item) => cleanText(item, 220)).filter(Boolean) : [];
@@ -192,6 +214,137 @@ export function fallbackCoachResponse(stageId, run, outOfScope = false) {
       : 'Tinjau kembali keputusan dengan risiko terbesar sebelum melakukan retry.',
     outOfScope: false,
   };
+}
+
+export function fallbackQuestionResponse(stageId, run, userMessage, previousResponses = [], allowRepeat = false) {
+  const queryTokens = searchTokens(userMessage);
+  if (queryTokens.length === 0 || !Array.isArray(run?.decisions)) return null;
+
+  const candidates = run.decisions
+    .map((decision, index) => ({ decision: resolveDecisionContext(stageId, decision), index }))
+    .filter((item) => item.decision)
+    .map((item) => ({ ...item, score: scoreDecisionMatch(item.decision, queryTokens) }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score || b.index - a.index);
+
+  const bestMatch = candidates[0];
+  const runnerUp = candidates[1];
+  if (!bestMatch || bestMatch.score < 3 || (runnerUp && bestMatch.score - runnerUp.score < 1)) return null;
+
+  const decision = bestMatch.decision;
+  const selected = decision.selectedChoice;
+  const bestAlternative = decision.availableChoices?.find((item) => item.assessment === 'best');
+  const assessment = assessmentLabel(selected.assessment);
+  const response = {
+    answer: `Untuk keputusan ini, pilihanmu adalah ${selected.label}. Pilihan tersebut dinilai ${assessment}: ${selected.outcome}`,
+    evidence: [decision.scenario, `Pilihan tercatat: ${selected.label}.`].filter(Boolean).slice(0, 2),
+    nextAction: bestAlternative && bestAlternative.id !== selected.id
+      ? `Saat retry, pilih ${bestAlternative.label}.`
+      : `Pertahankan pilihan ${selected.label} pada situasi serupa.`,
+    outOfScope: false,
+  };
+
+  if (isDuplicateCoachResponse(response, previousResponses, allowRepeat)) return null;
+  return response;
+}
+
+export function isDuplicateCoachResponse(candidate, previousResponses, allowRepeat = false) {
+  if (allowRepeat || !candidate || !Array.isArray(previousResponses)) return false;
+  const current = flattenCoachResponse(candidate);
+  if (!current) return false;
+  return previousResponses.some((previous) => {
+    const prior = flattenCoachResponse(previous);
+    if (!prior) return false;
+    return current === prior || bigramJaccard(current, prior) >= 0.85;
+  });
+}
+
+export function questionAllowsRepeat(currentQuestion, previousQuestion = '') {
+  if (REPEAT_REQUEST.test(currentQuestion || '')) return true;
+  const current = normalizeComparisonText(currentQuestion);
+  const previous = normalizeComparisonText(previousQuestion);
+  if (!current || !previous) return false;
+  if (current === previous || bigramJaccard(current, previous) >= 0.8) return true;
+  return tokenJaccard(searchTokens(currentQuestion), searchTokens(previousQuestion)) >= 0.8;
+}
+
+function scoreDecisionMatch(decision, queryTokens) {
+  const fields = [
+    { weight: 3, value: decision.eventId || '' },
+    { weight: 3, value: decision.selectedChoice?.label || '' },
+    { weight: 2, value: decision.scenario || '' },
+    { weight: 2, value: decision.selectedChoice?.outcome || '' },
+    { weight: 1, value: (decision.availableChoices || []).map((item) => `${item.label || ''} ${item.outcome || ''}`).join(' ') },
+  ];
+  let score = 0;
+  for (const token of queryTokens) {
+    for (const field of fields) {
+      if (searchTokens(field.value, false).includes(token)) score += field.weight;
+    }
+  }
+  return score;
+}
+
+function searchTokens(value, removeStopWords = true) {
+  const tokens = String(value || '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter((token) => token.length >= 2);
+  return [...new Set(removeStopWords ? tokens.filter((token) => !SEARCH_STOP_WORDS.has(token)) : tokens)];
+}
+
+function assessmentLabel(value) {
+  switch (value) {
+    case 'best': return 'pilihan terbaik';
+    case 'partial': return 'cukup aman, tetapi belum optimal';
+    case 'dangerous': return 'berbahaya';
+    case 'weak': return 'lemah';
+    default: return 'perlu ditinjau';
+  }
+}
+
+function flattenCoachResponse(response) {
+  if (!response || typeof response !== 'object') return '';
+  return normalizeComparisonText([
+    response.answer,
+    ...(Array.isArray(response.evidence) ? response.evidence : []),
+    response.nextAction,
+  ].filter(Boolean).join(' '));
+}
+
+function normalizeComparisonText(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
+}
+
+function bigramJaccard(left, right) {
+  const leftSet = wordBigrams(left);
+  const rightSet = wordBigrams(right);
+  if (leftSet.size === 0 || rightSet.size === 0) return left === right ? 1 : 0;
+  let intersection = 0;
+  for (const item of leftSet) if (rightSet.has(item)) intersection++;
+  const union = leftSet.size + rightSet.size - intersection;
+  return union > 0 ? intersection / union : 0;
+}
+
+function wordBigrams(value) {
+  const words = normalizeComparisonText(value).split(' ').filter(Boolean);
+  const result = new Set();
+  if (words.length === 1) result.add(words[0]);
+  for (let i = 0; i < words.length - 1; i++) result.add(`${words[i]} ${words[i + 1]}`);
+  return result;
+}
+
+function tokenJaccard(left, right) {
+  const leftSet = new Set(left);
+  const rightSet = new Set(right);
+  if (leftSet.size === 0 || rightSet.size === 0) return 0;
+  let intersection = 0;
+  for (const item of leftSet) if (rightSet.has(item)) intersection++;
+  const union = leftSet.size + rightSet.size - intersection;
+  return union > 0 ? intersection / union : 0;
 }
 
 export function cleanUserMessage(value) {
