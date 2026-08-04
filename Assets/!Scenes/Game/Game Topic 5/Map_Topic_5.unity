@@ -3491,7 +3491,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -140.99994, y: -0.4}
+  m_AnchoredPosition: {x: -132, y: -0.4}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &300672939
@@ -8697,7 +8697,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -140.99994, y: -0.9}
+  m_AnchoredPosition: {x: -132, y: -0.9}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &555209120
@@ -14690,6 +14690,7 @@ GameObject:
   m_Component:
   - component: {fileID: 897220843}
   - component: {fileID: 897220846}
+  - component: {fileID: 897220844}
   - component: {fileID: 897220842}
   - component: {fileID: 897220847}
   m_Layer: 5
@@ -14763,6 +14764,32 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &897220844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 897220841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd8b6ab441e594145bec88c0d36e90ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  websitePanelRoot: {fileID: 897220841}
+  txtURL: {fileID: 1424741439}
+  urlBarBackground: {fileID: 0}
+  inputUsername: {fileID: 1319640253}
+  inputPassword: {fileID: 1516451417}
+  btnLogin: {fileID: 1196793377}
+  btnCancel: {fileID: 0}
+  feedbackPanel: {fileID: 1766796620}
+  txtFeedbackTitle: {fileID: 596901237}
+  txtFeedbackDetail: {fileID: 712492451}
+  btnFeedbackOk: {fileID: 1297941066}
+  txtRoundInfo: {fileID: 0}
+  phishingURLColor: {r: 0.9, g: 0.2, b: 0.2, a: 1}
+  legitimateURLColor: {r: 0.2, g: 0.7, b: 0.2, a: 1}
 --- !u!222 &897220846
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -15322,7 +15349,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 225, y: 30}
+  m_SizeDelta: {x: 200, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &928794752
 MonoBehaviour:
@@ -27192,7 +27219,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5409479713633745855, guid: 739fd95d0147b2545a6bd71f8523faa1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -32287,7 +32314,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 45}
-  m_SizeDelta: {x: 225, y: 30}
+  m_SizeDelta: {x: 200, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1616683267
 MonoBehaviour:
@@ -36430,7 +36457,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -141, y: 0}
+  m_AnchoredPosition: {x: -132, y: 0}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1830821530
@@ -40171,8 +40198,8 @@ MonoBehaviour:
   txtFeedbackDetail: {fileID: 712492451}
   objectiveUI: {fileID: 1420995560}
   correctWifiName: CafeBean_Free
-  fakeWifiName_1: FREE_CAFE_WIFI
-  fakeWifiName_2: CafeBean_Free_5G
+  fakeWifiName_1: FREE_CAFE
+  fakeWifiName_2: CafeB3an_5G
 --- !u!224 &1999052343
 RectTransform:
   m_ObjectHideFlags: 0
@@ -40274,7 +40301,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -50}
-  m_SizeDelta: {x: 225, y: 30}
+  m_SizeDelta: {x: 200, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2002103933
 MonoBehaviour:
