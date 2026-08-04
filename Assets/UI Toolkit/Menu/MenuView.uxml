@@ -136,8 +136,51 @@
                     </ui:VisualElement>
                     <ui:ScrollView name="row-list" class="row-list" />
                 </ui:VisualElement>
-                <ui:VisualElement name="page-settings" class="page page-placeholder hidden">
-                    <ui:Label text="(Settings page belum dimigrate)" class="page-placeholder-text" />
+                <ui:VisualElement name="page-settings" class="page settings-page hidden">
+                    <ui:VisualElement class="lb-header">
+                        <ui:Label text="PREFERENCES" class="label-eyebrow" />
+                        <ui:Label text="Settings" class="title" />
+                    </ui:VisualElement>
+                    <ui:ScrollView class="settings-scroll">
+                        <ui:Label text="MOVEMENT" class="section-title" />
+                        <ui:VisualElement class="settings-card">
+                            <ui:VisualElement class="settings-row">
+                                <ui:VisualElement class="settings-row-text">
+                                    <ui:Label text="Player Speed" class="settings-row-title" />
+                                    <ui:Label text="Ngatur seberapa cepat karakter jalan." class="settings-row-desc" />
+                                </ui:VisualElement>
+                                <ui:Label text="50%" name="settings-speed-value" class="settings-value" />
+                            </ui:VisualElement>
+                            <ui:Slider name="settings-move-speed" low-value="0" high-value="1" value="0.5" class="settings-slider" />
+                            <ui:VisualElement class="settings-scale-row">
+                                <ui:Label text="Pelan banget" class="settings-scale-end" />
+                                <ui:Label text="Paling cepat" class="settings-scale-end" />
+                            </ui:VisualElement>
+                            <ui:Label text="Tahan Shift buat lari (+75% kecepatan)" class="settings-hint" />
+                        </ui:VisualElement>
+                        <ui:Label text="SOUND" class="section-title" />
+                        <ui:VisualElement class="settings-card">
+                            <ui:VisualElement class="settings-row">
+                                <ui:VisualElement class="settings-row-text">
+                                    <ui:Label text="Background Music" class="settings-row-title" />
+                                    <ui:Label text="Musik latar di menu dan di dalam game." class="settings-row-desc" />
+                                </ui:VisualElement>
+                                <ui:Toggle name="settings-music" class="settings-toggle" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="settings-divider" />
+                            <ui:VisualElement class="settings-row">
+                                <ui:VisualElement class="settings-row-text">
+                                    <ui:Label text="Dialogue" class="settings-row-title" />
+                                    <ui:Label text="Suara karakter dan bunyi ketik pas dialog jalan." class="settings-row-desc" />
+                                </ui:VisualElement>
+                                <ui:Toggle name="settings-dialogue" class="settings-toggle" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="settings-footer">
+                            <ui:Button text="Reset to Default" name="settings-reset" class="filter-tab" />
+                            <ui:Label text="Setting kesimpan otomatis dan kepakai di semua topic." class="settings-hint" />
+                        </ui:VisualElement>
+                    </ui:ScrollView>
                 </ui:VisualElement>
                 <ui:VisualElement name="page-help" class="page help-page hidden">
                     <ui:VisualElement class="help-header">

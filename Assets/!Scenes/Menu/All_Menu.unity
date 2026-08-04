@@ -7103,6 +7103,8 @@ MonoBehaviour:
   displayImage: {fileID: 1050985731}
   arrowLeft: {fileID: 1409518972}
   arrowRight: {fileID: 72183925}
+  slideInterval: 3
+  loop: 1
 --- !u!1 &1074725010
 GameObject:
   m_ObjectHideFlags: 0
@@ -7327,6 +7329,7 @@ GameObject:
   - component: {fileID: 1171245010}
   - component: {fileID: 1171245009}
   - component: {fileID: 1171245008}
+  - component: {fileID: 1171245011}
   m_Layer: 0
   m_Name: MenuShell
   m_TagString: Untagged
@@ -7356,7 +7359,7 @@ MonoBehaviour:
   classMigrated: 1
   profileMigrated: 1
   leaderboardMigrated: 1
-  settingsMigrated: 0
+  settingsMigrated: 1
   helpMigrated: 1
   dashboardSlides:
   - {fileID: 21300000, guid: 5f0f8749a804fec40b574ed4e2494b41, type: 3}
@@ -7365,6 +7368,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 1acc221282041ee458aee02465568a04, type: 3}
   - {fileID: 21300000, guid: 1b6d92565f0c87a4baf0825fa0054611, type: 3}
   - {fileID: 21300000, guid: c270dd955d82c16469176a3b105e8c3b, type: 3}
+  slideInterval: 3
 --- !u!114 &1171245009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7396,6 +7400,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1171245011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171245007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5950b58db545cc4a8db6942ce3454e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1178621352
 GameObject:
   m_ObjectHideFlags: 0
