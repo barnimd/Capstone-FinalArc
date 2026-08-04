@@ -204,6 +204,7 @@ public class Topic5ProgressionController : MonoBehaviour
     private void ResolveMasAntoChoice(int choice)
     {
         stage = Stage.Resolution;
+        PlayerRunRecorder.Record("wifi.investigation_response", choice == 0 ? "choice_a" : choice == 1 ? "choice_b" : "choice_c");
 
         VNDialogueData resolution = choice == 0
             ? choiceADialogue

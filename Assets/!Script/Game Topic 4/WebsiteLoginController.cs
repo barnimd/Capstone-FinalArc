@@ -81,6 +81,9 @@ public class WebsiteLoginController : MonoBehaviour
         if (_roundURLs == null || _roundURLs.Count == 0) return;
 
         URLEntry entry = _roundURLs[_currentRound];
+        PlayerRunRecorder.Record(
+            "website.round_" + (_currentRound + 1) + (entry.isPhishing ? ".phishing" : ".legitimate"),
+            "login");
 
         if (entry.isPhishing)
         {
@@ -103,6 +106,9 @@ public class WebsiteLoginController : MonoBehaviour
         if (_roundURLs == null || _roundURLs.Count == 0) return;
 
         URLEntry entry = _roundURLs[_currentRound];
+        PlayerRunRecorder.Record(
+            "website.round_" + (_currentRound + 1) + (entry.isPhishing ? ".phishing" : ".legitimate"),
+            "cancel");
 
         _currentRound++;
 

@@ -78,6 +78,7 @@ namespace GameTopic2
         /// </summary>
         void Start()
         {
+            PlayerRunRecorder.Ensure("2fa");
             if (passwordInput != null)
             {
                 passwordInput.onValueChanged.AddListener(OnPasswordChanged);
@@ -242,6 +243,8 @@ namespace GameTopic2
         /// <param name="enableMFA">True if the player chose to enable MFA, false otherwise.</param>
         public void OnMFAChosen(bool enableMFA)
         {
+            PlayerRunRecorder.Record("password.strength", CurrentStrength.ToString().ToLowerInvariant());
+            PlayerRunRecorder.Record("mfa.choice", enableMFA ? "enabled" : "skipped");
             if (mfaChoicePanel != null)
                 mfaChoicePanel.SetActive(false);
 

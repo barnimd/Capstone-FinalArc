@@ -118,6 +118,9 @@ public class DashboardPopupController : MonoBehaviour
     {
         PopupEntry entry = _popupQueue[_currentPopupIndex];
         bool answeredCorrectly = isCorrectButton;
+        PlayerRunRecorder.Record(
+            "popup.round_" + (_currentPopupIndex + 1) + (entry.isPhishing ? ".phishing" : ".legitimate"),
+            answeredCorrectly ? "correct" : "incorrect");
 
         _playerAnswers[_currentPopupIndex] = answeredCorrectly;
         if (answeredCorrectly) _correctCount++;

@@ -49,6 +49,7 @@ public class GameManager_Tp4 : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        PlayerRunRecorder.Ensure(stageId);
     }
 
     private void Start()

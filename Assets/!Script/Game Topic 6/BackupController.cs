@@ -24,6 +24,7 @@ public class BackupController : MonoBehaviour
     {
         if (btnYes) btnYes.onClick.AddListener(() =>
         {
+            PlayerRunRecorder.Record("backup.exists", "yes");
             questionPanel.SetActive(false);
             GameManager_Tp6.Instance.GoToState(Tp6State.RecoveryChoice);
         });
@@ -38,6 +39,7 @@ public class BackupController : MonoBehaviour
         if (btnCloud) btnCloud.onClick.AddListener(() =>
         {
             _choseCloud = true;
+            PlayerRunRecorder.Record("backup.recovery_source", "cloud");
             recoveryPanel.SetActive(false);
             GameManager_Tp6.Instance.GoToState(Tp6State.BackupSetup);
         });
@@ -45,6 +47,7 @@ public class BackupController : MonoBehaviour
         if (btnExternal) btnExternal.onClick.AddListener(() =>
         {
             _choseCloud = false;
+            PlayerRunRecorder.Record("backup.recovery_source", "external_drive");
             recoveryPanel.SetActive(false);
             GameManager_Tp6.Instance.GoToState(Tp6State.BackupSetup);
         });

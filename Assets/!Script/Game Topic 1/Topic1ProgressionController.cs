@@ -70,6 +70,7 @@ public class Topic1ProgressionController : MonoBehaviour
 
     private void Start()
     {
+        PlayerRunRecorder.Ensure(stageId);
         if (legacyAskingFile != null)
             legacyAskingFile.SetActive(false);
 
@@ -139,6 +140,7 @@ public class Topic1ProgressionController : MonoBehaviour
 
         evidenceChecklist.ShowDecision(evidenceCase, safe =>
         {
+            PlayerRunRecorder.Record("evidence." + (evidenceCase != null ? evidenceCase.name : "unknown"), safe ? "safe" : "unsafe");
             if (!safe && evidenceCase != pakBudiCase && ScoreManager.instance != null)
                 ScoreManager.instance.AddScore(evidenceCase.unsafePenalty);
 
@@ -157,6 +159,7 @@ public class Topic1ProgressionController : MonoBehaviour
 
     private void OnInstallerCompleted(bool installed)
     {
+        PlayerRunRecorder.Record("installer.untrusted", installed ? "installed" : "cancelled");
         if (stage != Stage.PakBudiInstaller)
             return;
 
@@ -180,6 +183,7 @@ public class Topic1ProgressionController : MonoBehaviour
 
     private void OnComputerDecision(bool safe)
     {
+        PlayerRunRecorder.Record("file_request.computer", safe ? "refused" : "sent");
         if (stage != Stage.Computer)
             return;
 

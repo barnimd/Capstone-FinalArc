@@ -62,6 +62,7 @@ public class GameManager_Tp6 : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        PlayerRunRecorder.Ensure(stageId);
 
         // Wire file explorer icon clicks
         var dc = desktopCanvas?.GetComponent<Canvas>();
@@ -288,11 +289,13 @@ public class GameManager_Tp6 : MonoBehaviour
     // ── Callbacks dari controller ────────────────────────────────────────────────────
     public void OnImportantLost()
     {
+        PlayerRunRecorder.Record("file.organization", "important_file_lost");
         if (_state == Tp6State.Organize) GoToState(Tp6State.Recovery);
     }
 
     public void OnRecoveryAttempted()
     {
+        PlayerRunRecorder.Record("file.recovery", "attempted");
         // FIX: Izinkan lanjut ke Crash dari state Organize maupun Recovery
         if (_state == Tp6State.Recovery || _state == Tp6State.Organize)
         {
@@ -303,6 +306,7 @@ public class GameManager_Tp6 : MonoBehaviour
     // FIX R5: ShowFB sekarang punya parameter autoClose untuk mengontrol tombol OK
     public void OnBackupQuestionNo()
     {
+        PlayerRunRecorder.Record("backup.exists", "no");
         ShowFB("Data cannot be recovered", "Tanpa backup, semua data hilang permanen!", autoClose: true);
         Invoke(nameof(DoneFail), fbDuration);
     }
@@ -310,6 +314,7 @@ public class GameManager_Tp6 : MonoBehaviour
     // FIX R7-A: simpan hasil config, lanjut ke Simulation bukan langsung ke Success/Failed
     public void OnBackupSetupDone(bool correct)
     {
+        PlayerRunRecorder.Record("backup.configuration", correct ? "reliable" : "unreliable");
         _backupConfigCorrect = correct;
         // Langsung masuk Simulation — Simulation yang memutuskan Success atau Failed
         GoToState(Tp6State.Simulation);

@@ -1,134 +1,194 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Networking;
-
-// ── DTOs ────────────────────────────────────────────────────────────────────
 
 [Serializable]
-public class AIChatMessage
+public class AICoachResponse
+{
+    public string answer;
+    public string[] evidence;
+    public string nextAction;
+    public bool outOfScope;
+
+    public string ToDisplayText()
+    {
+        string text = answer ?? "";
+        if (evidence != null && evidence.Length > 0)
+        {
+            text += "\n\nEvidence:";
+            foreach (string item in evidence)
+                if (!string.IsNullOrWhiteSpace(item)) text += "\n• " + item;
+        }
+        if (!string.IsNullOrWhiteSpace(nextAction))
+            text += "\n\nNext step: " + nextAction;
+        return text.Trim();
+    }
+}
+
+[Serializable]
+public class AISessionStartRequest
+{
+    public string runId;
+    public string stageId;
+    public int score;
+    public int maxScore;
+    public float durationSeconds;
+    public System.Collections.Generic.List<PlayerRunDecision> decisions;
+}
+
+[Serializable]
+public class AIStoredMessage
 {
     public string role;
-    public string content;
+    public string content_text;
+    public AICoachResponse content_json;
 }
 
 [Serializable]
-public class AIChatRequest
+public class AISessionStartResponse
 {
-    public List<AIChatMessage> messages;
-}
-
-[Serializable]
-public class AIChatResponse
-{
-    public bool   success;
-    public string reply;
+    public bool success;
+    public string sessionId;
+    public AICoachResponse opening;
+    public AIStoredMessage[] messages;
+    public int remainingQuestions;
     public string error;
 }
 
-// ── Service ─────────────────────────────────────────────────────────────────
+[Serializable]
+public class AIQuestionRequest
+{
+    public string sessionId;
+    public string message;
+}
+
+[Serializable]
+public class AIQuestionResponse
+{
+    public bool success;
+    public AICoachResponse response;
+    public int remainingQuestions;
+    public string error;
+}
 
 /// <summary>
-/// Sends player messages to /api/chat (Vercel → DeepSeek proxy).
-/// Maintains conversation history for multi-turn context.
-/// Pure coroutines — safe for Unity WebGL.
+/// WebGL-safe client for the authenticated post-game AI endpoints.
+/// System prompts and conversation history remain server-side.
 /// </summary>
 public class DeepSeekChatService : MonoBehaviour
 {
-    private const string ENDPOINT    = SecMindAPI.Paths.Chat;
-    private const int    MAX_HISTORY = 20; // trim oldest pairs to avoid token overflow
-
-    private readonly List<AIChatMessage> _history = new();
-
     public bool IsWaiting { get; private set; }
+    public string SessionId { get; private set; }
+    public int RemainingQuestions { get; private set; }
+    public AIStoredMessage[] RestoredMessages { get; private set; }
 
-    // ── Public API ──────────────────────────────────────────────────────────
+    public void StartSession(PlayerRunSnapshot run, Action<bool, AICoachResponse, int, string> callback)
+    {
+        if (IsWaiting || run == null)
+            return;
+        if (APIClient.Instance == null)
+        {
+            callback?.Invoke(false, null, 0, "API client is unavailable.");
+            return;
+        }
 
-    /// <summary>
-    /// Send a user message. callback(ok, replyText).
-    /// Does nothing if a request is already in flight.
-    /// </summary>
+        IsWaiting = true;
+        AISessionStartRequest request = new AISessionStartRequest
+        {
+            runId = run.runId,
+            stageId = run.stageId,
+            score = run.score,
+            maxScore = run.maxScore,
+            durationSeconds = run.durationSeconds,
+            decisions = run.decisions
+        };
+
+        APIClient.Instance.Post<AISessionStartRequest, AISessionStartResponse>(
+            SecMindAPI.Paths.AISessionStart, request, (ok, response, raw) =>
+            {
+                IsWaiting = false;
+                if (!ok || response == null || !response.success)
+                {
+                    callback?.Invoke(false, null, 0, response?.error ?? ExtractError(raw));
+                    return;
+                }
+
+                SessionId = response.sessionId;
+                RemainingQuestions = response.remainingQuestions;
+                RestoredMessages = response.messages;
+                AICoachResponse opening = response.opening ?? FindLastAssistant(response.messages);
+                callback?.Invoke(true, opening, RemainingQuestions, null);
+            });
+    }
+
+    public void SendQuestion(string message, Action<bool, AICoachResponse, int, string> callback)
+    {
+        string trimmed = message?.Trim();
+        if (IsWaiting || string.IsNullOrEmpty(trimmed))
+            return;
+        if (string.IsNullOrEmpty(SessionId) || APIClient.Instance == null)
+        {
+            callback?.Invoke(false, null, RemainingQuestions, "AI session is unavailable.");
+            return;
+        }
+        if (trimmed.Length > 400)
+        {
+            callback?.Invoke(false, null, RemainingQuestions, "Message is limited to 400 characters.");
+            return;
+        }
+
+        IsWaiting = true;
+        AIQuestionRequest request = new AIQuestionRequest { sessionId = SessionId, message = trimmed };
+        APIClient.Instance.Post<AIQuestionRequest, AIQuestionResponse>(SecMindAPI.Paths.AIChat, request,
+            (ok, response, raw) =>
+            {
+                IsWaiting = false;
+                if (!ok || response == null || !response.success)
+                {
+                    if (response != null) RemainingQuestions = response.remainingQuestions;
+                    callback?.Invoke(false, null, RemainingQuestions, response?.error ?? ExtractError(raw));
+                    return;
+                }
+                RemainingQuestions = response.remainingQuestions;
+                callback?.Invoke(true, response.response, RemainingQuestions, null);
+            });
+    }
+
+    // Compatibility for the old Topic 1 ChatbotUIManager. It only works after a session starts.
     public void SendMessage(string userMessage, Action<bool, string> callback)
     {
-        if (IsWaiting) return;
-
-        _history.Add(new AIChatMessage { role = "user", content = userMessage });
-
-        // Keep history bounded so we don't blow the context window
-        while (_history.Count > MAX_HISTORY)
-            _history.RemoveAt(0);
-
-        StartCoroutine(PostChat(callback));
+        SendQuestion(userMessage, (ok, response, _, error) =>
+            callback?.Invoke(ok, ok ? response?.ToDisplayText() : error));
     }
 
-    public void ClearHistory() => _history.Clear();
-
-    // ── Internal ────────────────────────────────────────────────────────────
-
-    private IEnumerator PostChat(Action<bool, string> callback)
+    public void ClearHistory()
     {
-        IsWaiting = true;
+        SessionId = null;
+        RemainingQuestions = 0;
+        RestoredMessages = null;
+    }
 
-        string url       = SecMindAPI.BaseUrl + ENDPOINT;
-        string json      = JsonConvert.SerializeObject(new AIChatRequest { messages = _history });
-        byte[] bodyBytes = Encoding.UTF8.GetBytes(json);
-
-        UnityWebRequest req = new UnityWebRequest(url, "POST");
-        req.uploadHandler   = new UploadHandlerRaw(bodyBytes);
-        req.downloadHandler = new DownloadHandlerBuffer();
-        req.SetRequestHeader("Content-Type", "application/json");
-
-        FirebaseManager fm = FirebaseManager.Instance;
-        if (fm != null && !string.IsNullOrEmpty(fm.IdToken))
-            req.SetRequestHeader("Authorization", "Bearer " + fm.IdToken);
-
-        yield return req.SendWebRequest();
-
-        IsWaiting = false;
-
-        if (req.result != UnityWebRequest.Result.Success)
+    private static AICoachResponse FindLastAssistant(AIStoredMessage[] messages)
+    {
+        if (messages == null) return null;
+        for (int i = messages.Length - 1; i >= 0; i--)
         {
-            Debug.LogWarning("[DeepSeekChat] Network error: " + req.error);
-            RemoveLastUserMessage();
-            callback?.Invoke(false, "Connection error. Please try again.");
-            req.Dispose();
-            yield break;
+            if (messages[i] == null || messages[i].role != "assistant") continue;
+            if (messages[i].content_json != null) return messages[i].content_json;
+            if (!string.IsNullOrEmpty(messages[i].content_text))
+                return new AICoachResponse { answer = messages[i].content_text, evidence = Array.Empty<string>(), nextAction = "Tanyakan keputusan yang ingin kamu pahami." };
         }
+        return null;
+    }
 
-        string raw = req.downloadHandler.text;
-        req.Dispose();
-
-        AIChatResponse resp;
+    private static string ExtractError(string raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw)) return "Connection error. Please try again.";
         try
         {
-            resp = JsonConvert.DeserializeObject<AIChatResponse>(raw);
+            APIErrorResponse error = JsonConvert.DeserializeObject<APIErrorResponse>(raw);
+            return error?.error ?? "Response error. Please try again.";
         }
-        catch (Exception e)
-        {
-            Debug.LogWarning("[DeepSeekChat] JSON parse failed: " + e.Message + " | " + raw);
-            RemoveLastUserMessage();
-            callback?.Invoke(false, "Response error. Please try again.");
-            yield break;
-        }
-
-        if (!resp.success)
-        {
-            Debug.LogWarning("[DeepSeekChat] API error: " + resp.error);
-            RemoveLastUserMessage();
-            callback?.Invoke(false, resp.error ?? "Unknown error.");
-            yield break;
-        }
-
-        _history.Add(new AIChatMessage { role = "assistant", content = resp.reply });
-        callback?.Invoke(true, resp.reply);
-    }
-
-    private void RemoveLastUserMessage()
-    {
-        if (_history.Count > 0 && _history[_history.Count - 1].role == "user")
-            _history.RemoveAt(_history.Count - 1);
+        catch { return "Response error. Please try again."; }
     }
 }

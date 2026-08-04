@@ -220,6 +220,7 @@ public class SummaryManager : MonoBehaviour
                     break;
             }
         }
+
     }
 
     /// <summary>
@@ -279,6 +280,10 @@ public class SummaryManager : MonoBehaviour
                     break;
             }
         }
+
+        // The AI coach builds the shared two-column layout and starts a contextual
+        // post-game session when this panel becomes visible.
+        PostGameAICoachController.Configure(panelRoot, finalScore, 100, elapsedSeconds);
     }
 
     private void SubmitResultToNeon(int rawScore)

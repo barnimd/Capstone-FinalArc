@@ -191,6 +191,7 @@ public class WifiSelectorController : MonoBehaviour
     {
         if (_selectedIndex < 0) return;
         bool isCorrect = _wifiOptions[_selectedIndex].isCorrect;
+        PlayerRunRecorder.Record("wifi.selection", isCorrect ? "office_secure" : "lookalike_network");
         confirmationPanel.SetActive(false);
         popupListWifi.SetActive(false);
 

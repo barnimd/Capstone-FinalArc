@@ -111,6 +111,9 @@ public class EvaluationPanel : MonoBehaviour
         if (_data == null) return;
 
         int jawabanBenar = _data.questions[_currentQuestionIndex].correctAnswerIndex;
+        PlayerRunRecorder.Record(
+            "evaluation.question_" + (_currentQuestionIndex + 1),
+            _playerAnswers[_currentQuestionIndex] == jawabanBenar ? "correct" : "incorrect");
 
         if (_playerAnswers[_currentQuestionIndex] == jawabanBenar)
             _correctCount++;

@@ -21,6 +21,7 @@ public class EmailManager : MonoBehaviour
 
     private void Awake()
     {
+        PlayerRunRecorder.Ensure("password-security");
         Instance = this;
 
         if (emailCanvas != null)
@@ -34,6 +35,9 @@ public class EmailManager : MonoBehaviour
     public void RecordDecision(PlayerAction action, bool isPhishing)
     {
         DecisionOutcome outcome = EvaluateOutcome(action, isPhishing);
+        PlayerRunRecorder.Record(
+            isPhishing ? "email.phishing" : "email.legitimate",
+            action.ToString().ToLowerInvariant() + "." + outcome.ToString().ToLowerInvariant());
 
         switch (outcome)
         {

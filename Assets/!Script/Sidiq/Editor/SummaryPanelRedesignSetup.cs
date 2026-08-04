@@ -47,7 +47,7 @@ public static class SummaryPanelRedesignSetup
         if (old != null) Object.DestroyImmediate(old.gameObject);
 
         var panel = NewRect("SummaryPannel", canvasT);
-        Anchor(panel, Center, Center, new Vector2(760f, 460f), Vector2.zero);
+        Anchor(panel, Center, Center, new Vector2(1180f, 620f), Vector2.zero);
         var panelImg = Shape(panel, DrawShape.Rectangle, BgDark);
         Rounded(panelImg, 28f);
 
@@ -78,9 +78,8 @@ public static class SummaryPanelRedesignSetup
         BuildStatTile(panel, "AccuracyTile", new Vector2(240f, -20f), "ACCURACY", "AccuracyText", "80%", "4 / 5 correct");
 
         // ── Buttons ────────────────────────────────────────────
-        BuildOutlineButton(panel, "BackToMenuButton", new Vector2(-230f, -195f), 190f, "‹  Back to Menu", true);
-        BuildOutlineButton(panel, "ReplayButton", new Vector2(0f, -195f), 150f, "↺  Replay", false);
-        BuildFilledButton(panel, "NextLevelButton", new Vector2(230f, -195f), 200f, "Next Level  ›");
+        BuildOutlineButton(panel, "BackToMenuButton", new Vector2(-100f, -195f), 190f, "‹  Back to Menu", true);
+        BuildOutlineButton(panel, "ReplayButton", new Vector2(100f, -195f), 190f, "↺  Retry", false);
 
         PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
         PrefabUtility.UnloadPrefabContents(root);

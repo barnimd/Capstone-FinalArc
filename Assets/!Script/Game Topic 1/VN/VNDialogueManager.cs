@@ -666,6 +666,7 @@ public class VNDialogueManager : MonoBehaviour
 
     public void OnAcceptClicked()
     {
+        PlayerRunRecorder.Record("vn." + (current != null ? current.name : "unknown"), "accept");
         if (ScoreManager.instance != null && acceptScore != 0)
             ScoreManager.instance.AddScore(acceptScore);
 
@@ -679,6 +680,7 @@ public class VNDialogueManager : MonoBehaviour
 
     public void OnRejectClicked()
     {
+        PlayerRunRecorder.Record("vn." + (current != null ? current.name : "unknown"), "reject");
         if (ScoreManager.instance != null && rejectScore != 0)
             ScoreManager.instance.AddScore(rejectScore);
 
