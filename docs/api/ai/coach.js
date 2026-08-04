@@ -5,21 +5,20 @@ import { buildRunContext, cleanUserMessage, fallbackCoachResponse, validateRunPa
 import { requestCoachResponse } from '../../lib/deepseek.js';
 
 /**
- * Single catch-all for every /api/ai/* route.
+ * Single handler behind every /api/ai/* URL.
  *
  * Vercel counts one Serverless Function per file, and the Hobby plan caps a
- * deployment at 12. Collapsing session/start, chat, session and the cleanup
- * cron into this file keeps all four public URLs unchanged while costing one
- * function instead of four.
+ * deployment at 12. The public URLs are mapped onto this one file by the
+ * `rewrites` block in vercel.json, which appends the `action` query param.
+ * Bracket catch-all filenames ([...route].js) are a Next.js convention and do
+ * NOT resolve on this project's plain filesystem API routing, so the rewrites
+ * are what makes multi-segment paths like /api/ai/session/start work.
  */
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
 
-  const segments = req.query?.route;
-  const route = (Array.isArray(segments) ? segments : [segments].filter(Boolean)).join('/');
-
-  switch (route) {
-    case 'session/start': return handleSessionStart(req, res);
+  switch (req.query?.action) {
+    case 'session-start': return handleSessionStart(req, res);
     case 'chat':          return handleChat(req, res);
     case 'session':       return handleSession(req, res);
     case 'cleanup':       return handleCleanup(req, res);

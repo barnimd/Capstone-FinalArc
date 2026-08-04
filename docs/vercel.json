@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    { "source": "/api/ai/session/start", "destination": "/api/ai/coach?action=session-start" },
+    { "source": "/api/ai/chat", "destination": "/api/ai/coach?action=chat" },
+    { "source": "/api/ai/session", "destination": "/api/ai/coach?action=session" },
+    { "source": "/api/ai/cleanup", "destination": "/api/ai/coach?action=cleanup" }
+  ],
   "crons": [
     { "path": "/api/ai/cleanup", "schedule": "17 3 * * *" }
   ]
