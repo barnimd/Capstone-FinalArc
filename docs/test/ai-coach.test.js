@@ -156,6 +156,25 @@ test('validates and sanitizes structured DeepSeek output', () => {
   );
 });
 
+test('normalizes duration when decisions span a scene transition', () => {
+  const result = validateRunPayload({
+    ...validRun,
+    durationSeconds: 188,
+    decisions: [{
+      eventId: 'wifi.clue.bu_dewi',
+      choiceId: 'assist_victim',
+      outcomeId: 'victim_warned',
+      scoreDelta: 5,
+      elapsedSeconds: 300,
+      facts: [{ key: 'fake_network', value: 'cafebean_free_5g' }],
+    }],
+  });
+
+  assert.equal(result.error, undefined);
+  assert.equal(result.value.durationSeconds, 300);
+  assert.equal(result.value.decisions[0].eventId, 'wifi.clue.bu_dewi');
+});
+
 test('follow-up messages keep the latest question last', () => {
   const history = [
     { role: 'assistant', content: '{"answer":"opening"}' },

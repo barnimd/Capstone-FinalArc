@@ -102,6 +102,7 @@ export function validateRunPayload(body) {
   if (decisions.length > MAX_DECISIONS) return { error: `Too many decisions (max ${MAX_DECISIONS})` };
 
   const normalizedDecisions = [];
+  let maxDecisionElapsedSeconds = 0;
   for (let i = 0; i < decisions.length; i++) {
     const eventId = normalizeId(decisions[i]?.eventId);
     const choiceId = normalizeId(decisions[i]?.choiceId);
@@ -111,7 +112,10 @@ export function validateRunPayload(body) {
       : normalizeId(decisions[i]?.outcomeId);
     const scoreDelta = decisions[i]?.scoreDelta == null ? 0 : Number(decisions[i]?.scoreDelta);
     const facts = Array.isArray(decisions[i]?.facts) ? decisions[i].facts : [];
-    if (!eventId || !choiceId || !Number.isFinite(elapsedSeconds) || elapsedSeconds < 0 || elapsedSeconds > durationSeconds + 60) {
+    // Some legacy WebGL builds start the run recorder in the map scene but restart
+    // the visible summary timer in the computer scene. Validate the timestamp's own
+    // bounds here, then normalize the run duration to the latest decision below.
+    if (!eventId || !choiceId || !Number.isFinite(elapsedSeconds) || elapsedSeconds < 0 || elapsedSeconds > 86400) {
       return { error: `Invalid decision at index ${i}` };
     }
     if ((decisions[i]?.outcomeId != null && decisions[i]?.outcomeId !== '' && !outcomeId) ||
@@ -147,9 +151,11 @@ export function validateRunPayload(body) {
       return { error: `Score delta does not match catalog at index ${i}` };
     }
     normalizedDecisions.push(normalizedDecision);
+    maxDecisionElapsedSeconds = Math.max(maxDecisionElapsedSeconds, normalizedDecision.elapsedSeconds);
   }
 
-  return { value: { runId, contentVersion, stageId, score: Math.round(score), maxScore: Math.round(maxScore), durationSeconds: Math.round(durationSeconds * 10) / 10, decisions: normalizedDecisions } };
+  const normalizedDurationSeconds = Math.max(durationSeconds, maxDecisionElapsedSeconds);
+  return { value: { runId, contentVersion, stageId, score: Math.round(score), maxScore: Math.round(maxScore), durationSeconds: Math.round(normalizedDurationSeconds * 10) / 10, decisions: normalizedDecisions } };
 }
 
 export function buildSystemPrompt(stageId) {

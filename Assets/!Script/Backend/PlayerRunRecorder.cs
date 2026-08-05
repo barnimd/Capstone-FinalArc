@@ -172,7 +172,18 @@ public class PlayerRunRecorder : MonoBehaviour
 
         _run.score = Mathf.Clamp(score, 0, Mathf.Max(1, maxScore));
         _run.maxScore = Mathf.Max(1, maxScore);
-        _run.durationSeconds = Mathf.Max(0f, durationSeconds);
+
+        // SummaryManager can be recreated when a topic changes scene. Its supplied
+        // duration then only covers the final scene, while decision timestamps still
+        // use this persistent recorder's full-run clock. Keep one authoritative
+        // timeline so no valid decision appears to occur after the run has ended.
+        float recorderDuration = Mathf.Max(0f, Time.time - _startedAt);
+        float lastDecisionElapsed = _run.decisions.Count > 0
+            ? Mathf.Max(0f, _run.decisions[_run.decisions.Count - 1].elapsedSeconds)
+            : 0f;
+        _run.durationSeconds = Mathf.Max(
+            Mathf.Max(0f, durationSeconds),
+            Mathf.Max(recorderDuration, lastDecisionElapsed));
         _completed = true;
         return _run;
     }
