@@ -8,7 +8,7 @@ using MPUIKIT;
 /// <summary>
 /// Rebuilds "SummaryPannel" inside Assets/!Prefab/Canvas/CanvasSummaryPanel.prefab
 /// to match the "Level Complete!" reference design (badge, title, subtitle,
-/// Score/Time/Accuracy stat tiles, and a Back to Menu / Replay / Next Level
+/// Score/Time stat tiles, and a Back to Menu / Replay / Next Level
 /// button row) using MPUIKit shapes. Visual pass only — button click behavior
 /// (Replay, Next Level) is wired up separately later.
 ///
@@ -21,12 +21,13 @@ public static class SummaryPanelRedesignSetup
 {
     const string PrefabPath = "Assets/!Prefab/Canvas/CanvasSummaryPanel.prefab";
 
+    // Harus sama dengan palet di PostGameAICoachController (versi kontras tinggi).
     static readonly Color BgDark    = new Color(0.106f, 0.082f, 0.071f, 1f);
-    static readonly Color CardDark  = new Color(0.165f, 0.129f, 0.114f, 1f);
-    static readonly Color Orange    = new Color(0.910f, 0.510f, 0.180f, 1f);
-    static readonly Color Cream     = new Color(0.961f, 0.945f, 0.918f, 1f);
-    static readonly Color MutedText = new Color(0.725f, 0.698f, 0.659f, 1f);
-    static readonly Color Outline   = new Color(1f, 1f, 1f, 0.12f);
+    static readonly Color CardDark  = new Color(0.239f, 0.196f, 0.173f, 1f);
+    static readonly Color Orange    = new Color(1f, 0.647f, 0.220f, 1f);
+    static readonly Color Cream     = new Color(1f, 0.988f, 0.973f, 1f);
+    static readonly Color MutedText = new Color(0.859f, 0.835f, 0.804f, 1f);
+    static readonly Color Outline   = new Color(1f, 1f, 1f, 0.28f);
 
     static readonly Vector2 Center     = new Vector2(0.5f, 0.5f);
     static readonly Vector2 TopCenter  = new Vector2(0.5f, 1f);
@@ -72,14 +73,15 @@ public static class SummaryPanelRedesignSetup
             14f, MutedText, TextAlignmentOptions.Center);
         Anchor(subtitle.rectTransform, TopCenter, TopCenter, new Vector2(580f, 24f), new Vector2(0f, -124f));
 
-        // ── Stat tiles ─────────────────────────────────────────
-        BuildStatTile(panel, "ScoreTile", new Vector2(-240f, -20f), "SCORE", "ScoreText", "67", null);
-        BuildStatTile(panel, "TimeTile", new Vector2(0f, -20f), "TIME", "TimeText", "2:14", null);
-        BuildStatTile(panel, "AccuracyTile", new Vector2(240f, -20f), "ACCURACY", "AccuracyText", "80%", "4 / 5 correct");
+        // ── Stat tiles (Score + Time saja, Accuracy dihapus) ───
+        BuildStatTile(panel, "ScoreTile", new Vector2(-120f, -20f), "SCORE", "ScoreText", "67", null);
+        BuildStatTile(panel, "TimeTile", new Vector2(120f, -20f), "TIME", "TimeText", "2:14", null);
 
         // ── Buttons ────────────────────────────────────────────
+        // Tanpa glyph unicode: ↺/↻ (U+21BA/U+21BB) tidak ada di atlas LiberationSans SDF
+        // dan kerender jadi kotak kosong. "‹" (U+2039) ada, jadi aman dipakai.
         BuildOutlineButton(panel, "BackToMenuButton", new Vector2(-100f, -195f), 190f, "‹  Back to Menu", true);
-        BuildOutlineButton(panel, "ReplayButton", new Vector2(100f, -195f), 190f, "↺  Retry", false);
+        BuildOutlineButton(panel, "ReplayButton", new Vector2(100f, -195f), 190f, "Retry", false);
 
         PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
         PrefabUtility.UnloadPrefabContents(root);

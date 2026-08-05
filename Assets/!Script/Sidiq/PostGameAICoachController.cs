@@ -10,11 +10,20 @@ using UnityEngine.UI;
 /// </summary>
 public class PostGameAICoachController : MonoBehaviour
 {
+    // Palet dinaikkan kontrasnya: teks sekunder dulu 0.72 abu-abu (susah dibaca di
+    // background gelap), sekarang 0.86. Orange dinaikkan ke amber menyala biar
+    // badge/aksen kebaca jelas.
     private static readonly Color BgDark = new Color(0.106f, 0.082f, 0.071f, 1f);
-    private static readonly Color CardDark = new Color(0.165f, 0.129f, 0.114f, 1f);
-    private static readonly Color Orange = new Color(0.910f, 0.510f, 0.180f, 1f);
-    private static readonly Color Cream = new Color(0.961f, 0.945f, 0.918f, 1f);
-    private static readonly Color Muted = new Color(0.725f, 0.698f, 0.659f, 1f);
+    private static readonly Color CardDark = new Color(0.180f, 0.145f, 0.129f, 1f);
+    private static readonly Color TileCard = new Color(0.239f, 0.196f, 0.173f, 1f);
+    private static readonly Color Orange = new Color(1f, 0.647f, 0.220f, 1f);
+    private static readonly Color Cream = new Color(1f, 0.988f, 0.973f, 1f);
+    private static readonly Color Muted = new Color(0.859f, 0.835f, 0.804f, 1f);
+    private static readonly Color OnOrange = new Color(0.106f, 0.082f, 0.071f, 1f);
+
+    /// <summary>Margin kiri/kanan yang dipakai SEMUA elemen kolom AI (judul, chat, input).</summary>
+    private const float Pad = 20f;
+    private static readonly Vector2 TileSize = new Vector2(350f, 88f);
 
     private DeepSeekChatService _service;
     private ScrollRect _scrollRect;
@@ -68,22 +77,32 @@ public class PostGameAICoachController : MonoBehaviour
         Image rightBg = GetOrAdd<Image>(right.gameObject);
         rightBg.color = CardDark;
 
-        MoveAndPlace(panel, left, "UsernameBadge", new Vector2(350f, 32f), new Vector2(0f, 252f));
-        MoveAndPlace(panel, left, "LevelCompleteText", new Vector2(350f, 44f), new Vector2(0f, 207f));
-        MoveAndPlace(panel, left, "TopicNameText", new Vector2(350f, 34f), new Vector2(0f, 166f));
-        MoveAndPlace(panel, left, "ScoreTile", new Vector2(350f, 82f), new Vector2(0f, 76f));
-        MoveAndPlace(panel, left, "TimeTile", new Vector2(350f, 82f), new Vector2(0f, -18f));
-        MoveAndPlace(panel, left, "AccuracyTile", new Vector2(350f, 82f), new Vector2(0f, -112f));
+        MoveAndPlace(panel, left, "UsernameBadge", new Vector2(300f, 32f), new Vector2(0f, 236f));
+        MoveAndPlace(panel, left, "LevelCompleteText", new Vector2(350f, 46f), new Vector2(0f, 190f));
+        MoveAndPlace(panel, left, "TopicNameText", new Vector2(350f, 34f), new Vector2(0f, 150f));
+        // Cuma Score + Time. Dua tile ditaruh sebagai satu grup di tengah kolom,
+        // digeser sedikit ke atas supaya jarak ke tombol bawah tidak sempit.
+        MoveAndPlace(panel, left, "ScoreTile", TileSize, new Vector2(0f, 32f));
+        MoveAndPlace(panel, left, "TimeTile", TileSize, new Vector2(0f, -72f));
         MoveAndPlace(panel, left, "BackToMenuButton", new Vector2(166f, 52f), new Vector2(-92f, -244f));
         MoveAndPlace(panel, left, "ReplayButton", new Vector2(166f, 52f), new Vector2(92f, -244f));
 
-        Transform next = FindDeepChild(panel, "NextLevelButton");
-        if (next != null) next.gameObject.SetActive(false);
+        HideChild(panel, "AccuracyTile");
+        HideChild(panel, "NextLevelButton");
+
+        // Isi tile masih memakai anchor dari prefab (tile aslinya 220x130, portrait).
+        // Setelah di-resize jadi 350x88 teksnya jadi melorot keluar tile, jadi
+        // internalnya ditata ulang di sini.
+        RelayoutStatTile(left, "ScoreTile", "ScoreText");
+        RelayoutStatTile(left, "TimeTile", "TimeText");
+
         Transform replay = FindDeepChild(left, "ReplayButton");
         if (replay != null)
         {
             TMP_Text label = replay.GetComponentInChildren<TMP_Text>(true);
-            if (label != null) label.text = "↻  Retry";
+            // Dulu "↻ Retry" / "↺ Retry" — glyph U+21BB & U+21BA tidak ada di atlas
+            // LiberationSans SDF, jadi kerender jadi kotak kosong. Pakai teks polos.
+            if (label != null) label.text = "Retry";
             Button button = replay.GetComponent<Button>();
             if (button != null)
             {
@@ -92,26 +111,27 @@ public class PostGameAICoachController : MonoBehaviour
             }
         }
 
+        ApplyLeftColumnContrast(left);
         BuildChatColumn(right);
     }
 
     private void BuildChatColumn(RectTransform right)
     {
         TMP_Text title = CreateText("AICoachTitle", right, "AI Learning Coach", 24f, Cream, TextAlignmentOptions.Left, FontStyles.Bold);
-        Anchor(title.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(430f, 36f), new Vector2(24f, -20f));
+        Anchor(title.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(430f, 36f), new Vector2(Pad, -20f));
         _remainingText = CreateText("RemainingQuestionsText", right, "3 questions remaining", 12f, Orange, TextAlignmentOptions.Right, FontStyles.Bold);
-        Anchor(_remainingText.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(210f, 28f), new Vector2(-24f, -25f));
+        Anchor(_remainingText.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(210f, 28f), new Vector2(-Pad, -25f));
         _statusText = CreateText("AIStatusText", right, "", 12f, Muted, TextAlignmentOptions.Left);
-        Anchor(_statusText.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(640f, 22f), new Vector2(24f, -58f));
+        Anchor(_statusText.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(640f, 22f), new Vector2(Pad, -58f));
 
         RectTransform scrollRoot = CreateRect("ChatScroll", right);
         scrollRoot.anchorMin = Vector2.zero;
         scrollRoot.anchorMax = Vector2.one;
         scrollRoot.pivot = new Vector2(0.5f, 0.5f);
-        scrollRoot.offsetMin = new Vector2(20f, 78f);
-        scrollRoot.offsetMax = new Vector2(-20f, -88f);
+        scrollRoot.offsetMin = new Vector2(Pad, 78f);
+        scrollRoot.offsetMax = new Vector2(-Pad, -88f);
         Image scrollBg = scrollRoot.gameObject.AddComponent<Image>();
-        scrollBg.color = new Color(0f, 0f, 0f, 0.14f);
+        scrollBg.color = new Color(0f, 0f, 0f, 0.22f);
         _scrollRect = scrollRoot.gameObject.AddComponent<ScrollRect>();
         _scrollRect.horizontal = false;
 
@@ -136,8 +156,14 @@ public class PostGameAICoachController : MonoBehaviour
         fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         _scrollRect.content = _messageContainer;
 
+        // Input di-stretch pakai margin yang sama dengan ChatScroll (Pad kiri/kanan),
+        // dulu lebarnya fix 610 jadi tepi kanannya tidak segaris dengan kotak chat.
         RectTransform inputRoot = CreateRect("ChatInput", right);
-        Anchor(inputRoot, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(610f, 50f), new Vector2(20f, 16f));
+        inputRoot.anchorMin = new Vector2(0f, 0f);
+        inputRoot.anchorMax = new Vector2(1f, 0f);
+        inputRoot.pivot = new Vector2(0.5f, 0f);
+        inputRoot.offsetMin = new Vector2(Pad, 16f);
+        inputRoot.offsetMax = new Vector2(-Pad, 66f);
         Image inputBg = inputRoot.gameObject.AddComponent<Image>();
         inputBg.color = BgDark;
         _input = inputRoot.gameObject.AddComponent<TMP_InputField>();
@@ -158,7 +184,8 @@ public class PostGameAICoachController : MonoBehaviour
         sendBg.color = Orange;
         _sendButton = sendRoot.gameObject.AddComponent<Button>();
         _sendButton.targetGraphic = sendBg;
-        TMP_Text sendText = CreateText("SendText", sendRoot, "Send", 13f, Color.white, TextAlignmentOptions.Center, FontStyles.Bold);
+        // Teks gelap di atas oranye menyala = kontras jauh lebih tinggi dari putih.
+        TMP_Text sendText = CreateText("SendText", sendRoot, "Send", 13f, OnOrange, TextAlignmentOptions.Center, FontStyles.Bold);
         Stretch(sendText.rectTransform, 0f);
         _sendButton.onClick.AddListener(SendQuestion);
 
@@ -235,7 +262,7 @@ public class PostGameAICoachController : MonoBehaviour
         if (_messageContainer == null) return null;
         RectTransform bubble = CreateRect(isUser ? "PlayerMessage" : "AIMessage", _messageContainer);
         Image background = bubble.gameObject.AddComponent<Image>();
-        background.color = isUser ? new Color(0.34f, 0.20f, 0.10f, 1f) : BgDark;
+        background.color = isUser ? new Color(0.451f, 0.259f, 0.110f, 1f) : new Color(0.145f, 0.118f, 0.106f, 1f);
         TMP_Text text = CreateText("MessageText", bubble, value, 14f, Cream, isUser ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft);
         text.enableWordWrapping = true;
         Stretch(text.rectTransform, 14f);
@@ -282,6 +309,92 @@ public class PostGameAICoachController : MonoBehaviour
             case "wifi-security": return "Keamanan Wi-Fi Publik & Website";
             case "ransomware": return "Ransomware & Backup";
             default: return "Cybersecurity Training";
+        }
+    }
+
+    private static void HideChild(Transform root, string name)
+    {
+        Transform found = FindDeepChild(root, name);
+        if (found != null) found.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Menata ulang isi satu stat tile untuk bentuk landscape 350x88: titik aksen di
+    /// kiri (rata tengah vertikal), label kecil di atas, angka besar di bawahnya —
+    /// keduanya rata tengah. Sub-text ("4 / 5 correct") dimatikan karena sudah tidak dipakai.
+    /// </summary>
+    private static void RelayoutStatTile(Transform root, string tileName, string valueName)
+    {
+        Transform tile = FindDeepChild(root, tileName);
+        if (tile == null) return;
+
+        Image tileBg = tile.GetComponent<Image>();
+        if (tileBg != null) tileBg.color = TileCard;
+
+        RectTransform icon = FindDeepChild(tile, tileName + "Icon") as RectTransform;
+        if (icon != null)
+            Anchor(icon, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(10f, 10f), new Vector2(18f, 0f));
+
+        RectTransform label = FindDeepChild(tile, tileName + "Label") as RectTransform;
+        if (label != null)
+        {
+            Anchor(label, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(300f, 18f), new Vector2(0f, -12f));
+            TMP_Text labelText = label.GetComponent<TMP_Text>();
+            if (labelText != null)
+            {
+                labelText.alignment = TextAlignmentOptions.Center;
+                labelText.fontSize = 12f;
+                labelText.color = Muted;
+            }
+        }
+
+        RectTransform value = FindDeepChild(tile, valueName) as RectTransform;
+        if (value != null)
+        {
+            Anchor(value, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(300f, 44f), new Vector2(0f, -32f));
+            TMP_Text valueText = value.GetComponent<TMP_Text>();
+            if (valueText != null)
+            {
+                valueText.alignment = TextAlignmentOptions.Center;
+                valueText.fontSize = 32f;
+                valueText.color = Cream;
+            }
+        }
+
+        HideChild(tile, valueName + "SubText");
+    }
+
+    /// <summary>
+    /// Menaikkan kontras teks kolom kiri. Warnanya ikut prefab (dibuat editor script),
+    /// jadi dinaikkan runtime supaya semua scene kebagian tanpa rebuild prefab.
+    /// </summary>
+    private static void ApplyLeftColumnContrast(Transform left)
+    {
+        foreach (TMP_Text text in left.GetComponentsInChildren<TMP_Text>(true))
+        {
+            switch (text.gameObject.name)
+            {
+                case "UsernameBadgeText":
+                    text.color = Orange;
+                    break;
+                case "TopicNameText":
+                    text.color = Muted;
+                    break;
+                case "LevelCompleteText":
+                case "BackToMenuButtonText":
+                case "ReplayButtonText":
+                    text.color = Cream;
+                    break;
+            }
+        }
+
+        // Isian tombol aslinya putih 4% — nyaris menyatu dengan background. Dinaikkan ke 12%.
+        foreach (string buttonName in new[] { "BackToMenuButton", "ReplayButton" })
+        {
+            Transform button = FindDeepChild(left, buttonName);
+            if (button == null) continue;
+            Image buttonBg = button.GetComponent<Image>();
+            if (buttonBg != null) buttonBg.color = new Color(1f, 1f, 1f, 0.12f);
         }
     }
 
