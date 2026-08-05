@@ -1,7 +1,9 @@
 /* ============================================================
    SecMind Main Menu — UI Toolkit shell + page styles
    Palette: bg-deep #1A1612 · bg-card #2A2419 · bg-elevated #3A3328
-            bone #F0E6D2 · ember #E87826 · ash #6B5D52
+            bone #F0E6D2 · ember #E87826
+            muted-on-dark rgb(180,166,150) · muted-dim rgb(148,133,120)
+            muted-on-bone rgb(82,68,58) · ember-on-bone rgb(178,82,12)
    ============================================================ */
 
 /* ── Override default Unity theme borders/backgrounds ────── */
@@ -44,7 +46,7 @@ Button {
 /* ── Sidebar ──────────────────────────────────────────────── */
 
 .sidebar {
-    width: 280px;
+    width: 296px;
     background-color: rgb(20, 17, 14);
     padding: 24px 16px;
     flex-direction: column;
@@ -62,9 +64,9 @@ Button {
     align-items: center;
     justify-content: flex-start;
     background-color: rgb(42, 36, 25);
-    color: rgb(240, 230, 210);
+    color: rgb(248, 242, 230);
     border-radius: 14px;
-    padding: 14px 20px;
+    padding: 15px 20px;
     margin-bottom: 10px;
     border-width: 0;
     transition-property: background-color, color;
@@ -72,15 +74,15 @@ Button {
 }
 
 .sidebar-btn-label {
-    color: rgb(240, 230, 210);
+    color: rgb(248, 242, 230);
     -unity-font-style: bold;
-    font-size: 14px;
+    font-size: 17px;
     letter-spacing: 0.5px;
     margin-left: 4px;
 }
 
 .sidebar-btn.active .sidebar-btn-label {
-    color: rgb(240, 230, 210);
+    color: rgb(255, 252, 245);
 }
 
 .sidebar-btn:hover {
@@ -89,20 +91,20 @@ Button {
 
 .sidebar-btn.active {
     background-color: rgb(232, 120, 38);
-    color: rgb(240, 230, 210);
+    color: rgb(255, 252, 245);
 }
 
 .sidebar-btn-icon {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     margin-right: 16px;
-    background-color: rgb(107, 93, 82);
+    background-color: rgb(180, 166, 150);
     border-radius: 4px;
     flex-shrink: 0;
 }
 
 .sidebar-btn.active .sidebar-btn-icon {
-    background-color: rgb(240, 230, 210);
+    background-color: rgb(255, 252, 245);
 }
 
 .sidebar-spacer {
@@ -126,7 +128,7 @@ Button {
 }
 
 .navbar {
-    height: 90px;
+    height: 96px;
     padding: 0 40px;
     flex-direction: row;
     align-items: center;
@@ -134,25 +136,25 @@ Button {
 }
 
 .navbar-greeting {
-    font-size: 28px;
-    color: rgb(240, 230, 210);
+    font-size: 34px;
+    color: rgb(248, 242, 230);
     -unity-font-style: bold;
     flex-grow: 1;
 }
 
 .navbar-profile {
-    width: 48px;
-    height: 48px;
-    border-radius: 24px;
+    width: 52px;
+    height: 52px;
+    border-radius: 26px;
     background-color: rgb(232, 120, 38);
     align-items: center;
     justify-content: center;
 }
 
 .navbar-profile-text {
-    color: rgb(240, 230, 210);
+    color: rgb(255, 252, 245);
     -unity-font-style: bold;
-    font-size: 18px;
+    font-size: 22px;
 }
 
 /* ── Content container & pages ───────────────────────────── */
@@ -179,8 +181,8 @@ Button {
 }
 
 .page-placeholder-text {
-    color: rgb(107, 93, 82);
-    font-size: 14px;
+    color: rgb(180, 166, 150);
+    font-size: 17px;
 }
 
 /* ── Leaderboard page (was: standalone .page) ────────────── */
@@ -197,16 +199,16 @@ Button {
 }
 
 .label-eyebrow {
-    font-size: 11px;
-    color: rgb(107, 93, 82);
+    font-size: 14px;
+    color: rgb(196, 182, 166);
     letter-spacing: 2px;
     -unity-font-style: bold;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .title {
-    font-size: 32px;
-    color: rgb(240, 230, 210);
+    font-size: 40px;
+    color: rgb(248, 242, 230);
     -unity-font-style: bold;
 }
 
@@ -219,30 +221,30 @@ Button {
     flex-grow: 1;
     background-color: rgb(42, 36, 25);
     border-radius: 16px;
-    padding: 16px 20px;
+    padding: 18px 22px;
     margin-right: 16px;
 }
 
 .stat-card-last { margin-right: 0; }
 
 .stat-label {
-    font-size: 11px;
-    color: rgb(107, 93, 82);
+    font-size: 13px;
+    color: rgb(196, 182, 166);
     letter-spacing: 1.5px;
     -unity-font-style: bold;
     margin-bottom: 6px;
 }
 
 .stat-value {
-    font-size: 28px;
-    color: rgb(240, 230, 210);
+    font-size: 34px;
+    color: rgb(248, 242, 230);
     -unity-font-style: bold;
     margin-bottom: 4px;
 }
 
 .stat-subtitle {
-    font-size: 12px;
-    color: rgb(107, 93, 82);
+    font-size: 14px;
+    color: rgb(180, 166, 150);
 }
 
 .filter-row {
@@ -253,23 +255,23 @@ Button {
 
 .filter-tab {
     background-color: rgb(42, 36, 25);
-    color: rgb(107, 93, 82);
+    color: rgb(196, 182, 166);
     border-radius: 22px;
-    padding: 8px 18px;
+    padding: 9px 20px;
     margin-right: 8px;
     -unity-font-style: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-width: 0;
 }
 
 .filter-tab:hover {
     background-color: rgb(58, 51, 40);
-    color: rgb(240, 230, 210);
+    color: rgb(248, 242, 230);
 }
 
 .filter-tab.active {
     background-color: rgb(232, 120, 38);
-    color: rgb(240, 230, 210);
+    color: rgb(255, 252, 245);
 }
 
 .table-header {
@@ -279,16 +281,16 @@ Button {
 }
 
 .col-header {
-    font-size: 11px;
-    color: rgb(107, 93, 82);
+    font-size: 13px;
+    color: rgb(196, 182, 166);
     letter-spacing: 1.5px;
     -unity-font-style: bold;
 }
 
-.col-rank { width: 60px; }
+.col-rank { width: 66px; }
 .col-player { flex-grow: 2; flex-basis: 0; }
 .col-topic { flex-grow: 3; flex-basis: 0; }
-.col-score { width: 80px; -unity-text-align: middle-right; }
+.col-score { width: 94px; -unity-text-align: middle-right; }
 
 .row-list { flex-grow: 1; }
 
@@ -297,7 +299,7 @@ Button {
     align-items: center;
     background-color: rgb(42, 36, 25);
     border-radius: 12px;
-    padding: 12px 24px;
+    padding: 13px 24px;
     margin-bottom: 8px;
     border-left-width: 0;
     border-left-color: rgb(232, 120, 38);
@@ -308,8 +310,8 @@ Button {
 .row:hover { background-color: rgb(58, 51, 40); }
 
 .rank-badge {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 8px;
     background-color: rgb(58, 51, 40);
     align-items: center;
@@ -319,9 +321,9 @@ Button {
 .rank-badge.first { background-color: rgb(232, 120, 38); }
 
 .rank-badge-text {
-    color: rgb(240, 230, 210);
+    color: rgb(248, 242, 230);
     -unity-font-style: bold;
-    font-size: 13px;
+    font-size: 16px;
 }
 
 .player-cell {
@@ -333,9 +335,9 @@ Button {
 }
 
 .avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
     background-color: rgb(58, 51, 40);
     align-items: center;
     justify-content: center;
@@ -343,39 +345,39 @@ Button {
 }
 
 .avatar-text {
-    color: rgb(240, 230, 210);
+    color: rgb(248, 242, 230);
     -unity-font-style: bold;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .player-name {
-    color: rgb(240, 230, 210);
-    font-size: 14px;
+    color: rgb(248, 242, 230);
+    font-size: 17px;
 }
 
 .you-badge {
     background-color: rgb(232, 120, 38);
-    color: rgb(240, 230, 210);
-    font-size: 9px;
+    color: rgb(255, 252, 245);
+    font-size: 11px;
     -unity-font-style: bold;
-    padding: 2px 6px;
+    padding: 3px 7px;
     border-radius: 4px;
     margin-left: 10px;
     letter-spacing: 1px;
 }
 
 .topic-text {
-    color: rgb(107, 93, 82);
-    font-size: 13px;
+    color: rgb(188, 174, 158);
+    font-size: 15px;
     flex-grow: 3;
     flex-basis: 0;
 }
 
 .score-text {
-    color: rgb(240, 230, 210);
-    font-size: 16px;
+    color: rgb(248, 242, 230);
+    font-size: 19px;
     -unity-font-style: bold;
-    width: 80px;
+    width: 94px;
     -unity-text-align: middle-right;
 }
 
@@ -386,8 +388,8 @@ Button {
 }
 
 .empty-text {
-    color: rgb(107, 93, 82);
-    font-size: 14px;
+    color: rgb(180, 166, 150);
+    font-size: 17px;
 }
 
 /* ── Class page ──────────────────────────────────────────── */
@@ -408,9 +410,9 @@ Button {
 }
 
 .section-title {
-    color: rgb(107, 93, 82);
+    color: rgb(196, 182, 166);
     -unity-font-style: bold;
-    font-size: 12px;
+    font-size: 15px;
     letter-spacing: 2px;
     margin-top: 12px;
     margin-bottom: 14px;
@@ -423,8 +425,8 @@ Button {
 }
 
 .lesson-card {
-    width: 180px;
-    height: 220px;
+    width: 200px;
+    height: 248px;
     background-color: rgb(42, 36, 25);
     border-radius: 16px;
     padding: 16px;
@@ -445,19 +447,19 @@ Button {
 }
 
 .lesson-number {
-    color: rgb(232, 120, 38);
+    color: rgb(240, 132, 48);
     -unity-font-style: bold;
-    font-size: 26px;
+    font-size: 30px;
     margin-bottom: 4px;
 }
 
 .lesson-card.locked .lesson-number {
-    color: rgb(107, 93, 82);
+    color: rgb(148, 133, 120);
 }
 
 .lesson-icon {
-    width: 80px;
-    height: 80px;
+    width: 84px;
+    height: 84px;
     align-self: center;
     margin: 8px 0;
     -unity-background-scale-mode: scale-to-fit;
@@ -465,8 +467,8 @@ Button {
 }
 
 .lesson-title {
-    color: rgb(240, 230, 210);
-    font-size: 13px;
+    color: rgb(248, 242, 230);
+    font-size: 16px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     white-space: normal;
@@ -474,24 +476,24 @@ Button {
 }
 
 .lesson-card.locked .lesson-title {
-    color: rgb(107, 93, 82);
+    color: rgb(160, 146, 132);
 }
 
 .lock-badge {
     position: absolute;
     top: 12px;
     right: 12px;
-    width: 28px;
-    height: 28px;
-    border-radius: 14px;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
     background-color: rgb(58, 51, 40);
     align-items: center;
     justify-content: center;
 }
 
 .lock-badge-text {
-    color: rgb(240, 230, 210);
-    font-size: 12px;
+    color: rgb(248, 242, 230);
+    font-size: 14px;
     -unity-font-style: bold;
 }
 
@@ -517,9 +519,9 @@ Button {
 }
 
 .profile-avatar {
-    width: 84px;
-    height: 84px;
-    border-radius: 42px;
+    width: 90px;
+    height: 90px;
+    border-radius: 45px;
     background-color: rgb(232, 120, 38);
     align-items: center;
     justify-content: center;
@@ -527,8 +529,8 @@ Button {
 }
 
 .profile-avatar-text {
-    color: rgb(240, 230, 210);
-    font-size: 36px;
+    color: rgb(255, 252, 245);
+    font-size: 40px;
     -unity-font-style: bold;
 }
 
@@ -538,23 +540,23 @@ Button {
 }
 
 .profile-name {
-    color: rgb(240, 230, 210);
+    color: rgb(248, 242, 230);
     -unity-font-style: bold;
-    font-size: 28px;
+    font-size: 34px;
     margin-top: 2px;
 }
 
 .profile-meta {
-    color: rgb(107, 93, 82);
-    font-size: 12px;
-    margin-top: 4px;
+    color: rgb(180, 166, 150);
+    font-size: 15px;
+    margin-top: 5px;
 }
 
 .profile-edit-btn {
     background-color: rgb(42, 36, 25);
-    color: rgb(240, 230, 210);
+    color: rgb(248, 242, 230);
     border-radius: 12px;
-    padding: 10px 16px;
+    padding: 11px 18px;
     border-width: 0;
 }
 
@@ -563,8 +565,8 @@ Button {
 }
 
 .profile-edit-btn-label {
-    color: rgb(240, 230, 210);
-    font-size: 12px;
+    color: rgb(248, 242, 230);
+    font-size: 14px;
     -unity-font-style: bold;
 }
 
@@ -599,9 +601,9 @@ Button {
 }
 
 .progress-section-title {
-    color: rgb(240, 230, 210);
+    color: rgb(248, 242, 230);
     -unity-font-style: bold;
-    font-size: 14px;
+    font-size: 17px;
     margin-bottom: 16px;
 }
 
@@ -620,28 +622,28 @@ Button {
 }
 
 .progress-item-name {
-    color: rgb(240, 230, 210);
-    font-size: 12px;
+    color: rgb(248, 242, 230);
+    font-size: 15px;
     flex-grow: 1;
 }
 
 .progress-item-percent {
-    color: rgb(232, 120, 38);
-    font-size: 12px;
+    color: rgb(240, 132, 48);
+    font-size: 15px;
     -unity-font-style: bold;
 }
 
 .progress-bar-bg {
-    height: 3px;
+    height: 5px;
     background-color: rgb(58, 51, 40);
-    border-radius: 2px;
+    border-radius: 3px;
     overflow: hidden;
 }
 
 .progress-bar-fill {
-    height: 3px;
+    height: 5px;
     background-color: rgb(232, 120, 38);
-    border-radius: 2px;
+    border-radius: 3px;
 }
 
 /* ── Dashboard page ──────────────────────────────────────── */
@@ -672,20 +674,20 @@ Button {
 
 .slideshow-arrow {
     position: absolute;
-    width: 48px;
-    height: 48px;
-    border-radius: 24px;
-    background-color: rgba(26, 22, 18, 0.75);
-    color: rgb(240, 230, 210);
+    width: 52px;
+    height: 52px;
+    border-radius: 26px;
+    background-color: rgba(26, 22, 18, 0.8);
+    color: rgb(248, 242, 230);
     border-width: 0;
     align-items: center;
     justify-content: center;
     top: 50%;
-    margin-top: -24px;
+    margin-top: -26px;
 }
 
 .slideshow-arrow:hover {
-    background-color: rgba(232, 120, 38, 0.85);
+    background-color: rgba(232, 120, 38, 0.9);
 }
 
 .slideshow-arrow-left {
@@ -697,8 +699,8 @@ Button {
 }
 
 .slideshow-arrow-text {
-    color: rgb(240, 230, 210);
-    font-size: 28px;
+    color: rgb(248, 242, 230);
+    font-size: 32px;
     -unity-font-style: bold;
 }
 
@@ -713,16 +715,16 @@ Button {
 }
 
 .slideshow-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 4px;
-    background-color: rgba(240, 230, 210, 0.4);
+    width: 9px;
+    height: 9px;
+    border-radius: 5px;
+    background-color: rgba(248, 242, 230, 0.5);
     margin: 0 4px;
 }
 
 .slideshow-dot.active {
     background-color: rgb(232, 120, 38);
-    width: 24px;
+    width: 26px;
 }
 
 /* ── Get Help page ───────────────────────────────────────── */
@@ -739,8 +741,8 @@ Button {
 }
 
 .help-section-eyebrow {
-    color: rgb(107, 93, 82);
-    font-size: 11px;
+    color: rgb(196, 182, 166);
+    font-size: 14px;
     -unity-font-style: bold;
     letter-spacing: 2px;
     margin-top: 8px;
@@ -762,19 +764,19 @@ Button {
 
 .help-search > .unity-base-text-field__input {
     background-color: rgba(0,0,0,0);
-    color: rgb(240, 230, 210);
+    color: rgb(248, 242, 230);
     border-width: 0;
-    padding: 10px 16px;
-    font-size: 13px;
+    padding: 11px 16px;
+    font-size: 16px;
 }
 
 .help-search-btn {
     background-color: rgb(232, 120, 38);
-    color: rgb(240, 230, 210);
+    color: rgb(255, 252, 245);
     border-radius: 12px;
-    padding: 10px 24px;
+    padding: 11px 26px;
     -unity-font-style: bold;
-    font-size: 13px;
+    font-size: 15px;
 }
 
 .help-search-btn:hover { background-color: rgb(212, 100, 28); }
@@ -789,7 +791,7 @@ Button {
 .help-topic-card {
     flex-grow: 1;
     flex-basis: 0;
-    background-color: rgb(240, 230, 210);
+    background-color: rgb(244, 236, 220);
     border-radius: 16px;
     padding: 20px;
     margin-right: 16px;
@@ -799,14 +801,14 @@ Button {
 }
 
 .help-topic-card:hover {
-    background-color: rgb(220, 210, 190);
+    background-color: rgb(224, 214, 194);
 }
 
 .help-topics-row > .help-topic-card:last-child { margin-right: 0; }
 
 .help-topic-icon-box {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 10px;
     background-color: rgb(232, 120, 38);
     align-items: center;
@@ -815,30 +817,30 @@ Button {
 }
 
 .help-topic-icon {
-    font-size: 16px;
-    color: rgb(240, 230, 210);
+    font-size: 18px;
+    color: rgb(255, 252, 245);
     -unity-text-align: middle-center;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
 }
 
 .help-topic-title {
-    color: rgb(30, 22, 18);
-    font-size: 15px;
+    color: rgb(24, 18, 14);
+    font-size: 18px;
     -unity-font-style: bold;
     margin-bottom: 6px;
 }
 
 .help-topic-desc {
-    color: rgb(107, 93, 82);
-    font-size: 12px;
+    color: rgb(82, 68, 58);
+    font-size: 14px;
     white-space: normal;
     margin-bottom: 14px;
 }
 
 .help-topic-open {
-    color: rgb(232, 120, 38);
-    font-size: 12px;
+    color: rgb(178, 82, 12);
+    font-size: 14px;
     -unity-font-style: bold;
 }
 
@@ -861,7 +863,7 @@ Button {
 .help-faq-item {
     background-color: rgb(42, 36, 25);
     border-radius: 12px;
-    padding: 14px 18px;
+    padding: 15px 18px;
     margin-bottom: 8px;
 }
 
@@ -876,16 +878,16 @@ Button {
 }
 
 .help-faq-q-text {
-    color: rgb(240, 230, 210);
-    font-size: 13px;
+    color: rgb(248, 242, 230);
+    font-size: 16px;
     -unity-font-style: bold;
     flex-grow: 1;
     white-space: normal;
 }
 
 .help-faq-chevron {
-    color: rgb(107, 93, 82);
-    font-size: 14px;
+    color: rgb(196, 182, 166);
+    font-size: 16px;
     margin-left: 8px;
     rotate: 0deg;
     transition-property: rotate;
@@ -894,12 +896,12 @@ Button {
 
 .help-faq-item.expanded .help-faq-chevron {
     rotate: 180deg;
-    color: rgb(232, 120, 38);
+    color: rgb(240, 132, 48);
 }
 
 .help-faq-answer {
-    color: rgb(180, 165, 150);
-    font-size: 12px;
+    color: rgb(206, 194, 180);
+    font-size: 15px;
     white-space: normal;
     margin-top: 8px;
     display: none;
@@ -917,22 +919,22 @@ Button {
 }
 
 .help-stuck-card {
-    background-color: rgb(240, 230, 210);
+    background-color: rgb(244, 236, 220);
     border-radius: 16px;
     padding: 20px;
 }
 
 .help-stuck-title {
-    color: rgb(30, 22, 18);
-    font-size: 15px;
+    color: rgb(24, 18, 14);
+    font-size: 18px;
     -unity-font-style: bold;
     white-space: normal;
     margin-bottom: 8px;
 }
 
 .help-stuck-desc {
-    color: rgb(107, 93, 82);
-    font-size: 12px;
+    color: rgb(82, 68, 58);
+    font-size: 14px;
     white-space: normal;
     margin-bottom: 16px;
 }
@@ -944,8 +946,8 @@ Button {
 }
 
 .help-stuck-icon-box {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 10px;
     background-color: rgb(232, 120, 38);
     align-items: center;
@@ -954,35 +956,35 @@ Button {
 }
 
 .help-stuck-icon {
-    font-size: 14px;
-    color: rgb(240, 230, 210);
+    font-size: 16px;
+    color: rgb(255, 252, 245);
     -unity-text-align: middle-center;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
 }
 
 .help-stuck-text-block { flex-direction: column; }
 
 .help-stuck-label {
-    color: rgb(107, 93, 82);
-    font-size: 11px;
+    color: rgb(90, 76, 66);
+    font-size: 13px;
     -unity-font-style: bold;
     letter-spacing: 0.5px;
 }
 
 .help-stuck-value {
-    color: rgb(30, 22, 18);
-    font-size: 13px;
+    color: rgb(24, 18, 14);
+    font-size: 15px;
     -unity-font-style: bold;
 }
 
 .help-contact-btn {
     background-color: rgb(30, 22, 18);
-    color: rgb(240, 230, 210);
+    color: rgb(255, 252, 245);
     border-radius: 12px;
-    padding: 14px;
+    padding: 15px;
     -unity-font-style: bold;
-    font-size: 13px;
+    font-size: 15px;
     margin-top: 12px;
     -unity-text-align: middle-center;
 }
@@ -1004,7 +1006,7 @@ Button {
 }
 
 .modal-card {
-    width: 360px;
+    width: 400px;
     background-color: rgb(42, 36, 25);
     border-radius: 16px;
     padding: 28px 24px;
@@ -1012,15 +1014,15 @@ Button {
 }
 
 .modal-title {
-    color: rgb(232, 120, 38);
-    font-size: 22px;
+    color: rgb(240, 132, 48);
+    font-size: 26px;
     -unity-font-style: bold;
     margin-bottom: 12px;
 }
 
 .modal-desc {
-    color: rgb(180, 165, 150);
-    font-size: 13px;
+    color: rgb(206, 194, 180);
+    font-size: 15px;
     -unity-text-align: middle-center;
     white-space: normal;
     margin-bottom: 22px;
@@ -1028,11 +1030,11 @@ Button {
 
 .modal-button {
     background-color: rgb(232, 120, 38);
-    color: rgb(240, 230, 210);
+    color: rgb(255, 252, 245);
     border-radius: 12px;
-    padding: 10px 36px;
+    padding: 11px 38px;
     -unity-font-style: bold;
-    font-size: 13px;
+    font-size: 15px;
 }
 
 .modal-button:hover { background-color: rgb(212, 100, 28); }
@@ -1062,7 +1064,7 @@ Button {
 }
 
 .admin-card {
-    width: 300px;
+    width: 320px;
     background-color: rgb(42, 36, 25);
     border-radius: 20px;
     padding: 28px;
@@ -1077,8 +1079,8 @@ Button {
 .admin-card:hover { background-color: rgb(58, 51, 40); }
 
 .admin-card-icon-box {
-    width: 56px;
-    height: 56px;
+    width: 58px;
+    height: 58px;
     border-radius: 14px;
     background-color: rgb(232, 120, 38);
     align-items: center;
@@ -1087,30 +1089,30 @@ Button {
 }
 
 .admin-card-icon {
-    font-size: 24px;
-    color: rgb(240, 230, 210);
+    font-size: 26px;
+    color: rgb(255, 252, 245);
     -unity-text-align: middle-center;
-    width: 56px;
-    height: 56px;
+    width: 58px;
+    height: 58px;
 }
 
 .admin-card-title {
-    color: rgb(240, 230, 210);
-    font-size: 20px;
+    color: rgb(248, 242, 230);
+    font-size: 23px;
     -unity-font-style: bold;
     margin-bottom: 8px;
 }
 
 .admin-card-desc {
-    color: rgb(107, 93, 82);
-    font-size: 13px;
+    color: rgb(180, 166, 150);
+    font-size: 15px;
     white-space: normal;
     margin-bottom: 18px;
 }
 
 .admin-card-open {
-    color: rgb(232, 120, 38);
-    font-size: 13px;
+    color: rgb(240, 132, 48);
+    font-size: 15px;
     -unity-font-style: bold;
 }
 
@@ -1119,7 +1121,7 @@ Button {
 .admin-back-btn {
     background-color: rgb(42, 36, 25);
     border-radius: 12px;
-    padding: 8px 16px;
+    padding: 9px 18px;
     margin-bottom: 16px;
     align-self: flex-start;
     border-width: 0;
@@ -1128,8 +1130,8 @@ Button {
 .admin-back-btn:hover { background-color: rgb(58, 51, 40); }
 
 .admin-back-label {
-    color: rgb(240, 230, 210);
-    font-size: 13px;
+    color: rgb(248, 242, 230);
+    font-size: 15px;
     -unity-font-style: bold;
 }
 
@@ -1141,22 +1143,22 @@ Button {
 }
 
 .admin-placeholder-text {
-    color: rgb(107, 93, 82);
-    font-size: 14px;
+    color: rgb(180, 166, 150);
+    font-size: 17px;
 }
 
 /* Admin level card = class lesson card + a status pill at the bottom */
-.admin-level-card { height: 250px; }
+.admin-level-card { height: 282px; }
 
 .admin-status-btn {
     border-radius: 10px;
-    padding: 7px 0;
+    padding: 8px 0;
     margin-top: 10px;
     -unity-text-align: middle-center;
     -unity-font-style: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-width: 0;
-    color: rgb(240, 230, 210);
+    color: rgb(255, 252, 245);
 }
 
 .admin-status-unlocked { background-color: rgb(58, 51, 40); }
@@ -1187,7 +1189,7 @@ Button {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 0;
+    padding: 7px 0;
 }
 
 .settings-row-text {
@@ -1197,23 +1199,23 @@ Button {
 }
 
 .settings-row-title {
-    font-size: 15px;
-    color: rgb(240, 230, 210);
+    font-size: 18px;
+    color: rgb(248, 242, 230);
     -unity-font-style: bold;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
 }
 
 .settings-row-desc {
-    font-size: 12px;
-    color: rgb(107, 93, 82);
+    font-size: 15px;
+    color: rgb(180, 166, 150);
     white-space: normal;
 }
 
 .settings-value {
-    font-size: 20px;
-    color: rgb(232, 120, 38);
+    font-size: 24px;
+    color: rgb(240, 132, 48);
     -unity-font-style: bold;
-    min-width: 60px;
+    min-width: 74px;
     -unity-text-align: middle-right;
 }
 
@@ -1245,13 +1247,13 @@ Button {
 }
 
 .settings-scale-end {
-    font-size: 11px;
-    color: rgb(107, 93, 82);
+    font-size: 13px;
+    color: rgb(180, 166, 150);
 }
 
 .settings-hint {
-    font-size: 12px;
-    color: rgb(107, 93, 82);
+    font-size: 15px;
+    color: rgb(180, 166, 150);
     white-space: normal;
 }
 
@@ -1266,12 +1268,12 @@ Button {
 }
 
 .settings-toggle .unity-toggle__checkmark {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     border-radius: 8px;
     background-color: rgb(26, 22, 18);
     border-width: 2px;
-    border-color: rgb(58, 51, 40);
+    border-color: rgb(90, 80, 66);
     -unity-background-image-tint-color: rgb(232, 120, 38);
 }
 

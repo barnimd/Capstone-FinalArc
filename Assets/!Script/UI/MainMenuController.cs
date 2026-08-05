@@ -56,7 +56,7 @@ public class MainMenuController : MonoBehaviour
     private Label _yourBestValue, _yourBestSubtitle;
     private Label _topScoreValue, _topScoreSubtitle;
     private ScrollView _rowList;
-    private Button _tabGlobal, _tabFriends, _tabWeek;
+    private Button _tabGlobal;
 
     // Navbar
     private Label _navbarGreeting;
@@ -161,8 +161,6 @@ public class MainMenuController : MonoBehaviour
         _rowList = _root.Q<ScrollView>("row-list");
 
         _tabGlobal = _root.Q<Button>("tab-global");
-        _tabFriends = _root.Q<Button>("tab-friends");
-        _tabWeek = _root.Q<Button>("tab-week");
 
         // Navbar
         _navbarGreeting = _root.Q<Label>("navbar-greeting");
@@ -218,8 +216,6 @@ public class MainMenuController : MonoBehaviour
         RefreshLocksFromServer();
 
         if (_tabGlobal != null) _tabGlobal.clicked += () => SelectFilterTab(_tabGlobal);
-        if (_tabFriends != null) _tabFriends.clicked += () => { SelectFilterTab(_tabFriends); Debug.Log("[MainMenuController] Friends tab — not implemented"); };
-        if (_tabWeek != null) _tabWeek.clicked += () => { SelectFilterTab(_tabWeek); Debug.Log("[MainMenuController] This Week tab — not implemented"); };
 
         UpdateNavbarGreeting();
 
@@ -389,8 +385,6 @@ public class MainMenuController : MonoBehaviour
     private void SelectFilterTab(Button selected)
     {
         if (_tabGlobal != null) _tabGlobal.RemoveFromClassList("active");
-        if (_tabFriends != null) _tabFriends.RemoveFromClassList("active");
-        if (_tabWeek != null) _tabWeek.RemoveFromClassList("active");
         if (selected != null) selected.AddToClassList("active");
     }
 
