@@ -12,6 +12,10 @@ if (!admin.apps.length) {
   });
 }
 
+// Re-exported so handlers that need the Admin SDK directly (mis. guest/login.js
+// yang mint custom token) memakai instance yang sudah di-init di atas.
+export { admin };
+
 /**
  * Verify Firebase ID token from Authorization header.
  * Returns { uid, email, error } object.

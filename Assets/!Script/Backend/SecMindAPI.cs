@@ -12,6 +12,7 @@ public static class SecMindAPI
     public static class Paths
     {
         public const string Stages           = "/api/stages";
+        public const string GuestLogin       = "/api/guest/login";
         public const string UserSync         = "/api/user/sync";
         public const string CheckpointSave   = "/api/checkpoint/save";
         public const string CheckpointLoad   = "/api/checkpoint/load";
@@ -58,6 +59,25 @@ public class StagesResponse
 {
     public bool        success;
     public StageInfo[] stages;
+}
+
+[Serializable]
+public class GuestLoginRequest
+{
+    public string callsign;
+    public string deviceId;      // GUID per-browser dari PlayerPrefs, di-hash server-side
+}
+
+[Serializable]
+public class GuestLoginResponse
+{
+    public bool   success;
+    public string reason;        // saat success=false: IN_USE_TODAY | INVALID_CALLSIGN | MISSING_DEVICE_ID
+    public string customToken;   // ditukar ke idToken lewat accounts:signInWithCustomToken
+    public string uid;           // "guest_<callsign lowercase>" — juga user_id di Neon
+    public string callsign;      // kapitalisasi asli yang diketik pemain
+    public string status;        // new | resumed | rebound
+    public bool   isReturning;   // false hanya saat akun baru dibuat
 }
 
 [Serializable]

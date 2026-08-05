@@ -460,10 +460,32 @@ public class FirebaseManager : MonoBehaviour
         }
     }
 
-    // ─── Guest Sign-In (anonymous + username) ────────────────────────────────
+    // ─── Guest Sign-In (callsign + server-minted custom token) ───────────────
+
+    private const string DeviceIdPrefKey = "SecMind.deviceId";
 
     /// <summary>
-    /// Signs in anonymously, validates username is unique for today, then saves it.
+    /// Random per-browser id, created once and kept in PlayerPrefs (IndexedDB on WebGL).
+    /// SystemInfo.deviceUniqueIdentifier is unreliable on WebGL, so we roll our own.
+    /// The server only ever stores its SHA-256 hash.
+    /// </summary>
+    private static string GetOrCreateDeviceId()
+    {
+        string id = PlayerPrefs.GetString(DeviceIdPrefKey, "");
+        if (string.IsNullOrEmpty(id))
+        {
+            id = Guid.NewGuid().ToString("N");
+            PlayerPrefs.SetString(DeviceIdPrefKey, id);
+            PlayerPrefs.Save();
+        }
+        return id;
+    }
+
+    /// <summary>
+    /// Signs in with a callsign only — no password. The server maps the callsign to a
+    /// fixed UID ("guest_ahmad") and mints a custom token for it, so the same callsign
+    /// always lands on the same Neon row and keeps its progress and score.
+    /// Anonymous auth is deliberately NOT used here: it issues a fresh UID every time.
     /// Callback: (success, errorMessage). errorMessage is null on success.
     /// </summary>
     public void SignInAsGuest(string username, Action<bool, string> callback)
@@ -473,77 +495,90 @@ public class FirebaseManager : MonoBehaviour
 
     private IEnumerator SignInAsGuestCoroutine(string username, Action<bool, string> callback)
     {
-        // Step 1: anonymous sign-in to get a token (needed for Firestore query)
-        bool signInDone = false;
-        bool signInOk   = false;
-        SignInAnonymous(result => { signInOk = result; signInDone = true; });
-        yield return new WaitUntil(() => signInDone);
-
-        if (!signInOk)
+        if (APIClient.Instance == null)
         {
-            Debug.LogWarning("[FirebaseManager] SignInAsGuest: anonymous sign-in failed");
+            Debug.LogWarning("[FirebaseManager] SignInAsGuest: APIClient not in scene");
             callback?.Invoke(false, "Gagal terhubung ke server. Coba lagi.");
             yield break;
         }
 
-        // Step 2: check username availability for today
-        bool checkDone      = false;
-        bool usernameIsFree = false;
-        CheckUsernameAvailableToday(username, result => { usernameIsFree = result; checkDone = true; });
-        yield return new WaitUntil(() => checkDone);
+        // Drop any leftover token first, so APIClient doesn't attach a stale Bearer
+        // header belonging to the previous player.
+        SignOut();
 
-        if (!usernameIsFree)
+        // Step 1: ask the server which account this callsign belongs to
+        bool               loginDone = false;
+        bool               loginOk   = false;
+        GuestLoginResponse resp      = null;
+        APIClient.Instance.GuestLogin(username, GetOrCreateDeviceId(), (ok, r, raw) =>
         {
-            Debug.LogWarning("[FirebaseManager] SignInAsGuest: username already taken today — " + username);
-            // clear the anonymous token we just created
-            idToken = "";
-            localId = "";
-            callback?.Invoke(false, "Username sudah dipakai hari ini. Coba username lain.");
+            loginOk = ok; resp = r; loginDone = true;
+            if (!ok) Debug.LogWarning("[FirebaseManager] SignInAsGuest: /api/guest/login failed — " + raw);
+        });
+        yield return new WaitUntil(() => loginDone);
+
+        if (!loginOk || resp == null)
+        {
+            callback?.Invoke(false, "Gagal terhubung ke server. Coba lagi.");
             yield break;
         }
 
-        // Step 3: save username to Firestore players/{localId}
-        bool saveDone = false;
-        bool saveOk   = false;
-        SaveUsername(localId, username, result => { saveOk = result; saveDone = true; });
-        yield return new WaitUntil(() => saveDone);
-
-        if (!saveOk)
+        if (!resp.success)
         {
-            Debug.LogWarning("[FirebaseManager] SignInAsGuest: SaveUsername failed");
-            idToken = "";
-            localId = "";
-            callback?.Invoke(false, "Gagal menyimpan username. Coba lagi.");
+            Debug.LogWarning("[FirebaseManager] SignInAsGuest rejected '" + username + "': " + resp.reason);
+            callback?.Invoke(false, GuestLoginErrorMessage(resp.reason));
             yield break;
         }
 
-        _username = username;
-        Debug.Log("[FirebaseManager] SignInAsGuest OK — username: " + username + " | localId: " + localId);
+        // Step 2: trade the custom token for a real Firebase session
+        bool tokenDone = false;
+        bool tokenOk   = false;
+        SignInWithCustomToken(resp.customToken, resp.uid, ok => { tokenOk = ok; tokenDone = true; });
+        yield return new WaitUntil(() => tokenDone);
+
+        if (!tokenOk)
+        {
+            SignOut();
+            callback?.Invoke(false, "Gagal masuk. Coba lagi.");
+            yield break;
+        }
+
+        _username = !string.IsNullOrEmpty(resp.callsign) ? resp.callsign : username;
+        Debug.Log("[FirebaseManager] SignInAsGuest OK — callsign: " + _username +
+                  " | uid: " + localId + " | status: " + resp.status);
         callback?.Invoke(true, null);
     }
 
-    /// <summary>
-    /// Returns true if username is NOT used today (available), false if taken.
-    /// Requires a valid idToken to query Firestore.
-    /// </summary>
-    private void CheckUsernameAvailableToday(string username, Action<bool> callback)
+    /// <summary>Maps a server 'reason' code to the message shown on the callsign screen.</summary>
+    private static string GuestLoginErrorMessage(string reason)
     {
-        StartCoroutine(CheckUsernameAvailableTodayCoroutine(username, callback));
+        switch (reason)
+        {
+            case "IN_USE_TODAY":
+                return "Nama ini sedang dipakai hari ini di perangkat lain. Coba nama lain atau kembali besok.";
+            case "INVALID_CALLSIGN":
+                return "Nama hanya boleh huruf dan angka, 3-16 karakter.";
+            case "MISSING_DEVICE_ID":
+                return "Perangkat tidak dikenali. Muat ulang halaman lalu coba lagi.";
+            default:
+                return "Terjadi kesalahan, coba lagi";
+        }
     }
 
-    private IEnumerator CheckUsernameAvailableTodayCoroutine(string username, Action<bool> callback)
+    /// <summary>
+    /// Exchanges a server-minted custom token for an idToken + refreshToken.
+    /// Unlike signUp / signInWithPassword, this response carries no localId field,
+    /// so the uid the server handed us is written into localId by hand.
+    /// </summary>
+    public void SignInWithCustomToken(string customToken, string uid, Action<bool> callback)
     {
-        string today = DateTime.UtcNow.ToString("yyyy-MM-dd");
-        string url   = firestoreBase + ":runQuery";
-        string body  =
-            "{\"structuredQuery\":{" +
-                "\"from\":[{\"collectionId\":\"players\"}]," +
-                "\"where\":{\"compositeFilter\":{\"op\":\"AND\",\"filters\":[" +
-                    "{\"fieldFilter\":{\"field\":{\"fieldPath\":\"username\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"" + username + "\"}}}," +
-                    "{\"fieldFilter\":{\"field\":{\"fieldPath\":\"createdDate\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"" + today + "\"}}}" +
-                "]}}," +
-                "\"limit\":1" +
-            "}}";
+        StartCoroutine(SignInWithCustomTokenCoroutine(customToken, uid, callback));
+    }
+
+    private IEnumerator SignInWithCustomTokenCoroutine(string customToken, string uid, Action<bool> callback)
+    {
+        string url  = authBase + "/accounts:signInWithCustomToken?key=" + apiKey;
+        string body = "{\"token\":\"" + customToken + "\",\"returnSecureToken\":true}";
 
         using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
         {
@@ -551,26 +586,27 @@ public class FirebaseManager : MonoBehaviour
             request.uploadHandler   = new UploadHandlerRaw(bodyBytes);
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
-            if (!string.IsNullOrEmpty(idToken))
-                request.SetRequestHeader("Authorization", "Bearer " + idToken);
 
             yield return request.SendWebRequest();
 
-            if (request.result != UnityWebRequest.Result.Success)
+            if (request.result == UnityWebRequest.Result.Success)
             {
-                Debug.LogWarning("[FirebaseManager] CheckUsernameAvailableToday query failed: " + request.downloadHandler.text);
-                // On query failure, allow login (fail open — better UX than hard block)
+                ParseAuthResponse(request.downloadHandler.text);
+                localId = uid;   // absent from the signInWithCustomToken payload
                 callback?.Invoke(true);
-                yield break;
             }
-
-            // Firestore returns [{document: {...}}] if found, or [{}] if no results
-            string json    = request.downloadHandler.text;
-            bool   hasDoc  = json.Contains("\"document\"");
-            Debug.Log("[FirebaseManager] CheckUsername '" + username + "' today=" + today + " taken=" + hasDoc);
-            callback?.Invoke(!hasDoc); // available = not taken
+            else
+            {
+                Debug.LogWarning("[FirebaseManager] SignInWithCustomToken failed: " + request.downloadHandler.text);
+                callback?.Invoke(false);
+            }
         }
     }
+
+    // CheckUsernameAvailableToday() used to run this check against the Firestore
+    // 'players' collection. It was removed: progress lives in Neon, so the daily
+    // uniqueness rule now belongs to /api/guest/login where it can read last_login
+    // off the same row it guards.
 
     public void SignOut()
     {

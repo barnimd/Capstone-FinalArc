@@ -46,6 +46,10 @@ public class APIClient : MonoBehaviour
     public void GetStages(Action<bool, StagesResponse, string> cb)
         => Get(SecMindAPI.Paths.Stages, cb);
 
+    /// <summary>Guest login. The only endpoint that runs before a token exists.</summary>
+    public void GuestLogin(string callsign, string deviceId, Action<bool, GuestLoginResponse, string> cb)
+        => Post(SecMindAPI.Paths.GuestLogin, new GuestLoginRequest { callsign = callsign, deviceId = deviceId }, cb);
+
     public void UserSync(string displayName, Action<bool, UserSyncResponse, string> cb)
         => Post(SecMindAPI.Paths.UserSync, new UserSyncRequest { displayName = displayName }, cb);
 
