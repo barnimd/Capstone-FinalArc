@@ -37,31 +37,31 @@ Use Indonesian by default, but use English when the player writes in English.
 
 export const TOPIC_AI_CONFIG = {
   phishing: {
-    name: 'Phishing & Social Engineering',
+    name: 'Privasi Data & Social Engineering',
     objective: 'Recognize social-engineering pressure, inspect evidence, refuse unsafe file requests, and avoid untrusted installers.',
     flow: 'The player talks to office NPCs, reviews evidence, responds to a file request, and may face an installer decision.',
     eventPrefixes: ['vn.', 'evidence.', 'installer.', 'file_request.'],
   },
   '2fa': {
-    name: 'Password Security & MFA',
+    name: 'Keamanan Password & MFA',
     objective: 'Build a strong password and understand how MFA reduces account-takeover risk.',
     flow: 'The player renews a password, chooses whether to enable MFA, sees the security outcome, and answers evaluation questions.',
     eventPrefixes: ['vn.', 'password.', 'mfa.', 'evaluation.'],
   },
   'password-security': {
-    name: 'Email & Password Security',
+    name: 'Phishing Email',
     objective: 'Identify suspicious email behavior and choose whether to reply, delete, or report each message.',
     flow: 'The player reviews office email, takes an action on each message, and completes a short evaluation.',
     eventPrefixes: ['vn.', 'email.', 'evaluation.'],
   },
   'malware-awareness': {
-    name: 'Malware & Website Awareness',
+    name: 'Keamanan Browsing & Malware',
     objective: 'Distinguish legitimate URLs from phishing pages and respond safely to suspicious popups.',
     flow: 'The player decides whether to log in to presented websites, handles desktop popups, and completes an evaluation.',
     eventPrefixes: ['vn.', 'website.', 'popup.', 'evaluation.'],
   },
   'wifi-security': {
-    name: 'Wi-Fi & Website Security',
+    name: 'Keamanan Wi-Fi Publik & Website',
     objective: 'Detect look-alike Wi-Fi networks, protect public connections with a VPN, and avoid exposing credentials.',
     flow: 'The player investigates a fake Wi-Fi incident in a cafe, responds to the operator, selects the official cafe network, chooses whether to activate a VPN, logs in, and completes an evaluation.',
     eventPrefixes: ['vn.', 'wifi.', 'vpn.', 'public_wifi.', 'evaluation.'],

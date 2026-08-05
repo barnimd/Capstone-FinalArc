@@ -275,11 +275,11 @@ public class PostGameAICoachController : MonoBehaviour
     {
         switch (stageId)
         {
-            case "phishing": return "Phishing & Social Engineering";
-            case "2fa": return "Password Security & MFA";
-            case "password-security": return "Email & Password Security";
-            case "malware-awareness": return "Malware & Website Awareness";
-            case "wifi-security": return "Wi-Fi & Website Security";
+            case "phishing": return "Privasi Data & Social Engineering";
+            case "2fa": return "Keamanan Password & MFA";
+            case "password-security": return "Phishing Email";
+            case "malware-awareness": return "Keamanan Browsing & Malware";
+            case "wifi-security": return "Keamanan Wi-Fi Publik & Website";
             case "ransomware": return "Ransomware & Backup";
             default: return "Cybersecurity Training";
         }
