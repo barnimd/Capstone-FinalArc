@@ -54,43 +54,53 @@ export default async function handler(req, res) {
     let status = 'new';
 
     if (created.length === 0) {
-      // Callsign sudah ada. 'Hari ini' dihitung di Asia/Jakarta, bukan UTC, supaya
-      // batas harinya jam 00:00 WIB dan bukan jam 07:00 WIB.
-      const rows = await sql`
-        SELECT device_hash,
-               (last_login AT TIME ZONE 'Asia/Jakarta')::date
-                 = (NOW()   AT TIME ZONE 'Asia/Jakarta')::date AS logged_in_today
-        FROM users
-        WHERE user_id = ${uid}
-      `;
-
-      const row = rows[0];
-      if (!row) {
-        return res.status(500).json({ error: 'Database error', detail: 'user row missing after upsert' });
-      }
-
-      if (row.device_hash === null) {
-        // Baris ada tapi belum pernah diikat ke device mana pun — hasil migrasi data
-        // lama. Pemain pertama yang mengetik callsign ini mengklaimnya; memblokir
-        // sampai besok justru mengunci pemiliknya dari progress-nya sendiri.
-        status = 'claimed';
-      } else if (row.device_hash === deviceHash) {
-        status = 'resumed';
-      } else if (row.logged_in_today) {
-        return res.status(200).json({ success: false, reason: 'IN_USE_TODAY' });
-      } else {
-        status = 'rebound';
-      }
-
-      // display_name ikut ditulis ulang supaya kapitalisasi terbaru yang diketik
-      // pemain ("Ahmad") yang tampil di profil dan leaderboard.
-      await sql`
-        UPDATE users
+      // Callsign sudah ada. Keputusan boleh-tidaknya diambil DI DALAM satu statement,
+      // bukan SELECT-lalu-UPDATE. Dua alasannya:
+      //   1. Tidak ada celah balapan antara membaca dan menulis device_hash.
+      //   2. Hasil perbandingan tanggal tidak perlu bolak-balik jadi boolean JS —
+      //      versi sebelumnya mengembalikan kolom boolean yang selalu terbaca falsy
+      //      di sisi Node, jadi device lain ikut lolos padahal harus ditolak.
+      // 0 baris kembali = aturan harian menolak login ini.
+      //
+      // 'Hari ini' dihitung di Asia/Jakarta, bukan UTC, supaya batas harinya
+      // jam 00:00 WIB dan bukan jam 07:00 WIB.
+      //
+      // last_login WAJIB di-cast ke timestamptz dulu. Kalau kolomnya ternyata
+      // 'timestamp without time zone', 'AT TIME ZONE' akan membaca jam UTC yang
+      // tersimpan itu seolah-olah jam Jakarta lalu mengembalikan timestamptz —
+      // hasil ::date-nya meleset satu hari ke belakang sepanjang pagi/siang WIB,
+      // jadi is_stale selalu true dan aturan hariannya tidak pernah menggigit.
+      // Cast ini benar untuk kedua tipe kolom: no-op kalau sudah timestamptz.
+      const claimed = await sql`
+        WITH before AS (
+          SELECT device_hash AS old_hash,
+                 (last_login::timestamptz AT TIME ZONE 'Asia/Jakarta')::date
+                   < (NOW()               AT TIME ZONE 'Asia/Jakarta')::date AS is_stale
+          FROM users
+          WHERE user_id = ${uid}
+        )
+        UPDATE users u
            SET device_hash  = ${deviceHash},
                display_name = ${callsign},
                last_login   = NOW()
-         WHERE user_id = ${uid}
+          FROM before b
+         WHERE u.user_id = ${uid}
+           AND (
+                 b.old_hash IS NULL          -- belum pernah diikat (hasil migrasi data lama)
+              OR b.old_hash = ${deviceHash}  -- device yang sama, resume kapan saja
+              OR b.is_stale                  -- device lain, tapi login terakhirnya bukan hari ini
+           )
+        RETURNING b.old_hash
       `;
+
+      if (claimed.length === 0) {
+        return res.status(200).json({ success: false, reason: 'IN_USE_TODAY' });
+      }
+
+      const oldHash = claimed[0].old_hash;
+      status = oldHash === null       ? 'claimed'
+             : oldHash === deviceHash ? 'resumed'
+             :                          'rebound';
     }
 
     // Ditandatangani lokal pakai FIREBASE_PRIVATE_KEY — tidak perlu IAM role tambahan.

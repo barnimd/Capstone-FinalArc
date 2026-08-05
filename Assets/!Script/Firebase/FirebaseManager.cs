@@ -495,16 +495,12 @@ public class FirebaseManager : MonoBehaviour
 
     private IEnumerator SignInAsGuestCoroutine(string username, Action<bool, string> callback)
     {
-        if (APIClient.Instance == null)
-        {
-            Debug.LogWarning("[FirebaseManager] SignInAsGuest: APIClient not in scene");
-            callback?.Invoke(false, "Gagal terhubung ke server. Coba lagi.");
-            yield break;
-        }
-
         // Drop any leftover token first, so APIClient doesn't attach a stale Bearer
         // header belonging to the previous player.
         SignOut();
+
+        // APIClient.Instance self-bootstraps, so it is safe to touch from LoginScene
+        // even though that scene carries no APIClient GameObject.
 
         // Step 1: ask the server which account this callsign belongs to
         bool               loginDone = false;

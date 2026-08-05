@@ -20,7 +20,12 @@ public class APIClient : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            // Only the duplicate component goes, never the GameObject. In All_Menu this
+            // sits on SecMindManagers alongside SaveSystem, StageManager and
+            // LeaderboardManager; LoginScene now carries its own APIClient, so by the
+            // time All_Menu loads this one is the duplicate. Destroying the GameObject
+            // here would take those three managers down with it.
+            Destroy(this);
             return;
         }
         Instance = this;
