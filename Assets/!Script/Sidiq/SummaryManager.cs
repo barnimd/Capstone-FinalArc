@@ -49,18 +49,21 @@ public class SummaryManager : MonoBehaviour
 
     // ── Internal ──────────────────────────────────────────────
     private float _startTime;
+    private bool _clockStarted;
     private bool _triggered = false;
 
     private void Awake()
     {
         if (instance != null && instance != this) { Destroy(gameObject); return; }
         instance = this;
+        StartClock();
         ResolveSummaryTextReferences();
     }
 
     private void Start()
     {
-        _startTime = Time.time;
+        // Fallback: kalau GameObject-nya mulai nonaktif, Awake belum pernah jalan.
+        StartClock();
 
         // Ensure overlay is invisible at game start
         if (fadeOverlay != null)
@@ -70,6 +73,23 @@ public class SummaryManager : MonoBehaviour
             fadeOverlay.color = c;
             fadeOverlay.gameObject.SetActive(true);
         }
+    }
+
+    /// <summary>
+    /// Mulai jam stage. Dipanggil dari Awake supaya timer jalan sejak scene di-load,
+    /// bukan sejak GameObject-nya kebetulan aktif.
+    ///
+    /// Topic 5: SummaryManager duduk di dalam EmbeddedComputerInteraction, dan root itu
+    /// dimatikan runtime oleh Topic5ProgressionController.Start(). Kalau _startTime diset
+    /// di Start(), urutan Start antar script menentukan apakah timer menghitung seluruh
+    /// stage atau cuma fase komputer — nondeterministik. Awake selalu jalan sebelum
+    /// deaktivasi manapun, jadi titik mulainya pasti = awal stage.
+    /// </summary>
+    private void StartClock()
+    {
+        if (_clockStarted) return;
+        _clockStarted = true;
+        _startTime = Time.time;
     }
 
     /// <summary>
