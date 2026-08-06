@@ -50,7 +50,7 @@ public class GameManager_Tp5 : MonoBehaviour
         if (summaryCanvas != null) summaryCanvas.SetActive(false);
 
         if (objectiveUI != null)
-            objectiveUI.ShowObjective("Connect to a Wi-Fi network to continue.");
+            objectiveUI.ShowObjective("Sambungkan ke jaringan Wi-Fi untuk melanjutkan");
 
         if (wifiController != null)
             wifiController.StartWifiPhase(OnWifiComplete);
