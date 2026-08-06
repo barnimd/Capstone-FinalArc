@@ -387,13 +387,19 @@ public static class SettingsLegendPortSetup
             log.AppendLine("  isi kartu legend sama kayak prefab, gak diubah.");
         }
 
-        // Layout vertikal = scene side-scroll. Di sana legend dipasang gaya MPUIKit
-        // dan disembunyiin di balik tombol HINT.
-        if (wantVertical)
+        // Restyle MPUIKit + tombol HINT dipasang di semua topic. Keduanya ngubah
+        // struktur (buang child "Inner", sisipin wrapper "Visible"), dan itu gak
+        // boleh dilakuin ke prefab instance — jadi unpack dulu kalau masih nyambung.
+        if (PrefabUtility.IsPartOfPrefabInstance(legendGO))
         {
-            StyleCardMPUI(card, shadow, log);
-            SetupHintButton(legendGO, legend, card, shadow, log);
+            PrefabUtility.UnpackPrefabInstance(legendGO, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            card = FindDeep(legendGO.transform, "Card");
+            shadow = FindDeep(legendGO.transform, "Shadow");
+            log.AppendLine("  legend di-unpack (perlu restyle MPUIKit + tombol HINT).");
         }
+
+        StyleCardMPUI(card, shadow, log);
+        SetupHintButton(legendGO, legend, card, shadow, wantVertical, log);
 
         // Blocker
         string[] names;
@@ -800,10 +806,14 @@ public static class SettingsLegendPortSetup
     ///   └── Visible            ← legendRoot-nya ControlLegendUI (pause / blocker)
     ///       ├── HintButton     ← tetap keliatan pas kartu ditutup
     ///       └── Legend         ← di-toggle tombol HINT, auto-hide 4 detik
+    ///
+    /// Posisi tombol ngikut layout kartunya:
+    ///   vertikal (side-scroll) → pojok kiri ATAS, kartu turun di bawahnya
+    ///   horizontal (top-down)  → pojok kiri BAWAH, kartu tetap di bawah-tengah
     /// </summary>
     private static void SetupHintButton(GameObject legendGO, ControlLegendUI legend,
                                         RectTransform card, RectTransform shadow,
-                                        System.Text.StringBuilder log)
+                                        bool vertical, System.Text.StringBuilder log)
     {
         var legendPanel = card.parent as RectTransform;   // objek "Legend"
 
@@ -831,9 +841,9 @@ public static class SettingsLegendPortSetup
 
         var btnRT = (RectTransform)new GameObject("HintButton", typeof(RectTransform)).transform;
         btnRT.SetParent(visible, false);
-        btnRT.anchorMin = btnRT.anchorMax = new Vector2(0f, 1f);
-        btnRT.pivot = new Vector2(0f, 1f);
-        btnRT.anchoredPosition = new Vector2(V_MARGIN, -V_MARGIN);
+        btnRT.anchorMin = btnRT.anchorMax = new Vector2(0f, vertical ? 1f : 0f);
+        btnRT.pivot = new Vector2(0f, vertical ? 1f : 0f);
+        btnRT.anchoredPosition = new Vector2(V_MARGIN, vertical ? -V_MARGIN : V_MARGIN);
         btnRT.sizeDelta = new Vector2(HINT_SIZE, HINT_SIZE);
 
         var btnImg = AsRoundedRect(btnRT.gameObject, cream, R_HINT, ink, OUTLINE_W, true);
@@ -850,26 +860,32 @@ public static class SettingsLegendPortSetup
         var thread = NewChild(btnRT, "Bulb_Thread", new Vector2(0f, -18f), new Vector2(11f, 3f));
         AsRoundedRect(thread.gameObject, ink, 1.5f, Color.clear, 0f, false);
 
-        // 4. Tulisan "HINT" di bawah tombol
+        // 4. Tulisan "HINT". Kartu vertikal tombolnya di atas -> caption di bawah;
+        //    kartu horizontal tombolnya nempel dasar layar -> caption di atas,
+        //    kalau di bawah bakal kepotong tepi layar.
         var capRT = (RectTransform)new GameObject("HintCaption", typeof(RectTransform)).transform;
         capRT.SetParent(btnRT, false);
-        capRT.anchorMin = capRT.anchorMax = new Vector2(0.5f, 0f);
-        capRT.pivot = new Vector2(0.5f, 1f);
-        capRT.anchoredPosition = new Vector2(0f, -4f);
+        capRT.anchorMin = capRT.anchorMax = new Vector2(0.5f, vertical ? 0f : 1f);
+        capRT.pivot = new Vector2(0.5f, vertical ? 1f : 0f);
+        capRT.anchoredPosition = new Vector2(0f, vertical ? -4f : 4f);
         capRT.sizeDelta = new Vector2(HINT_SIZE + 20f, HINT_CAPTION_H);
         var cap = capRT.gameObject.AddComponent<TextMeshProUGUI>();
         cap.text = "HINT";
         cap.fontSize = 18f;
         cap.color = ink;
-        cap.alignment = TextAlignmentOptions.Top;
+        cap.alignment = vertical ? TextAlignmentOptions.Top : TextAlignmentOptions.Bottom;
         cap.fontStyle = FontStyles.Bold;
         cap.raycastTarget = false;
         if (font != null) cap.font = font;
 
-        // 5. Kartu digeser turun, kasih ruang buat tombol + caption
-        float drop = HINT_SIZE + HINT_CAPTION_H + HINT_TO_CARD;
-        card.anchoredPosition = new Vector2(V_MARGIN, -(V_MARGIN + drop));
-        if (shadow != null) shadow.anchoredPosition = card.anchoredPosition + new Vector2(-5f, -5f);
+        // 5. Cuma layout vertikal yang perlu geser kartu — tombolnya nempatin
+        //    pojok yang sama. Layout horizontal kartunya di tengah, gak nabrak.
+        if (vertical)
+        {
+            float drop = HINT_SIZE + HINT_CAPTION_H + HINT_TO_CARD;
+            card.anchoredPosition = new Vector2(V_MARGIN, -(V_MARGIN + drop));
+            if (shadow != null) shadow.anchoredPosition = card.anchoredPosition + new Vector2(-5f, -5f);
+        }
 
         // 6. legendRoot pindah ke wrapper, biar tombol ikut ilang pas ada panel nutupin
         var lSO = new SerializedObject(legend);

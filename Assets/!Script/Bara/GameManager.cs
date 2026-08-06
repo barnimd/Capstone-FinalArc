@@ -24,7 +24,11 @@ public class GameplayManager : MonoBehaviour
     void Start()
     {
         ResolveSummaryTextReferences();
-        summaryPanel.SetActive(false);
+
+        // Opsional: topik yang summary-nya diurus SummaryManager (mis. Topic 2)
+        // memakai script ini cuma sebagai timer, jadi summaryPanel sengaja kosong.
+        if (summaryPanel != null)
+            summaryPanel.SetActive(false);
 
         // Simpan posisi awal player & langsung mulai timer
         if (playerTransform != null)
