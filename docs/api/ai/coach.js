@@ -2,8 +2,10 @@ import crypto from 'node:crypto';
 import { verifyToken } from '../../lib/auth.js';
 import { sql } from '../../lib/db.js';
 import {
+  buildDecisionListResponse,
   buildFollowupMessages,
   buildRunContext,
+  classifyCoachQuestion,
   cleanUserMessage,
   fallbackCoachResponse,
   fallbackQuestionResponse,
@@ -120,7 +122,9 @@ async function handleChat(req, res) {
 
     let response;
     let usage = null;
-    try {
+    if (classifyCoachQuestion(session.stage_id, run, message) === 'decision_list') {
+      response = buildDecisionListResponse(session.stage_id, run);
+    } else try {
       const result = await requestCoachResponse(
         session.stage_id,
         buildFollowupMessages(run, history, message),

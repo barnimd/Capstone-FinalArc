@@ -23,6 +23,7 @@ const SEARCH_STOP_WORDS = new Set([
 
 const REPEAT_REQUEST = /\b(ulang|ulangi|jelaskan lagi|coba lagi|repeat|again|rephrase)\b/i;
 const SCORE_QUESTION = /\b(skor|score|nilai|poin|point|points)\b/i;
+const DECISION_LIST_QUESTION = /(?:\b(?:apa saja|daftar|tampilkan|sebutkan|lihat|riwayat|semua)\b.{0,60}\b(?:keputusan|pilihan|decisions?|choices?|aktivitas|activity|events?)\b)|(?:\b(?:keputusan|pilihan|decisions?|choices?|aktivitas|events?)\b.{0,60}\b(?:tercatat|direkam|recorded|history|semua)\b)/i;
 const DECISION_QUESTION = /\b(pilihan(?:ku| saya)?|saya pilih|keputusan(?:ku| saya)?|choice|decision|jawaban(?:ku| saya)?|skor|score|nilai|hasil(?:ku| saya)?)\b/i;
 const CONCEPT_QUESTION = /\b(apa|apakah|mengapa|kenapa|bagaimana|gimana|cara kerja|fungsi|kegunaan|beda|perbedaan|materi|pelajaran|konsep|what|why|how)\b/i;
 const MIXED_QUESTION = /\b(mengapa|kenapa|alasan|risiko|dampak|cara kerja|why|reason|risk|impact)\b/i;
@@ -267,6 +268,8 @@ export function fallbackQuestionResponse(stageId, run, userMessage, previousResp
   let response = null;
   if (SCORE_QUESTION.test(userMessage || '')) {
     response = buildScoreResponse(stageId, run);
+  } else if (isDecisionListQuestion(userMessage)) {
+    response = buildDecisionListResponse(stageId, run);
   } else if (asksForLesson && !asksAboutDecision) {
     response = buildLessonResponse(stageId);
   } else if (asksAboutDecision && decisionMatch && conceptMatch && asksAboutConcept && MIXED_QUESTION.test(userMessage || '')) {
@@ -287,6 +290,7 @@ export function classifyCoachQuestion(stageId, run, userMessage) {
   const queryTokens = searchTokens(userMessage);
   if (queryTokens.length === 0) return 'out_of_scope';
   if (SCORE_QUESTION.test(userMessage || '')) return 'score';
+  if (isDecisionListQuestion(userMessage)) return 'decision_list';
   const hasDecision = Boolean(findDecisionMatch(stageId, run, queryTokens));
   const hasConcept = Boolean(findConceptMatch(stageId, queryTokens));
   const asksDecision = DECISION_QUESTION.test(userMessage || '');
@@ -296,6 +300,134 @@ export function classifyCoachQuestion(stageId, run, userMessage) {
   if (hasConcept) return 'concept';
   if (hasDecision) return 'decision';
   return 'out_of_scope';
+}
+
+export function isDecisionListQuestion(userMessage) {
+  return DECISION_LIST_QUESTION.test(String(userMessage || ''));
+}
+
+export function buildDecisionListResponse(stageId, run) {
+  const resolved = (Array.isArray(run?.decisions) ? run.decisions : [])
+    .map((decision) => resolveDecisionContext(stageId, decision))
+    .filter(Boolean);
+  if (resolved.length === 0) {
+    return {
+      answer: 'Tidak ada keputusan atau event gameplay yang tercatat pada run ini.',
+      evidence: ['Daftar dibuat langsung dari run context yang tersimpan.'],
+      nextAction: 'Mainkan kembali topic ini untuk menghasilkan catatan keputusan baru.',
+      outOfScope: false,
+    };
+  }
+
+  const groups = { gameplay: [], exploration: [], evaluation: [] };
+  const labelCounts = new Map();
+  for (const decision of resolved) {
+    const label = normalizeDecisionListText(decision.selectedChoice?.label || 'Pilihan tidak dikenal').toLowerCase();
+    labelCounts.set(label, (labelCounts.get(label) || 0) + 1);
+  }
+  for (const decision of resolved) {
+    const category = decisionListCategory(decision);
+    groups[category].push({
+      detailed: compactDecisionItem(decision, true, labelCounts),
+      compact: compactDecisionItem(decision, false, labelCounts),
+    });
+  }
+
+  let answer = formatDecisionGroups(resolved.length, groups, 'detailed');
+  if (wordCount(answer) > 145) answer = formatDecisionGroups(resolved.length, groups, 'compact');
+  if (wordCount(answer) > 145) answer = formatAggregatedDecisionGroups(resolved.length, groups);
+
+  const scoreContext = getTopicScoringContext(stageId, run?.decisions);
+  const missedOptional = scoreContext?.optionalEvents?.find((event) => !event.recorded);
+  return {
+    answer,
+    evidence: [
+      `Semua ${resolved.length} item berasal dari event run yang tervalidasi.`,
+      missedOptional
+        ? `${normalizeDecisionListText(missedOptional.label)} tidak tercatat dan merupakan bonus eksplorasi opsional ${missedOptional.scoreDelta} poin.`
+        : null,
+    ].filter(Boolean).slice(0, 2),
+    nextAction: 'Sebutkan satu keputusan jika kamu ingin membahas alasan, risiko, dan alternatifnya.',
+    outOfScope: false,
+  };
+}
+
+function decisionListCategory(decision) {
+  if (decision.eventId?.startsWith('evaluation.')) return 'evaluation';
+  if (decision.eventId?.startsWith('vn.') || decision.eventId?.includes('.clue.') || decision.selectedChoice?.assessment === 'scenario') {
+    return 'exploration';
+  }
+  return 'gameplay';
+}
+
+function compactDecisionItem(decision, includeScenario, labelCounts) {
+  const selected = decision.selectedChoice;
+  const status = decision.eventId?.startsWith('evaluation.')
+    ? (selected?.id === decision.correctChoiceId ? 'benar' : 'salah')
+    : decisionAssessmentLabel(selected?.assessment);
+  const choiceLabel = normalizeDecisionListText(selected?.label || 'Pilihan tidak dikenal');
+  if (!includeScenario) return `${choiceLabel} (${status})`;
+  const needsScenario = decision.eventId?.startsWith('evaluation.')
+    || /^(?:email|website|popup)\./.test(decision.eventId || '')
+    || (labelCounts?.get(choiceLabel.toLowerCase()) || 0) > 1;
+  const scenario = needsScenario
+    ? shortenWords(normalizeDecisionListText(String(decision.scenario || '').replace(/[.!?].*$/, '')), 7)
+    : '';
+  return scenario ? `${scenario}: ${choiceLabel} (${status})` : `${choiceLabel} (${status})`;
+}
+
+function formatDecisionGroups(total, groups, itemKey) {
+  const sentences = [`Ada ${total} catatan pada run ini.`];
+  if (groups.gameplay.length) sentences.push(`Pilihan gameplay: ${groups.gameplay.map((item) => item[itemKey]).join('; ')}.`);
+  if (groups.exploration.length) sentences.push(`Narasi atau eksplorasi: ${groups.exploration.map((item) => item[itemKey]).join('; ')}.`);
+  if (groups.evaluation.length) sentences.push(`Jawaban evaluasi: ${groups.evaluation.map((item) => item[itemKey]).join('; ')}.`);
+  return sentences.join(' ');
+}
+
+function formatAggregatedDecisionGroups(total, groups) {
+  const aggregate = (items) => {
+    const counts = new Map();
+    for (const item of items) counts.set(item.compact, (counts.get(item.compact) || 0) + 1);
+    return [...counts.entries()].map(([label, count]) => count > 1 ? `${label} x${count}` : label).join('; ');
+  };
+  const sentences = [`Ada ${total} catatan pada run ini.`];
+  if (groups.gameplay.length) sentences.push(`Pilihan gameplay: ${aggregate(groups.gameplay)}.`);
+  if (groups.exploration.length) sentences.push(`Narasi atau eksplorasi: ${aggregate(groups.exploration)}.`);
+  if (groups.evaluation.length) sentences.push(`Jawaban evaluasi: ${aggregate(groups.evaluation)}.`);
+  return sentences.join(' ');
+}
+
+function decisionAssessmentLabel(value) {
+  switch (value) {
+    case 'best': return 'terbaik';
+    case 'partial': return 'cukup aman';
+    case 'dangerous': return 'berisiko';
+    case 'weak': return 'lemah';
+    case 'correct': return 'benar';
+    case 'incorrect': return 'salah';
+    case 'neutral': return 'netral';
+    case 'scenario': return 'mekanik skenario';
+    case 'safe': return 'aman';
+    case 'contextual': return 'kontekstual';
+    default: return 'tercatat';
+  }
+}
+
+function shortenWords(value, maxWords) {
+  const words = String(value || '').trim().split(/\s+/).filter(Boolean);
+  return words.length <= maxWords ? words.join(' ') : `${words.slice(0, maxWords).join(' ')}…`;
+}
+
+function normalizeDecisionListText(value) {
+  return String(value || '')
+    .replace(/[_*#`<>]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/[.!?;:,]+$/g, '')
+    .trim();
+}
+
+function wordCount(value) {
+  return String(value || '').trim().split(/\s+/).filter(Boolean).length;
 }
 
 function findDecisionMatch(stageId, run, queryTokens) {

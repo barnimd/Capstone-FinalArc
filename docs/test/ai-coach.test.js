@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  buildDecisionListResponse,
   buildFollowupMessages,
   buildRunContext,
   buildSystemPrompt,
@@ -9,6 +10,7 @@ import {
   fallbackCoachResponse,
   fallbackQuestionResponse,
   isDuplicateCoachResponse,
+  isDecisionListQuestion,
   parseCoachResponse,
   questionAllowsRepeat,
   validateRunPayload,
@@ -276,6 +278,97 @@ test('system prompt contains topic grounding and JSON rules', () => {
   assert.match(prompt, /Return JSON only/);
   assert.match(prompt, /PROMPT VERSION: v4/);
   assert.match(prompt, new RegExp(TOPIC_KNOWLEDGE_VERSION));
+});
+
+test('recognizes requests to list all recorded decisions', () => {
+  for (const question of [
+    'apa saja keputusan yang tercatat?',
+    'tampilkan pilihan saya',
+    'daftar aktivitas yang direkam',
+    'what decisions were recorded?',
+  ]) {
+    assert.equal(isDecisionListQuestion(question), true, question);
+    assert.equal(classifyCoachQuestion('wifi-security', topic5BestCoreRun, question), 'decision_list', question);
+  }
+  assert.equal(isDecisionListQuestion('bagaimana pilihan VPN saya?'), false);
+});
+
+test('decision list uses semantic labels and groups Topic 5 events without technical IDs', () => {
+  const response = buildDecisionListResponse('wifi-security', topic5BestCoreRun);
+  assert.match(response.answer, /Ada 6 catatan/i);
+  assert.match(response.answer, /Pilihan gameplay/i);
+  assert.match(response.answer, /Narasi atau eksplorasi/i);
+  assert.match(response.answer, /CafeBean Free/i);
+  assert.match(response.answer, /Aktifkan VPN/i);
+  assert.match(response.answer, /Saya sudah panggil staff/i);
+  assert.doesNotMatch(JSON.stringify(response), /wifi\.selection|vpn\.choice|public_wifi\.login|report_to_staff/i);
+  assert.ok(parseCoachResponse(JSON.stringify(response)));
+});
+
+test('decision list groups evaluation answers and marks their correctness', () => {
+  const evaluationRun = validateRunPayload({
+    ...validRun,
+    decisions: [{
+      eventId: 'evaluation.question_1',
+      choiceId: 'choice_a',
+      outcomeId: 'correct',
+      scoreDelta: 0,
+      elapsedSeconds: 40,
+      facts: [{ key: 'correct_choice', value: 'choice_a' }],
+    }],
+  }).value;
+  const response = buildDecisionListResponse('wifi-security', evaluationRun);
+  assert.match(response.answer, /Jawaban evaluasi/i);
+  assert.match(response.answer, /\((?:benar|salah)\)/i);
+  assert.doesNotMatch(JSON.stringify(response), /evaluation\.question|choice_a/i);
+});
+
+test('decision list labels forced scenario records as mechanics rather than player mistakes', () => {
+  const ransomwareRun = validateRunPayload({
+    ...validRun,
+    stageId: 'ransomware',
+    decisions: [{
+      eventId: 'file.organization',
+      choiceId: 'important_project_moved',
+      outcomeId: 'recovery_required',
+      scoreDelta: 15,
+      elapsedSeconds: 10,
+      facts: [],
+    }],
+  }).value;
+  const response = buildDecisionListResponse('ransomware', ransomwareRun);
+  assert.match(response.answer, /Narasi atau eksplorasi/i);
+  assert.match(response.answer, /mekanik skenario/i);
+  assert.doesNotMatch(JSON.stringify(response), /file\.organization|important_project_moved/i);
+});
+
+test('decision-list fallback remains available if provider routing changes', () => {
+  const response = fallbackQuestionResponse('wifi-security', topic5BestCoreRun, 'apa saja keputusan yang tercatat?');
+  assert.ok(response);
+  assert.match(response.answer, /Ada 6 catatan/i);
+});
+
+test('decision list produces semantic output for every topic', () => {
+  const samples = [
+    ['phishing', { eventId: 'evidence.rizal', choiceId: 'refuse_and_verify', outcomeId: 'safe', scoreDelta: 0 }, /Tolak dan verifikasi/i],
+    ['2fa', { eventId: 'mfa.verification', choiceId: 'verified', outcomeId: 'otp_verified', scoreDelta: 0 }, /OTP berhasil diverifikasi/i],
+    ['password-security', { eventId: 'email.bri_account_closure', choiceId: 'laporkan', outcomeId: 'correct', scoreDelta: 0 }, /Laporkan/i],
+    ['malware-awareness', { eventId: 'popup.fake_virus_cleanup', choiceId: 'correct_action', outcomeId: 'correct', scoreDelta: 0 }, /Tutup/i],
+    ['wifi-security', { eventId: 'wifi.selection', choiceId: 'cafebean_free', outcomeId: 'trusted_network', scoreDelta: 0 }, /CafeBean Free/i],
+    ['ransomware', { eventId: 'backup.exists', choiceId: 'yes', outcomeId: 'recovery_available', scoreDelta: 20 }, /Ada backup/i],
+  ];
+
+  for (const [stageId, decision, expected] of samples) {
+    const run = validateRunPayload({
+      ...validRun,
+      stageId,
+      decisions: [{ ...decision, elapsedSeconds: 10, facts: [] }],
+    }).value;
+    const response = buildDecisionListResponse(stageId, run);
+    assert.match(response.answer, expected, stageId);
+    assert.doesNotMatch(JSON.stringify(response), new RegExp(decision.eventId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), stageId);
+    assert.ok(parseCoachResponse(JSON.stringify(response)), stageId);
+  }
 });
 
 test('system prompt includes only the selected topic knowledge', () => {
