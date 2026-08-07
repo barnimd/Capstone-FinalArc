@@ -9612,7 +9612,7 @@ MonoBehaviour:
     m_Skew: 0
     m_CornerRadius: 0
   m_Circle:
-    m_Radius: 0
+    m_Radius: 15
     m_FitRadius: 1
   m_Pentagon:
     m_CornerRadius: {x: 0, y: 0, z: 0, w: 0}
@@ -54657,7 +54657,7 @@ GameObject:
   - component: {fileID: 1727572904}
   - component: {fileID: 1727572903}
   m_Layer: 0
-  m_Name: HintCaption
+  m_Name: ControlsCaption
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54680,7 +54680,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 4}
-  m_SizeDelta: {x: 92, y: 22}
+  m_SizeDelta: {x: 140, y: 22}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1727572903
 MonoBehaviour:
@@ -54702,7 +54702,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: HINT
+  m_text: CONTROLS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -54729,11 +54729,11 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
-  m_fontSizeMin: 18
+  m_fontSizeMin: 16
   m_fontSizeMax: 72
   m_fontStyle: 1
   m_HorizontalAlignment: 2
@@ -54745,7 +54745,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
