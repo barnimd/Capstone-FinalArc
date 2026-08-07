@@ -1688,7 +1688,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4279900698
   m_fontColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1701,7 +1701,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -25628,7 +25628,7 @@ Transform:
   m_GameObject: {fileID: 1175442671}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.36215, y: -13.000001, z: -10}
+  m_LocalPosition: {x: -5.357012, y: -13.000001, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -30458,19 +30458,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   player: {fileID: 0}
-  arrowImage: {fileID: 1654320704}
-  rotationOffset: 0
+  arrowImage: {fileID: 0}
+  spriteFacing: 0
+  rotationOffset: 180
   displayMode: 1
-  screenEdgeMargin: 40
-  screenEdgeInsets: {x: 12, y: 12, z: 12, w: 12}
+  screenEdgeMargin: 68
+  screenEdgeInsets: {x: 0, y: 0, z: 0, w: 0}
   hideWhenTargetVisible: 1
   pinToVisibleTarget: 0
   visibleTargetOffset: {x: 0, y: 44}
-  visibleTargetRotation: 180
-  hideWithinWorldDistance: 1.5
+  visibleTargetRotation: 0
+  hideWithinWorldDistance: 1.2
+  farArrowSprite: {fileID: -55241936, guid: 917b62a0c0e7bdc4a8669116f5c98233, type: 3}
+  nearMarkerSprite: {fileID: -320986822, guid: 917b62a0c0e7bdc4a8669116f5c98233, type: 3}
+  nearMarkerWorldDistance: 5
+  nearMarkerRotation: 0
+  nearMarkerScale: 1
+  useRendererBounds: 0
+  worldHeightOffset: 0.25
+  markerProfiles: []
+  idleBobEnabled: 1
+  idleBobAmplitude: 5
+  idleBobPeriod: 1.1
+  idleBobScalePulse: 0.06
+  positionSmoothTime: 0.05
+  fadeDuration: 0.15
+  scaleWithDistance: 0
+  scaleNearDistance: 4
+  scaleFarDistance: 24
+  maxDistanceScale: 1
+  minDistanceScale: 0.6
   bounceDuration: 0.4
   bounceCount: 3
-  bounceAmplitude: 8
+  bounceAmplitude: 5
 --- !u!114 &1654320704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30484,7 +30504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.78, b: 0.08, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -34252,7 +34272,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 3
+  m_AdditionalShaderChannelsFlag: 27
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 500
@@ -34799,7 +34819,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
