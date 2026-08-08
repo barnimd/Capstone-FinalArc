@@ -37,10 +37,10 @@ public class TrashController : MonoBehaviour
             foreach (Transform t in content) Destroy(t.gameObject);
             if (txtEmpty)
             {
-                txtEmpty.text = "Trash is empty";
+                txtEmpty.text = "Kosong";
                 txtEmpty.gameObject.SetActive(true);
             }
-            if (txtSelected) txtSelected.text = "Selected: none";
+            if (txtSelected) txtSelected.text = "Dipilih: none";
             if (btnRestore) btnRestore.interactable = false;
             return;
         }
@@ -63,7 +63,7 @@ public class TrashController : MonoBehaviour
             foreach (Transform t in content) Destroy(t.gameObject);
             if (txtEmpty)
             {
-                txtEmpty.text = "Trash is empty";
+                txtEmpty.text = "Kosong";
                 txtEmpty.gameObject.SetActive(true);
             }
             if (btnRestore) btnRestore.interactable = false;
@@ -85,7 +85,7 @@ public class TrashController : MonoBehaviour
             if (btn) btn.onClick.AddListener(() =>
             {
                 _selected = fn;
-                if (txtSelected) txtSelected.text = "Selected: " + fn;
+                if (txtSelected) txtSelected.text = "Dipilih: " + fn;
             });
         }
         bool isEmpty = deleted.Count == 0;

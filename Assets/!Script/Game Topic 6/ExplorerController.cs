@@ -110,7 +110,7 @@ public class ExplorerController : MonoBehaviour
         if (_lost) return; _lost = true;
         if (explorerPanel) explorerPanel.SetActive(false);
         warningPanel.SetActive(true);
-        txtWarning.text = "Important file missing!\n\nImportant_Project telah dihapus, dipindahkan, atau direname.";
+        txtWarning.text = "File penting hilang!\n\nImportant_Project telah dihapus, dipindahkan, atau direname.";
     }
 
     void OnWarningOk()

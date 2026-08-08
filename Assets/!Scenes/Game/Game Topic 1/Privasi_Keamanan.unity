@@ -7560,7 +7560,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Are you sure to send file?
+  m_text: Yakin ingin mengirim file ini?
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
@@ -18769,7 +18769,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Launch when ready
+  m_text: Jalankan saat siap
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
@@ -20291,8 +20291,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -18.7, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -17.05, y: 0}
+  m_SizeDelta: {x: 155.9, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &880110718
 MonoBehaviour:
@@ -20314,7 +20314,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Click Here to Send File
+  m_text: Klik untuk mengirim file
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
@@ -25056,7 +25056,7 @@ RectTransform:
   m_GameObject: {fileID: 1241180072}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 152910937}
@@ -26083,6 +26083,7 @@ MonoBehaviour:
   target: {fileID: 86208568}
   player: {fileID: 448295506}
   arrowImage: {fileID: 1288014017}
+  spriteFacing: 0
   rotationOffset: 0
   displayMode: 1
   screenEdgeMargin: 32
@@ -26092,6 +26093,25 @@ MonoBehaviour:
   visibleTargetOffset: {x: 0, y: 44}
   visibleTargetRotation: 180
   hideWithinWorldDistance: 1.5
+  farArrowSprite: {fileID: 0}
+  nearMarkerSprite: {fileID: 0}
+  nearMarkerWorldDistance: 5
+  nearMarkerRotation: 0
+  nearMarkerScale: 1
+  useRendererBounds: 0
+  worldHeightOffset: 0.25
+  markerProfiles: []
+  idleBobEnabled: 1
+  idleBobAmplitude: 5
+  idleBobPeriod: 1.1
+  idleBobScalePulse: 0.06
+  positionSmoothTime: 0.05
+  fadeDuration: 0.15
+  scaleWithDistance: 0
+  scaleNearDistance: 4
+  scaleFarDistance: 24
+  maxDistanceScale: 1
+  minDistanceScale: 0.6
   bounceDuration: 0.4
   bounceCount: 3
   bounceAmplitude: 8
@@ -28393,7 +28413,7 @@ RectTransform:
   m_GameObject: {fileID: 1439508200}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 512857743}
@@ -41692,7 +41712,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Sending the file\u2026"
+  m_text: Mengirim file...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
   m_sharedMaterial: {fileID: 2164040, guid: 5302535af1044152a457ed104f1f4b91, type: 2}
