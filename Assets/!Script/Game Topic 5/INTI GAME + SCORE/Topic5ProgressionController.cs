@@ -186,7 +186,7 @@ public class Topic5ProgressionController : MonoBehaviour
             stage = Stage.KaraokeNarration;
             SetInteractable(budi, false);
             SetInteractable(karaokeNarration, true);
-            ShowObjective("Periksa ruang karaoke", karaokeNarration);
+            ShowObjective("Periksa ruang karaoke\n(<i>jelajahi ruangan dan berinteraksi untuk mendapatkan skor tambahan</i>)", karaokeNarration);
         }
         else if (source == karaokeNarration && stage == Stage.KaraokeNarration)
         {
