@@ -127,19 +127,19 @@ public class SignUpController : MonoBehaviour
 
         if (password.Length < 8)
         {
-            ShowError("Password minimal 8 karakter");
+            ShowError("Kata sandi minimal 8 karakter");
             return false;
         }
 
         if (password != confirm)
         {
-            ShowError("Password tidak cocok");
+            ShowError("Kata sandi tidak cocok");
             return false;
         }
 
         if (username.Length < 3)
         {
-            ShowError("Username minimal 3 karakter");
+            ShowError("Nama panggilan minimal 3 karakter");
             return false;
         }
 
@@ -182,7 +182,7 @@ public class SignUpController : MonoBehaviour
         if (string.IsNullOrEmpty(errorResponse))       return "Terjadi kesalahan, coba lagi";
         if (errorResponse.Contains("EMAIL_EXISTS"))    return "Email sudah terdaftar";
         if (errorResponse.Contains("INVALID_EMAIL"))   return "Format email tidak valid";
-        if (errorResponse.Contains("WEAK_PASSWORD"))   return "Password terlalu lemah";
+        if (errorResponse.Contains("WEAK_PASSWORD"))   return "Kata sandi terlalu lemah";
         if (errorResponse.Contains("TOO_MANY_ATTEMPTS")) return "Terlalu banyak percobaan, coba lagi nanti";
         if (errorResponse.Contains("OPERATION_NOT_ALLOWED")) return "Pendaftaran tidak diizinkan";
         if (errorResponse.Contains("Gagal"))           return errorResponse;

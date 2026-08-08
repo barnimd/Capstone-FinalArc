@@ -5,19 +5,19 @@
             <ui:VisualElement name="sidebar-logo" class="sidebar-logo" />
             <ui:Button name="btn-dashboard" class="sidebar-btn active">
                 <ui:VisualElement class="sidebar-btn-icon" style="background-image: url(&quot;project://database/Assets/Icon/dashboard.png?fileID=2800000&amp;guid=350cf36694af5e94b8bb1e9cffe8699d&amp;type=3#dashboard&quot;);" />
-                <ui:Label text="Dashboard" class="sidebar-btn-label" />
+                <ui:Label text="Beranda" class="sidebar-btn-label" />
             </ui:Button>
             <ui:Button name="btn-class" class="sidebar-btn">
                 <ui:VisualElement class="sidebar-btn-icon" style="background-image: url(&quot;project://database/Assets/Icon/virtual-event.png?fileID=2800000&amp;guid=2eab52ba4c4cc744ca1569af7b8401a2&amp;type=3#virtual-event&quot;);" />
-                <ui:Label text="Class" class="sidebar-btn-label" />
+                <ui:Label text="Kelas" class="sidebar-btn-label" />
             </ui:Button>
             <ui:Button name="btn-profile" class="sidebar-btn">
                 <ui:VisualElement class="sidebar-btn-icon" style="background-image: url(&quot;project://database/Assets/Icon/user%201.png?fileID=2800000&amp;guid=e989fd1c6c1375941a783d06fd8251db&amp;type=3#user 1&quot;);" />
-                <ui:Label text="Profile" class="sidebar-btn-label" />
+                <ui:Label text="Profil" class="sidebar-btn-label" />
             </ui:Button>
             <ui:Button name="btn-leaderboard" class="sidebar-btn">
                 <ui:VisualElement class="sidebar-btn-icon" style="background-image: url(&quot;project://database/Assets/Icon/podium.png?fileID=2800000&amp;guid=534b376d7e99def4781c2267f172ba37&amp;type=3#podium&quot;);" />
-                <ui:Label text="Leaderboard" class="sidebar-btn-label" />
+                <ui:Label text="Papan Peringkat" class="sidebar-btn-label" />
             </ui:Button>
             <ui:Button name="btn-admin" class="sidebar-btn sidebar-btn-admin" style="display: none;">
                 <ui:VisualElement class="sidebar-btn-icon" style="background-image: url(&quot;project://database/Assets/Icon/user%201.png?fileID=2800000&amp;guid=e989fd1c6c1375941a783d06fd8251db&amp;type=3#user 1&quot;);" />
@@ -26,16 +26,16 @@
             <ui:VisualElement class="sidebar-spacer" />
             <ui:Button name="btn-settings" class="sidebar-btn sidebar-btn-secondary">
                 <ui:VisualElement class="sidebar-btn-icon" style="background-image: url(&quot;project://database/Assets/Icon/gear.png?fileID=2800000&amp;guid=e8ec879ed3f148b40bb14c908647109a&amp;type=3#gear&quot;);" />
-                <ui:Label text="Settings" class="sidebar-btn-label" />
+                <ui:Label text="Pengaturan" class="sidebar-btn-label" />
             </ui:Button>
             <ui:Button name="btn-help" class="sidebar-btn sidebar-btn-secondary">
                 <ui:VisualElement class="sidebar-btn-icon" style="background-image: url(&quot;project://database/Assets/Icon/question.png?fileID=2800000&amp;guid=496d2d2f6e511de439620c6419ec483a&amp;type=3#question&quot;);" />
-                <ui:Label text="Get Help" class="sidebar-btn-label" />
+                <ui:Label text="Bantuan" class="sidebar-btn-label" />
             </ui:Button>
         </ui:VisualElement>
         <ui:VisualElement class="main-area">
             <ui:VisualElement class="navbar">
-                <ui:Label text="Hi, Player" name="navbar-greeting" class="navbar-greeting" />
+                <ui:Label text="Hai, Pemain" name="navbar-greeting" class="navbar-greeting" />
                 <ui:VisualElement class="navbar-profile">
                     <ui:Label text="?" name="navbar-profile-text" class="navbar-profile-text" />
                 </ui:VisualElement>
@@ -43,8 +43,8 @@
             <ui:VisualElement class="content">
                 <ui:VisualElement name="page-dashboard" class="page dashboard-page">
                     <ui:VisualElement class="dashboard-header">
-                        <ui:Label text="DASHBOARD" class="label-eyebrow" />
-                        <ui:Label text="Welcome Back" class="title" />
+                        <ui:Label text="BERANDA" class="label-eyebrow" />
+                        <ui:Label text="Selamat Datang Kembali" class="title" />
                     </ui:VisualElement>
                     <ui:VisualElement class="slideshow-frame">
                         <ui:VisualElement name="slideshow-image" class="slideshow-image" />
@@ -59,66 +59,66 @@
                 </ui:VisualElement>
                 <ui:VisualElement name="page-class" class="page class-page hidden">
                     <ui:VisualElement class="class-header">
-                        <ui:Label text="CLASSROOM" class="label-eyebrow" />
-                        <ui:Label text="Lessons" class="title" />
+                        <ui:Label text="KELAS" class="label-eyebrow" />
+                        <ui:Label text="Materi" class="title" />
                     </ui:VisualElement>
                     <ui:ScrollView class="class-scroll">
-                        <ui:Label text="UNLOCKED" class="section-title" />
+                        <ui:Label text="TERBUKA" class="section-title" />
                         <ui:VisualElement name="unlocked-grid" class="lesson-grid" />
-                        <ui:Label text="LOCKED" class="section-title" />
+                        <ui:Label text="TERKUNCI" class="section-title" />
                         <ui:VisualElement name="locked-grid" class="lesson-grid" />
                     </ui:ScrollView>
                 </ui:VisualElement>
                 <ui:VisualElement name="page-profile" class="page profile-page hidden">
                     <ui:VisualElement class="profile-header">
-                        <ui:Label text="PROFILE" class="label-eyebrow" />
-                        <ui:Label text="Hi, Player" name="profile-greeting" class="title" />
+                        <ui:Label text="PROFIL" class="label-eyebrow" />
+                        <ui:Label text="Hai, Pemain" name="profile-greeting" class="title" />
                     </ui:VisualElement>
                     <ui:VisualElement class="profile-identity">
                         <ui:VisualElement class="profile-avatar">
                             <ui:Label text="P" name="profile-avatar-text" class="profile-avatar-text" />
                         </ui:VisualElement>
                         <ui:VisualElement class="profile-identity-text">
-                            <ui:Label text="PLAYER" class="label-eyebrow" />
-                            <ui:Label text="Player Name" name="profile-name" class="profile-name" />
-                            <ui:Label text="Joined 2026 · Rank — globally" name="profile-meta" class="profile-meta" />
+                            <ui:Label text="PEMAIN" class="label-eyebrow" />
+                            <ui:Label text="Nama Pemain" name="profile-name" class="profile-name" />
+                            <ui:Label text="Bergabung 2026 · Peringkat — global" name="profile-meta" class="profile-meta" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:VisualElement class="profile-stats">
                         <ui:VisualElement class="profile-stat-card">
-                            <ui:Label text="LEVEL CLEARED" class="stat-label" />
+                            <ui:Label text="LEVEL DISELESAIKAN" class="stat-label" />
                             <ui:Label text="— / 6" name="profile-level-cleared" class="stat-value" />
                         </ui:VisualElement>
                         <ui:VisualElement class="profile-stat-card profile-stat-card-last">
-                            <ui:Label text="GLOBAL RANK" class="stat-label" />
+                            <ui:Label text="PERINGKAT GLOBAL" class="stat-label" />
                             <ui:Label text="—" name="profile-rank" class="stat-value" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:VisualElement class="profile-progress-row">
                         <ui:VisualElement class="profile-progress-col">
-                            <ui:Label text="Course Progress" class="progress-section-title" />
+                            <ui:Label text="Progres Materi" class="progress-section-title" />
                             <ui:VisualElement name="course-progress-list" class="progress-list" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="page-leaderboard" class="page lb-page hidden">
                     <ui:VisualElement class="lb-header">
-                        <ui:Label text="LEADERBOARD" class="label-eyebrow" />
-                        <ui:Label text="Top Scores" class="title" />
+                        <ui:Label text="PAPAN PERINGKAT" class="label-eyebrow" />
+                        <ui:Label text="Skor Tertinggi" class="title" />
                     </ui:VisualElement>
                     <ui:VisualElement class="stat-strip">
                         <ui:VisualElement name="stat-your-rank" class="stat-card">
-                            <ui:Label text="YOUR RANK" class="stat-label" />
+                            <ui:Label text="PERINGKATMU" class="stat-label" />
                             <ui:Label text="—" name="your-rank-value" class="stat-value" />
-                            <ui:Label text="not yet ranked" name="your-rank-subtitle" class="stat-subtitle" />
+                            <ui:Label text="belum ada peringkat" name="your-rank-subtitle" class="stat-subtitle" />
                         </ui:VisualElement>
                         <ui:VisualElement name="stat-your-best" class="stat-card">
-                            <ui:Label text="YOUR BEST" class="stat-label" />
+                            <ui:Label text="TERBAIKMU" class="stat-label" />
                             <ui:Label text="—" name="your-best-value" class="stat-value" />
-                            <ui:Label text="no completion yet" name="your-best-subtitle" class="stat-subtitle" />
+                            <ui:Label text="belum ada penyelesaian" name="your-best-subtitle" class="stat-subtitle" />
                         </ui:VisualElement>
                         <ui:VisualElement name="stat-top-score" class="stat-card stat-card-last">
-                            <ui:Label text="TOP SCORE" class="stat-label" />
+                            <ui:Label text="SKOR TERTINGGI" class="stat-label" />
                             <ui:Label text="—" name="top-score-value" class="stat-value" />
                             <ui:Label text="—" name="top-score-subtitle" class="stat-subtitle" />
                         </ui:VisualElement>
@@ -127,24 +127,24 @@
                         <ui:Button text="Global" name="tab-global" class="filter-tab active" />
                     </ui:VisualElement>
                     <ui:VisualElement class="table-header">
-                        <ui:Label text="RANK" class="col-header col-rank" />
-                        <ui:Label text="PLAYER" class="col-header col-player" />
-                        <ui:Label text="TOPIC" class="col-header col-topic" />
-                        <ui:Label text="SCORE" class="col-header col-score" />
+                        <ui:Label text="PERINGKAT" class="col-header col-rank" />
+                        <ui:Label text="PEMAIN" class="col-header col-player" />
+                        <ui:Label text="TOPIK" class="col-header col-topic" />
+                        <ui:Label text="SKOR" class="col-header col-score" />
                     </ui:VisualElement>
                     <ui:ScrollView name="row-list" class="row-list" />
                 </ui:VisualElement>
                 <ui:VisualElement name="page-settings" class="page settings-page hidden">
                     <ui:VisualElement class="lb-header">
-                        <ui:Label text="PREFERENCES" class="label-eyebrow" />
-                        <ui:Label text="Settings" class="title" />
+                        <ui:Label text="PREFERENSI" class="label-eyebrow" />
+                        <ui:Label text="Pengaturan" class="title" />
                     </ui:VisualElement>
                     <ui:ScrollView class="settings-scroll">
-                        <ui:Label text="MOVEMENT" class="section-title" />
+                        <ui:Label text="GERAKAN" class="section-title" />
                         <ui:VisualElement class="settings-card">
                             <ui:VisualElement class="settings-row">
                                 <ui:VisualElement class="settings-row-text">
-                                    <ui:Label text="Player Speed" class="settings-row-title" />
+                                    <ui:Label text="Kecepatan Pemain" class="settings-row-title" />
                                     <ui:Label text="Ngatur seberapa cepat karakter jalan." class="settings-row-desc" />
                                 </ui:VisualElement>
                                 <ui:Label text="50%" name="settings-speed-value" class="settings-value" />
@@ -156,11 +156,11 @@
                             </ui:VisualElement>
                             <ui:Label text="Tahan Shift buat lari (+75% kecepatan)" class="settings-hint" />
                         </ui:VisualElement>
-                        <ui:Label text="SOUND" class="section-title" />
+                        <ui:Label text="SUARA" class="section-title" />
                         <ui:VisualElement class="settings-card">
                             <ui:VisualElement class="settings-row">
                                 <ui:VisualElement class="settings-row-text">
-                                    <ui:Label text="Background Music" class="settings-row-title" />
+                                    <ui:Label text="Musik Latar" class="settings-row-title" />
                                     <ui:Label text="Musik latar di menu dan di dalam game." class="settings-row-desc" />
                                 </ui:VisualElement>
                                 <ui:Toggle name="settings-music" class="settings-toggle" />
@@ -168,64 +168,64 @@
                             <ui:VisualElement class="settings-divider" />
                             <ui:VisualElement class="settings-row">
                                 <ui:VisualElement class="settings-row-text">
-                                    <ui:Label text="Dialogue" class="settings-row-title" />
+                                    <ui:Label text="Dialog" class="settings-row-title" />
                                     <ui:Label text="Suara karakter dan bunyi ketik pas dialog jalan." class="settings-row-desc" />
                                 </ui:VisualElement>
                                 <ui:Toggle name="settings-dialogue" class="settings-toggle" />
                             </ui:VisualElement>
                         </ui:VisualElement>
                         <ui:VisualElement class="settings-footer">
-                            <ui:Button text="Reset to Default" name="settings-reset" class="filter-tab" />
+                            <ui:Button text="Kembalikan ke Default" name="settings-reset" class="filter-tab" />
                             <ui:Label text="Setting kesimpan otomatis dan kepakai di semua topic." class="settings-hint" />
                         </ui:VisualElement>
                     </ui:ScrollView>
                 </ui:VisualElement>
                 <ui:VisualElement name="page-help" class="page help-page hidden">
                     <ui:VisualElement class="help-header">
-                        <ui:Label text="HELP CENTER" class="label-eyebrow" />
-                        <ui:Label text="How can we help?" class="title" />
+                        <ui:Label text="PUSAT BANTUAN" class="label-eyebrow" />
+                        <ui:Label text="Apa yang bisa kami bantu?" class="title" />
                     </ui:VisualElement>
                     <ui:VisualElement class="help-search-row">
                         <ui:TextField name="help-search" class="help-search" />
-                        <ui:Button text="Search" name="help-search-btn" class="help-search-btn" />
+                        <ui:Button text="Cari" name="help-search-btn" class="help-search-btn" />
                     </ui:VisualElement>
-                    <ui:Label text="BROWSE TOPICS" class="help-section-eyebrow" />
+                    <ui:Label text="JELAJAHI TOPIK" class="help-section-eyebrow" />
                     <ui:VisualElement class="help-topics-row">
                         <ui:Button name="help-topic-1" class="help-topic-card">
                             <ui:VisualElement class="help-topic-icon-box">
                                 <ui:Label text="▶" class="help-topic-icon" />
                             </ui:VisualElement>
-                            <ui:Label text="How to play" class="help-topic-title" />
-                            <ui:Label text="Walkthrough of game modes, scoring, and unlocking modules." class="help-topic-desc" />
-                            <ui:Label text="Open  →" class="help-topic-open" />
+                            <ui:Label text="Cara bermain" class="help-topic-title" />
+                            <ui:Label text="Panduan mode permainan, skor, dan membuka modul." class="help-topic-desc" />
+                            <ui:Label text="Buka  →" class="help-topic-open" />
                         </ui:Button>
                         <ui:Button name="help-topic-2" class="help-topic-card">
                             <ui:VisualElement class="help-topic-icon-box">
                                 <ui:Label text="👤" class="help-topic-icon" />
                             </ui:VisualElement>
-                            <ui:Label text="Account &amp; login" class="help-topic-title" />
-                            <ui:Label text="Reset password, change email, or recover access." class="help-topic-desc" />
-                            <ui:Label text="Open  →" class="help-topic-open" />
+                            <ui:Label text="Akun &amp; login" class="help-topic-title" />
+                            <ui:Label text="Reset kata sandi, ganti email, atau pulihkan akses." class="help-topic-desc" />
+                            <ui:Label text="Buka  →" class="help-topic-open" />
                         </ui:Button>
                         <ui:Button name="help-topic-3" class="help-topic-card">
                             <ui:VisualElement class="help-topic-icon-box">
                                 <ui:Label text="🐞" class="help-topic-icon" />
                             </ui:VisualElement>
-                            <ui:Label text="Report a bug" class="help-topic-title" />
-                            <ui:Label text="Something broken? Send us the details and screenshots." class="help-topic-desc" />
-                            <ui:Label text="Open  →" class="help-topic-open" />
+                            <ui:Label text="Laporkan bug" class="help-topic-title" />
+                            <ui:Label text="Ada yang rusak? Kirim detail dan tangkapan layar." class="help-topic-desc" />
+                            <ui:Label text="Buka  →" class="help-topic-open" />
                         </ui:Button>
                     </ui:VisualElement>
                     <ui:VisualElement class="help-bottom-row">
                         <ui:VisualElement class="help-faq-col">
-                            <ui:Label text="FREQUENTLY ASKED" class="help-section-eyebrow" />
+                            <ui:Label text="PERTANYAAN UMUM" class="help-section-eyebrow" />
                             <ui:VisualElement name="help-faq-list" class="help-faq-list" />
                         </ui:VisualElement>
                         <ui:VisualElement class="help-stuck-col">
-                            <ui:Label text="STILL STUCK?" class="help-section-eyebrow" />
+                            <ui:Label text="MASIH BINGUNG?" class="help-section-eyebrow" />
                             <ui:VisualElement class="help-stuck-card">
-                                <ui:Label text="Talk to a human on the SecMind team" class="help-stuck-title" />
-                                <ui:Label text="Usually responds within a day. Include screenshots if you can." class="help-stuck-desc" />
+                                <ui:Label text="Bicara dengan tim SecMind" class="help-stuck-title" />
+                                <ui:Label text="Biasanya membalas dalam sehari. Sertakan tangkapan layar jika bisa." class="help-stuck-desc" />
                                 <ui:VisualElement class="help-stuck-row">
                                     <ui:VisualElement class="help-stuck-icon-box">
                                         <ui:Label text="✉" class="help-stuck-icon" />
@@ -240,17 +240,17 @@
                                         <ui:Label text="💬" class="help-stuck-icon" />
                                     </ui:VisualElement>
                                     <ui:VisualElement class="help-stuck-text-block">
-                                        <ui:Label text="Live chat" class="help-stuck-label" />
-                                        <ui:Label text="Mon–Fri · 09.00–17.00 WIB" class="help-stuck-value" />
+                                        <ui:Label text="Obrolan langsung" class="help-stuck-label" />
+                                        <ui:Label text="Sen–Jum · 09.00–17.00 WIB" class="help-stuck-value" />
                                     </ui:VisualElement>
                                 </ui:VisualElement>
-                                <ui:Button text="Start a conversation" name="help-contact-btn" class="help-contact-btn" />
+                                <ui:Button text="Mulai percakapan" name="help-contact-btn" class="help-contact-btn" />
                             </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:VisualElement name="coming-soon-modal" class="modal-backdrop hidden">
                         <ui:VisualElement class="modal-card">
-                            <ui:Label text="Coming Soon" class="modal-title" />
+                            <ui:Label text="Segera Hadir" class="modal-title" />
                             <ui:Label name="modal-desc" class="modal-desc" />
                             <ui:Button text="OK" name="modal-close-btn" class="modal-button" />
                         </ui:VisualElement>
@@ -279,9 +279,9 @@
                                     <!-- Manage Class icon: PNG dimuat lewat code dari Resources/Icons/icon-manage-class.png (lihat MainMenuController.LoadManageClassIcon). -->
                                     <ui:VisualElement name="manage-class-icon" class="admin-card-icon-image" />
                                 </ui:VisualElement>
-                                <ui:Label text="Manage Class" class="admin-card-title" />
-                                <ui:Label text="Atur level: buka atau kunci topik pembelajaran." class="admin-card-desc" />
-                                <ui:Label text="Open  →" class="admin-card-open" />
+                            <ui:Label text="Kelola Kelas" class="admin-card-title" />
+                            <ui:Label text="Atur level: buka atau kunci topik pembelajaran." class="admin-card-desc" />
+                            <ui:Label text="Buka  →" class="admin-card-open" />
                             </ui:Button>
                         </ui:VisualElement>
                     </ui:VisualElement>
@@ -305,8 +305,8 @@
                             <ui:Label text="←  Kembali" class="admin-back-label" />
                         </ui:Button>
                         <ui:VisualElement class="admin-header">
-                            <ui:Label text="ADMIN · CLASS" class="label-eyebrow" />
-                            <ui:Label text="Manage Class" class="title" />
+                            <ui:Label text="ADMIN · KELAS" class="label-eyebrow" />
+                            <ui:Label text="Kelola Kelas" class="title" />
                         </ui:VisualElement>
                         <ui:ScrollView class="class-scroll">
                             <ui:VisualElement name="admin-level-grid" class="lesson-grid" />

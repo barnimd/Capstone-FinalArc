@@ -166,10 +166,10 @@ public class SignUpControllerUIToolkit : MonoBehaviour
             switch (level)
             {
                 case StrengthLevel.None:   _strengthLabel.text = "";              _strengthLabel.AddToClassList("none");   break;
-                case StrengthLevel.Weak:   _strengthLabel.text = "Weak";          _strengthLabel.AddToClassList("weak");   break;
-                case StrengthLevel.Medium: _strengthLabel.text = "Medium";        _strengthLabel.AddToClassList("medium"); break;
-                case StrengthLevel.Strong: _strengthLabel.text = "Strong";        _strengthLabel.AddToClassList("strong"); break;
-                case StrengthLevel.Super:  _strengthLabel.text = "Super Strong";  _strengthLabel.AddToClassList("super");  break;
+                case StrengthLevel.Weak:   _strengthLabel.text = "Lemah";         _strengthLabel.AddToClassList("weak");   break;
+                case StrengthLevel.Medium: _strengthLabel.text = "Sedang";        _strengthLabel.AddToClassList("medium"); break;
+                case StrengthLevel.Strong: _strengthLabel.text = "Kuat";          _strengthLabel.AddToClassList("strong"); break;
+                case StrengthLevel.Super:  _strengthLabel.text = "Sangat Kuat";   _strengthLabel.AddToClassList("super");  break;
             }
         }
     }
@@ -200,19 +200,19 @@ public class SignUpControllerUIToolkit : MonoBehaviour
 
         if (nickname.Length < 3)
         {
-            ShowError("Nickname minimal 3 karakter");
+            ShowError("Nama panggilan minimal 3 karakter");
             return;
         }
 
         if (password.Length < 8)
         {
-            ShowError("Password minimal 8 karakter");
+            ShowError("Kata sandi minimal 8 karakter");
             return;
         }
 
         if (password != confirm)
         {
-            ShowError("Password tidak cocok");
+            ShowError("Kata sandi tidak cocok");
             return;
         }
 
@@ -247,7 +247,7 @@ public class SignUpControllerUIToolkit : MonoBehaviour
         if (string.IsNullOrEmpty(error))                       return "Terjadi kesalahan, coba lagi";
         if (error.Contains("EMAIL_EXISTS"))                    return "Email sudah terdaftar";
         if (error.Contains("INVALID_EMAIL"))                   return "Format email tidak valid";
-        if (error.Contains("WEAK_PASSWORD"))                   return "Password terlalu lemah";
+        if (error.Contains("WEAK_PASSWORD"))                   return "Kata sandi terlalu lemah";
         if (error.Contains("TOO_MANY_ATTEMPTS"))               return "Terlalu banyak percobaan, coba lagi nanti";
         if (error.Contains("OPERATION_NOT_ALLOWED"))           return "Pendaftaran tidak diizinkan";
         if (error.Contains("Gagal"))                           return error;

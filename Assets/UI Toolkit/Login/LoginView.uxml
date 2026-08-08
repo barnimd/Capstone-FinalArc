@@ -7,48 +7,48 @@
         <ui:VisualElement class="login-body">
             <ui:VisualElement class="hero-panel">
                 <ui:VisualElement class="hero-content">
-                    <ui:Label text="WELCOME BACK" class="hero-eyebrow" />
-                    <ui:Label text="Stay sharp." class="hero-title" />
+                    <ui:Label text="SELAMAT DATANG KEMBALI" class="hero-eyebrow" />
+                    <ui:Label text="Tetap sigap." class="hero-title" />
                     <ui:VisualElement style="flex-direction: row;">
-                        <ui:Label text="Stay " class="hero-title" />
-                        <ui:Label text="secure." class="hero-title hero-title-accent" />
+                        <ui:Label text="Tetap " class="hero-title" />
+                        <ui:Label text="aman." class="hero-title hero-title-accent" />
                     </ui:VisualElement>
-                    <ui:Label text="Continue your training. Spot phishing, harden passwords, and keep your streak alive." class="hero-subtitle" />
+                    <ui:Label text="Lanjutkan pelatihanmu. Kenali phishing, perkuat kata sandi, dan jaga streak-mu tetap aktif." class="hero-subtitle" />
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement class="login-panel">
                 <ui:VisualElement class="login-card">
                     <ui:VisualElement class="login-logo" />
-                    <ui:Label text="SIGN IN TO CONTINUE" class="login-eyebrow" />
-                    <ui:Label text="NICKNAME" class="login-field-label" />
+                    <ui:Label text="MASUK UNTUK MELANJUTKAN" class="login-eyebrow" />
+                    <ui:Label text="NAMA PANGGILAN" class="login-field-label" />
                     <ui:TextField name="nickname-input" class="login-input" />
-                    <ui:Label text="PASSWORD" class="login-field-label" />
+                    <ui:Label text="KATA SANDI" class="login-field-label" />
                     <ui:TextField name="password-input" password="true" class="login-input" />
                     <ui:VisualElement class="login-row">
-                        <ui:Label text="Forgot password?" name="forgot-link" class="login-link" />
+                        <ui:Label text="Lupa kata sandi?" name="forgot-link" class="login-link" />
                     </ui:VisualElement>
-                    <ui:Button text="OK, go!" name="login-button" class="login-button-primary" />
+                    <ui:Button text="OK, masuk!" name="login-button" class="login-button-primary" />
                     <ui:VisualElement class="login-divider">
                         <ui:VisualElement class="login-divider-line" />
-                        <ui:Label text="OR" class="login-divider-text" />
+                        <ui:Label text="ATAU" class="login-divider-text" />
                         <ui:VisualElement class="login-divider-line" />
                     </ui:VisualElement>
                     <ui:Button name="google-button" class="login-button-google">
                         <ui:VisualElement class="google-icon" />
-                        <ui:Label text="Sign in with Google" class="google-label" />
+                        <ui:Label text="Masuk dengan Google" class="google-label" />
                     </ui:Button>
                     <ui:VisualElement class="login-bottom">
-                        <ui:Label text="New to this game?" class="login-bottom-text" />
-                        <ui:Label text="Make an account" name="signup-link" class="login-link" />
+                        <ui:Label text="Baru di game ini?" class="login-bottom-text" />
+                        <ui:Label text="Buat akun" name="signup-link" class="login-link" />
                     </ui:VisualElement>
                     <ui:VisualElement class="login-bottom">
-                        <ui:Label text="Just want to try?" class="login-bottom-text" />
-                        <ui:Label text="Play as Guest" name="guest-link" class="login-link" />
+                        <ui:Label text="Cuma mau coba?" class="login-bottom-text" />
+                        <ui:Label text="Main sebagai Tamu" name="guest-link" class="login-link" />
                     </ui:VisualElement>
                     <ui:Label name="login-error" class="login-error" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:Label text="© 2026 SecMind · Cyber Security Awareness Game" class="hero-footer" />
+        <ui:Label text="© 2026 SecMind · Game Edukasi Kesadaran Keamanan Siber" class="hero-footer" />
     </ui:VisualElement>
 </ui:UXML>

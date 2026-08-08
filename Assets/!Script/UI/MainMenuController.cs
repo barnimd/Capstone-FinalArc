@@ -253,9 +253,9 @@ public class MainMenuController : MonoBehaviour
         if (_navbarGreeting == null) return;
         string raw = FirebaseManager.Instance != null && !string.IsNullOrEmpty(FirebaseManager.Instance.Username)
             ? FirebaseManager.Instance.Username
-            : "Player";
+            : "Pemain";
         string display = CapitalizeFirst(raw);
-        _navbarGreeting.text = $"Hi, {display}";
+        _navbarGreeting.text = $"Hai, {display}";
 
         if (_navbarProfileText != null)
             _navbarProfileText.text = string.IsNullOrEmpty(display) ? "?" : display.Substring(0, 1).ToUpper();
@@ -415,7 +415,7 @@ public class MainMenuController : MonoBehaviour
         {
             VisualElement empty = new VisualElement();
             empty.AddToClassList("empty-state");
-            Label emptyText = new Label("No scores yet — be the first!");
+            Label emptyText = new Label("Belum ada skor — jadi yang pertama!");
             emptyText.AddToClassList("empty-text");
             empty.Add(emptyText);
             _rowList.Add(empty);
@@ -425,7 +425,7 @@ public class MainMenuController : MonoBehaviour
         string myUid = FirebaseManager.Instance != null ? FirebaseManager.Instance.LocalId : null;
 
         if (_topScoreValue != null) _topScoreValue.text = entries[0].score.ToString();
-        if (_topScoreSubtitle != null) _topScoreSubtitle.text = $"by {entries[0].displayName}";
+        if (_topScoreSubtitle != null) _topScoreSubtitle.text = $"oleh {entries[0].displayName}";
 
         GlobalLeaderboardEntryDTO mine = !string.IsNullOrEmpty(myUid)
             ? entries.FirstOrDefault(e => e.userId == myUid)
@@ -434,16 +434,16 @@ public class MainMenuController : MonoBehaviour
         if (mine != null)
         {
             if (_yourRankValue != null) _yourRankValue.text = "#" + mine.rank;
-            if (_yourRankSubtitle != null) _yourRankSubtitle.text = $"out of {entries.Length} players";
+            if (_yourRankSubtitle != null) _yourRankSubtitle.text = $"dari {entries.Length} pemain";
             if (_yourBestValue != null) _yourBestValue.text = mine.score.ToString();
             if (_yourBestSubtitle != null) _yourBestSubtitle.text = mine.bestStageName;
         }
         else
         {
             if (_yourRankValue != null) _yourRankValue.text = "—";
-            if (_yourRankSubtitle != null) _yourRankSubtitle.text = "not on leaderboard yet";
+            if (_yourRankSubtitle != null) _yourRankSubtitle.text = "belum masuk papan peringkat";
             if (_yourBestValue != null) _yourBestValue.text = "—";
-            if (_yourBestSubtitle != null) _yourBestSubtitle.text = "no completion yet";
+            if (_yourBestSubtitle != null) _yourBestSubtitle.text = "belum ada penyelesaian";
         }
 
         foreach (GlobalLeaderboardEntryDTO e in entries)
@@ -454,16 +454,16 @@ public class MainMenuController : MonoBehaviour
 
     private static readonly (string question, string answer)[] _faqs = new (string, string)[]
     {
-        ("How do I unlock the next module?",
-         "Complete the current module with a score of 70% or higher to unlock the next one in sequence."),
-        ("Can I retake a quiz to improve my score?",
-         "Yes! You can replay any completed module anytime. Your highest score is what counts for the leaderboard, so retaking only helps you."),
-        ("Why didn't my score appear on the leaderboard?",
-         "Scores sync to the server every few seconds. If yours is still missing after a minute, make sure you completed the module fully and try refreshing the page."),
-        ("How does the streak system work?",
-         "Play at least one module per day to keep your streak alive. Miss a day and the streak resets to zero. Streaks earn bonus rewards every 7 days."),
-        ("Is my progress saved if I sign out?",
-         "Yes. Your progress, scores, and checkpoints are tied to your account. Sign back in on any device and pick up right where you left off."),
+        ("Bagaimana cara membuka modul berikutnya?",
+         "Selesaikan modul saat ini dengan skor 70% atau lebih untuk membuka modul berikutnya secara berurutan."),
+        ("Bolehkah mengulang kuis untuk memperbaiki skor?",
+         "Bisa! Kamu dapat memutar ulang modul yang sudah selesai kapan saja. Skor tertinggimu yang dihitung di papan peringkat, jadi mengulang hanya menguntungkanmu."),
+        ("Kenapa skor saya tidak muncul di papan peringkat?",
+         "Skor disinkronkan ke server setiap beberapa detik. Jika masih belum muncul setelah satu menit, pastikan modul diselesaikan sampai tuntas dan coba muat ulang halaman."),
+        ("Bagaimana cara kerja sistem streak?",
+         "Mainkan minimal satu modul per hari untuk menjaga streak tetap hidup. Jika bolos satu hari, streak kembali ke nol. Streak memberi hadiah bonus setiap 7 hari."),
+        ("Apakah progres saya tersimpan kalau keluar (logout)?",
+         "Ya. Progres, skor, dan checkpoint terikat ke akunmu. Masuk lagi di perangkat mana pun dan lanjutkan dari tempat terakhirmu."),
     };
 
     private void SetupHelpIfNeeded()
@@ -694,17 +694,17 @@ public class MainMenuController : MonoBehaviour
         // Always refresh (in case Username changed after login)
         string raw = FirebaseManager.Instance != null && !string.IsNullOrEmpty(FirebaseManager.Instance.Username)
             ? FirebaseManager.Instance.Username
-            : "Player";
+            : "Pemain";
         string display = CapitalizeFirst(raw);
 
-        if (_profileGreeting != null) _profileGreeting.text = $"Hi, {display}";
+        if (_profileGreeting != null) _profileGreeting.text = $"Hai, {display}";
         if (_profileName != null) _profileName.text = display;
         if (_profileAvatarText != null) _profileAvatarText.text = string.IsNullOrEmpty(display) ? "?" : display.Substring(0, 1).ToUpper();
 
         // Loading placeholders until backend responds.
         if (_profileLevelCleared != null) _profileLevelCleared.text = "… / " + ProfileStageIds.Length;
         if (_profileRank != null) _profileRank.text = "—";
-        if (_profileMeta != null) _profileMeta.text = "Joined 2026 · Rank — globally";
+        if (_profileMeta != null) _profileMeta.text = "Bergabung 2026 · Peringkat — global";
 
         // Level Cleared (# completed) and per-course scores both come from stage_completions,
         // read per stage via checkpoint/load for the logged-in user.
@@ -817,11 +817,11 @@ public class MainMenuController : MonoBehaviour
         if (mine != null)
         {
             if (_profileRank != null) _profileRank.text = "#" + mine.rank;
-            if (_profileMeta != null) _profileMeta.text = $"Joined 2026 · Rank #{mine.rank} globally";
+            if (_profileMeta != null) _profileMeta.text = $"Bergabung 2026 · Peringkat #{mine.rank} global";
         }
         else
         {
-            if (_profileRank != null) _profileRank.text = "Unranked";
+            if (_profileRank != null) _profileRank.text = "Tanpa peringkat";
         }
     }
 
@@ -1143,7 +1143,7 @@ public class MainMenuController : MonoBehaviour
         card.EnableInClassList("locked", !unlocked);
         status.EnableInClassList("admin-status-unlocked", unlocked);
         status.EnableInClassList("admin-status-locked", !unlocked);
-        status.text = unlocked ? "Unlocked" : "Locked";
+        status.text = unlocked ? "Terbuka" : "Terkunci";
     }
 
     // ── Leaderboard row builder ─────────────────────────────────────────────
@@ -1179,7 +1179,7 @@ public class MainMenuController : MonoBehaviour
 
         if (isYou)
         {
-            Label youBadge = new Label("YOU");
+            Label youBadge = new Label("KAMU");
             youBadge.AddToClassList("you-badge");
             playerCell.Add(youBadge);
         }

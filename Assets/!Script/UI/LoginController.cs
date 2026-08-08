@@ -68,13 +68,13 @@ public class LoginController : MonoBehaviour
 
         if (string.IsNullOrEmpty(username))
         {
-            ShowError("Username tidak boleh kosong");
+            ShowError("Nama panggilan tidak boleh kosong");
             return;
         }
 
         if (string.IsNullOrEmpty(password))
         {
-            ShowError("Password tidak boleh kosong");
+            ShowError("Kata sandi tidak boleh kosong");
             return;
         }
 
@@ -103,11 +103,11 @@ public class LoginController : MonoBehaviour
         if (string.IsNullOrEmpty(error))                    return "Terjadi kesalahan, coba lagi";
         if (error.Contains("tidak ditemukan"))              return error;
         if (error.Contains("Gagal"))                        return error;
-        if (error.Contains("INVALID_PASSWORD"))             return "Password salah";
-        if (error.Contains("INVALID_LOGIN_CREDENTIALS"))   return "Username atau password salah";
+        if (error.Contains("INVALID_PASSWORD"))             return "Kata sandi salah";
+        if (error.Contains("INVALID_LOGIN_CREDENTIALS"))   return "Nama panggilan atau kata sandi salah";
         if (error.Contains("USER_DISABLED"))                return "Akun dinonaktifkan";
         if (error.Contains("TOO_MANY_ATTEMPTS"))            return "Terlalu banyak percobaan, coba lagi nanti";
-        return "Username atau password salah";
+        return "Nama panggilan atau kata sandi salah";
     }
 
     public void OnGoToSignUpClicked()
