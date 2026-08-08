@@ -49,6 +49,15 @@ public class WebsiteSecurityController : MonoBehaviour
     public float successPanelFadeOutDuration = 0.35f;
     public float successPanelHoldDuration = 1.5f;
 
+    [Header("=== Hack Panel Fade ===")]
+    public float attackPanelFadeInDuration = 0.35f;
+    public float instantHackFadeInDuration = 0.35f;
+    public float feedbackCanvasFadeInDuration = 0.35f;
+
+    [Header("=== Attack Progress ===")]
+    public Slider attackProgressBar;
+    public float attackProgressDuration = 1.2f;
+
     private bool _vpnActivated;
     private System.Action<bool> _onComplete;
 
@@ -181,14 +190,23 @@ public class WebsiteSecurityController : MonoBehaviour
     private IEnumerator HackRoutine()
     {
         attackPanel.SetActive(true);
-        yield return new WaitForSeconds(attackPanelDuration);
+        yield return FadeCanvasGroup(attackPanel, 0f, 1f, attackPanelFadeInDuration);
+
+        if (attackProgressBar != null) attackProgressBar.value = 0f;
+        yield return AnimateAttackProgress(attackProgressDuration);
+
+        float holdLeft = Mathf.Max(0f, attackPanelDuration - attackProgressDuration);
+        yield return new WaitForSeconds(holdLeft);
+
         attackPanel.SetActive(false);
 
         instantHackPanel.SetActive(true);
+        yield return FadeCanvasGroup(instantHackPanel, 0f, 1f, instantHackFadeInDuration);
         yield return new WaitForSeconds(instantHackDuration);
         instantHackPanel.SetActive(false);
 
         feedbackCanvas.SetActive(true);
+        yield return FadeCanvasGroup(feedbackCanvas, 0f, 1f, feedbackCanvasFadeInDuration);
 
         if (feedbackPanel != null && txtFeedbackTitle != null && txtFeedbackDetail != null)
         {
@@ -209,6 +227,25 @@ public class WebsiteSecurityController : MonoBehaviour
             feedbackCanvas.SetActive(false);
 
         _onComplete?.Invoke(_vpnActivated);
+    }
+
+    private IEnumerator AnimateAttackProgress(float duration)
+    {
+        if (attackProgressBar == null)
+        {
+            yield return new WaitForSeconds(duration);
+            yield break;
+        }
+
+        attackProgressBar.value = 0f;
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            attackProgressBar.value = Mathf.Lerp(0f, 1f, Mathf.Clamp01(t / duration));
+            yield return null;
+        }
+        attackProgressBar.value = 1f;
     }
 
     private IEnumerator FadeCanvasGroup(GameObject target, float from, float to, float duration)

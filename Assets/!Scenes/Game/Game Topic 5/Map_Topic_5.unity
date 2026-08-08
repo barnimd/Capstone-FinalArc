@@ -15941,6 +15941,11 @@ MonoBehaviour:
   successPanelFadeInDuration: 0.35
   successPanelFadeOutDuration: 0.35
   successPanelHoldDuration: 1.5
+  attackPanelFadeInDuration: 0.35
+  instantHackFadeInDuration: 0.35
+  feedbackCanvasFadeInDuration: 0.35
+  attackProgressBar: {fileID: 388756503}
+  attackProgressDuration: 1.2
 --- !u!224 &897220843
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18690,7 +18695,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8, g: 0, b: 0, a: 0.92156863}
+  m_Color: {r: 0.8207547, g: 0, b: 0.010943386, a: 0.9411765}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
