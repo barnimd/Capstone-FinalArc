@@ -99,6 +99,16 @@ public static class LessonLocks
             return;
         }
 
+#if UNITY_EDITOR
+        // Editor debug: JANGAN hit API /api/admin/stage-lock (server bakal 403 karena
+        // requireAdmin() ngecek role asli di Neon, dan di editor kita mungkin gak login).
+        // Langsung flip cache lokal supaya UI Manage Class tetap bisa di-test offline.
+        LockedByStage[stageId] = locked;
+        PlayerPrefs.SetInt(LockPrefPrefix + stageId, locked ? 1 : 0);
+        PlayerPrefs.Save();
+        cb?.Invoke(true);
+        return;
+#else
         APIClient.Instance.SetStageLock(stageId, locked, (ok, resp, raw) =>
         {
             if (!ok || resp == null || !resp.success)
@@ -113,5 +123,6 @@ public static class LessonLocks
             PlayerPrefs.Save();
             cb?.Invoke(true);
         });
+#endif
     }
 }

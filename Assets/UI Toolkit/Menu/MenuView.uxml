@@ -263,6 +263,8 @@
                             <ui:Label text="Menu Admin" class="title" />
                         </ui:VisualElement>
                         <ui:VisualElement class="admin-cards-row">
+                            <!-- [Manage User] DI-COMMENT — kartu "Manage Users" dihilangkan dari Menu Admin.
+                                 Kalau mau diaktifkan lagi, hapus tanda comment di bawah ini:
                             <ui:Button name="btn-manage-users" class="admin-card">
                                 <ui:VisualElement class="admin-card-icon-box">
                                     <ui:Label text="👥" class="admin-card-icon" />
@@ -271,9 +273,11 @@
                                 <ui:Label text="Lihat dan kelola semua akun pengguna terdaftar." class="admin-card-desc" />
                                 <ui:Label text="Open  →" class="admin-card-open" />
                             </ui:Button>
+                            -->
                             <ui:Button name="btn-manage-class" class="admin-card">
                                 <ui:VisualElement class="admin-card-icon-box">
-                                    <ui:Label text="📚" class="admin-card-icon" />
+                                    <!-- Manage Class icon: PNG dimuat lewat code dari Resources/Icons/icon-manage-class.png (lihat MainMenuController.LoadManageClassIcon). -->
+                                    <ui:VisualElement name="manage-class-icon" class="admin-card-icon-image" />
                                 </ui:VisualElement>
                                 <ui:Label text="Manage Class" class="admin-card-title" />
                                 <ui:Label text="Atur level: buka atau kunci topik pembelajaran." class="admin-card-desc" />
@@ -281,6 +285,8 @@
                             </ui:Button>
                         </ui:VisualElement>
                     </ui:VisualElement>
+                    <!-- [Manage User] DI-COMMENT — subview "Manage Users" dihilangkan.
+                         Kalau mau diaktifkan lagi, hapus tanda comment di bawah ini:
                     <ui:VisualElement name="admin-manage-users" class="admin-subview hidden">
                         <ui:Button name="btn-admin-back-users" class="admin-back-btn">
                             <ui:Label text="←  Kembali" class="admin-back-label" />
@@ -293,6 +299,7 @@
                             <ui:Label text="Daftar pengguna akan tampil di sini. (Coming soon)" class="admin-placeholder-text" />
                         </ui:VisualElement>
                     </ui:VisualElement>
+                    -->
                     <ui:VisualElement name="admin-manage-class" class="admin-subview hidden">
                         <ui:Button name="btn-admin-back-class" class="admin-back-btn">
                             <ui:Label text="←  Kembali" class="admin-back-label" />

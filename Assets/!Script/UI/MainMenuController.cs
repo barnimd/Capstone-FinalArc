@@ -69,8 +69,18 @@ public class MainMenuController : MonoBehaviour
 
     // Admin page (role-gated)
     private const string RolePrefKey = "SecMind.role";
-    private Button _btnAdmin, _btnManageUsers, _btnManageClass, _btnAdminBackUsers, _btnAdminBackClass;
-    private VisualElement _pageAdmin, _adminHome, _adminManageUsers, _adminManageClass, _adminLevelGrid;
+    // Manage Class: tombol kartu "Manage Class" + subview grid level — sudah berfungsi penuh.
+    // Manage User: DI-NONAKTIFKAN (comment out). Menu "Manage Users" sengaja dihilangkan dari
+    //   Menu Admin — lihat UXML MenuView.uxml (kartu btn-manage-users & subview admin-manage-users
+    //   ikut di-comment). Kalau mau diaktifkan lagi, uncomment baris bertanda [Manage User] di
+    //   file ini dan di UXML. Field asli yang dinonaktifkan:
+    //     private Button _btnManageUsers;            // [Manage User] tombol kartu "Manage Users"
+    //     private Button _btnAdminBackUsers;         // [Manage User] tombol "← Kembali" subview users
+    //     private VisualElement _adminManageUsers;   // [Manage User] subview daftar user
+    private Button _btnAdmin, _btnManageClass, _btnAdminBackClass;
+    private VisualElement _pageAdmin, _adminHome, _adminManageClass, _adminLevelGrid;
+    // Manage Class: element ikon PNG (background-image) yang dimuat dari Resources/Icons/icon-manage-class.png.
+    private VisualElement _manageClassIcon;
     private bool _adminGridBuilt;
     private bool _isAdmin;
 
@@ -143,12 +153,15 @@ public class MainMenuController : MonoBehaviour
 
         // Admin sub-views + buttons
         _adminHome = _root.Q<VisualElement>("admin-home");
-        _adminManageUsers = _root.Q<VisualElement>("admin-manage-users");
+        // [Manage User] DI-COMMENT — menu "Manage Users" dihilangkan:
+        //   _adminManageUsers = _root.Q<VisualElement>("admin-manage-users");
         _adminManageClass = _root.Q<VisualElement>("admin-manage-class");
         _adminLevelGrid = _root.Q<VisualElement>("admin-level-grid");
-        _btnManageUsers = _root.Q<Button>("btn-manage-users");
+        // [Manage User] DI-COMMENT — menu "Manage Users" dihilangkan:
+        //   _btnManageUsers = _root.Q<Button>("btn-manage-users");
         _btnManageClass = _root.Q<Button>("btn-manage-class");
-        _btnAdminBackUsers = _root.Q<Button>("btn-admin-back-users");
+        // [Manage User] DI-COMMENT — menu "Manage Users" dihilangkan:
+        //   _btnAdminBackUsers = _root.Q<Button>("btn-admin-back-users");
         _btnAdminBackClass = _root.Q<Button>("btn-admin-back-class");
 
         // Leaderboard sub-refs
@@ -202,10 +215,15 @@ public class MainMenuController : MonoBehaviour
         if (_btnAdmin != null) _btnAdmin.clicked += () => ShowPage("admin");
 
         // Admin sub-navigation
-        if (_btnManageUsers != null) _btnManageUsers.clicked += OpenManageUsers;
+        // [Manage User] DI-COMMENT — menu "Manage Users" dihilangkan:
+        //   if (_btnManageUsers != null) _btnManageUsers.clicked += OpenManageUsers;
         if (_btnManageClass != null) _btnManageClass.clicked += OpenManageClass;
-        if (_btnAdminBackUsers != null) _btnAdminBackUsers.clicked += ShowAdminHome;
+        // [Manage User] DI-COMMENT — menu "Manage Users" dihilangkan:
+        //   if (_btnAdminBackUsers != null) _btnAdminBackUsers.clicked += ShowAdminHome;
         if (_btnAdminBackClass != null) _btnAdminBackClass.clicked += ShowAdminHome;
+
+        // Manage Class: isi ikon PNG pada kartu "Manage Class" (Resources/Icons/icon-manage-class.png).
+        LoadManageClassIcon();
 
         // Role gating: hide admin button by default, apply cached role, then refresh from server.
         if (_btnAdmin != null) _btnAdmin.style.display = DisplayStyle.None;
@@ -344,7 +362,7 @@ public class MainMenuController : MonoBehaviour
                 // Guard: non-admins should never reach this page.
                 if (!_isAdmin) { ShowPage("dashboard"); return; }
                 ShowElement(_pageAdmin);
-                ShowAdminHome();
+                ShowAdminHome(); // Default ke admin-home (kartu "Manage Class" saja — "Manage Users" dihilangkan).
                 break;
         }
     }
@@ -976,7 +994,13 @@ public class MainMenuController : MonoBehaviour
 
     private void ApplyRole(string role)
     {
+#if UNITY_EDITOR
+        // Editor debug: Menu Admin SELALU muncul di editor, walau belum login / role server masih "user".
+        // Cuma untuk testing UI — tidak berlaku di build WebGL (compile ke #else).
+        _isAdmin = true;
+#else
         _isAdmin = !string.IsNullOrEmpty(role) && role == "admin";
+#endif
         if (_btnAdmin != null)
             _btnAdmin.style.display = _isAdmin ? DisplayStyle.Flex : DisplayStyle.None;
 
@@ -985,15 +1009,17 @@ public class MainMenuController : MonoBehaviour
             ShowPage("dashboard");
     }
 
+    // Kembali ke halaman admin-home (menampilkan kartu "Manage Class" — "Manage Users" dihilangkan).
     private void ShowAdminHome()
     {
         SetAdminSubviews(home: true, users: false, cls: false);
     }
 
-    private void OpenManageUsers()
-    {
-        SetAdminSubviews(home: false, users: true, cls: false);
-    }
+    // [Manage User] DI-COMMENT — menu "Manage Users" dihilangkan dari Menu Admin:
+    //   private void OpenManageUsers()
+    //   {
+    //       SetAdminSubviews(home: false, users: true, cls: false);
+    //   }
 
     private void OpenManageClass()
     {
@@ -1002,11 +1028,28 @@ public class MainMenuController : MonoBehaviour
         RefreshLocksFromServer();
     }
 
+    // Manage User: show/hide antar admin-home, subview users (di-comment), dan subview Manage Class.
     private void SetAdminSubviews(bool home, bool users, bool cls)
     {
         ToggleHidden(_adminHome, !home);
-        ToggleHidden(_adminManageUsers, !users);
+        // [Manage User] DI-COMMENT — subview users dihapus:
+        //   ToggleHidden(_adminManageUsers, !users);
         ToggleHidden(_adminManageClass, !cls);
+    }
+
+    // Manage Class icon: memuat PNG dari folder Resources/Icons (nama file: icon-manage-class.png)
+    // lalu dipasang sebagai background-image pada element #manage-class-icon di UXML.
+    // Taruh PNG di Assets/Resources/Icons/icon-manage-class.png agar ikut ter-build WebGL.
+    private void LoadManageClassIcon()
+    {
+        _manageClassIcon = _root.Q<VisualElement>("manage-class-icon");
+        if (_manageClassIcon == null) return;
+
+        Texture2D tex = Resources.Load<Texture2D>("Icons/icon-manage-class");
+        if (tex != null)
+            _manageClassIcon.style.backgroundImage = new StyleBackground(tex);
+        else
+            Debug.LogWarning("[MainMenuController] Icon Manage Class tidak ditemukan: Resources/Icons/icon-manage-class.png");
     }
 
     private void ToggleHidden(VisualElement el, bool hidden)

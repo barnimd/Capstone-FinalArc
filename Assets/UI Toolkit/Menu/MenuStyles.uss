@@ -1088,12 +1088,24 @@ Button {
     margin-bottom: 18px;
 }
 
+/* [Manage User] DI-COMMENT — style emoji ikon kartu "Manage Users" (menu dihilangkan):
 .admin-card-icon {
     font-size: 26px;
     color: rgb(255, 252, 245);
     -unity-text-align: middle-center;
     width: 58px;
     height: 58px;
+}
+*/
+
+/* Manage Class icon: PNG yang di-set via code (MainMenuController.LoadManageClassIcon),
+   dirender di tengah kotak oranye tanpa mengubah warna latar kotak. */
+.admin-card-icon-image {
+    width: 58px;
+    height: 58px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .admin-card-title {
@@ -1135,6 +1147,7 @@ Button {
     -unity-font-style: bold;
 }
 
+/* [Manage User] DI-COMMENT — style placeholder "Coming soon" pada subview daftar user (menu dihilangkan):
 .admin-placeholder {
     flex-grow: 1;
     align-items: center;
@@ -1146,6 +1159,7 @@ Button {
     color: rgb(180, 166, 150);
     font-size: 17px;
 }
+*/
 
 /* Admin level card = class lesson card + a status pill at the bottom */
 .admin-level-card { height: 282px; }
