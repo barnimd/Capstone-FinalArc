@@ -58,6 +58,11 @@ public class GameManager_Tp5 : MonoBehaviour
 
     private void OnWifiComplete(bool success)
     {
+        // Lepas listener feedback Wi-Fi supaya callback lama (OnWifiComplete) tidak memicu
+        // crash kedua saat tombol OK shared ditekan di fase website (menyebabkan teks dobel).
+        if (wifiController != null && wifiController.btnFeedbackOk != null)
+            wifiController.btnFeedbackOk.onClick.RemoveListener(wifiController.OnFeedbackOkClicked);
+
         if (!success)
         {
             if (crashOverlay != null)

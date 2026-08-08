@@ -228,7 +228,7 @@ public class WifiSelectorController : MonoBehaviour
         confirmationPanel.SetActive(false);
     }
 
-    private void OnFeedbackOkClicked()
+    public void OnFeedbackOkClicked()
     {
         if (feedbackPanel != null) feedbackPanel.SetActive(false);
         _onComplete?.Invoke(false);

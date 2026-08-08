@@ -1281,6 +1281,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 47379106}
   m_CullTransparentMesh: 1
+--- !u!1 &60465930
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 60465931}
+  - component: {fileID: 60465933}
+  - component: {fileID: 60465932}
+  m_Layer: 0
+  m_Name: AlertIcon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &60465931
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60465930}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1273754609}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 11.371913, y: 14.989035}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &60465932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60465930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &60465933
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60465930}
+  m_CullTransparentMesh: 1
 --- !u!1 &60814883
 GameObject:
   m_ObjectHideFlags: 0
@@ -17969,20 +18044,17 @@ MonoBehaviour:
   crashCanvas: {fileID: 756688769}
   mainBg: {fileID: 1185691847}
   mainText: {fileID: 1016143099}
-  alertLabel: {fileID: 0}
-  intrusionLines:
-  - 'WARNING: Unauthorized access detected'
-  - Firewall bypassed
-  - 'Data connection established: 192.168.1.105'
-  - 'Credentials exposed: admin / ********'
-  - 'Personal data: Name, Email, Password'
-  - DATABASE COMPROMISED
+  shieldIcon: {fileID: 0}
+  alertIcon: {fileID: 0}
+  lockIcon: {fileID: 0}
+  tearLine: {fileID: 0}
   fadeInDuration: 0.6
-  lineShowDuration: 0.9
-  lineFadeDuration: 0.3
-  redFlashCount: 3
-  flashInterval: 0.2
-  finalFadeDuration: 0.8
+  glitchLoopInterval: 0.5
+  glitchLoopCount: 3
+  iconScaleDuration: 0.6
+  pulseCount: 3
+  pulseInterval: 0.3
+  fadeOutDuration: 0.5
 --- !u!114 &756688772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21740,20 +21812,17 @@ MonoBehaviour:
   crashCanvas: {fileID: 901797619}
   mainBg: {fileID: 2099861103}
   mainText: {fileID: 1608708486}
-  alertLabel: {fileID: 0}
-  intrusionLines:
-  - 'WARNING: Unauthorized access detected'
-  - Firewall bypassed
-  - 'Data connection established: 192.168.1.105'
-  - 'Credentials exposed: admin / ********'
-  - 'Personal data: Name, Email, Password'
-  - DATABASE COMPROMISED
+  shieldIcon: {fileID: 0}
+  alertIcon: {fileID: 0}
+  lockIcon: {fileID: 0}
+  tearLine: {fileID: 0}
   fadeInDuration: 0.6
-  lineShowDuration: 0.9
-  lineFadeDuration: 0.3
-  redFlashCount: 3
-  flashInterval: 0.2
-  finalFadeDuration: 0.8
+  glitchLoopInterval: 0.5
+  glitchLoopCount: 3
+  iconScaleDuration: 0.6
+  pulseCount: 3
+  pulseInterval: 0.3
+  fadeOutDuration: 0.5
 --- !u!114 &901797622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31911,6 +31980,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1136611672}
+  - {fileID: 1391947138}
+  - {fileID: 60465931}
+  - {fileID: 1712214531}
   m_Father: {fileID: 1620379286}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -31933,20 +32005,17 @@ MonoBehaviour:
   crashCanvas: {fileID: 1273754604}
   mainBg: {fileID: 1136611674}
   mainText: {fileID: 718843306}
-  alertLabel: {fileID: 0}
-  intrusionLines:
-  - 'WARNING: Unauthorized access detected'
-  - Firewall bypassed
-  - 'Data connection established: 192.168.1.105'
-  - 'Credentials exposed: admin / ********'
-  - 'Personal data: Name, Email, Password'
-  - DATABASE COMPROMISED
+  shieldIcon: {fileID: 1391947137}
+  alertIcon: {fileID: 0}
+  lockIcon: {fileID: 1712214530}
+  tearLine: {fileID: 0}
   fadeInDuration: 0.6
-  lineShowDuration: 0.9
-  lineFadeDuration: 0.3
-  redFlashCount: 3
-  flashInterval: 0.2
-  finalFadeDuration: 0.8
+  glitchLoopInterval: 0.5
+  glitchLoopCount: 3
+  iconScaleDuration: 0.6
+  pulseCount: 3
+  pulseInterval: 0.3
+  fadeOutDuration: 0.5
 --- !u!1 &1274344078
 GameObject:
   m_ObjectHideFlags: 0
@@ -35146,6 +35215,81 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1383235681}
+  m_CullTransparentMesh: 1
+--- !u!1 &1391947137
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1391947138}
+  - component: {fileID: 1391947140}
+  - component: {fileID: 1391947139}
+  m_Layer: 0
+  m_Name: ShieldIcon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1391947138
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391947137}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1273754609}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 11.371913, y: 14.989035}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1391947139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391947137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 44f252dbe424feb4e93b075558668f58, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1391947140
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391947137}
   m_CullTransparentMesh: 1
 --- !u!1 &1410440628
 GameObject:
@@ -54565,6 +54709,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1708705575}
   m_CullTransparentMesh: 1
+--- !u!1 &1712214530
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1712214531}
+  - component: {fileID: 1712214533}
+  - component: {fileID: 1712214532}
+  m_Layer: 5
+  m_Name: LockIcon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1712214531
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712214530}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1273754609}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 11.371913, y: 14.989035}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1712214532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712214530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: ce215ad8d8aea9543bead6c3d6796dd2, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1712214533
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712214530}
+  m_CullTransparentMesh: 1
 --- !u!1 &1721764537
 GameObject:
   m_ObjectHideFlags: 0
@@ -55710,7 +55929,7 @@ Transform:
   m_GameObject: {fileID: 1748217363}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.531582, y: 1.62385, z: -10}
+  m_LocalPosition: {x: 14.538604, y: 1.62385, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
