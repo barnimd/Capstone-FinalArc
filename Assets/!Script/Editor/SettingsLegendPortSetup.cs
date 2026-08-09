@@ -56,9 +56,12 @@ public static class SettingsLegendPortSetup
     private const float V_MARGIN  = 26f;  // jarak kartu dari pojok layar
 
     // ── Tombol HINT + gaya MPUIKit ───────────────────────────────────────────
-    private const float HINT_SIZE      = 72f;  // sisi tombol HINT
-    private const float HINT_CAPTION_H = 22f;  // tinggi tulisan "HINT"
-    private const float HINT_CAPTION_W = 140f; // lebar caption, lebih lebar dari tombol biar gak kepotong
+    private const float HINT_SIZE      = 72f;  // lebar tombol HINT
+    private const float HINT_H         = 100f; // tinggi tombol HINT — ikon + caption muat di dalam
+    private const float HINT_CAPTION_H = 22f;  // tinggi kotak tulisan "HINT"
+    private const float HINT_CAP_PAD   = 8f;   // padding kiri/kanan caption dari tepi tombol
+    private const float HINT_CAP_Y     = 14f;  // jarak caption dari dasar tombol
+    private const float HINT_CAP_FS    = 20f;  // ukuran font maksimum caption
     private const float HINT_TO_CARD   = 12f;  // jarak tombol ke kartu
     private const float R_CARD         = 14f;  // radius sudut kartu
     private const float R_KEY          = 7f;   // radius sudut keycap
@@ -845,38 +848,42 @@ public static class SettingsLegendPortSetup
         btnRT.anchorMin = btnRT.anchorMax = new Vector2(0f, vertical ? 1f : 0f);
         btnRT.pivot = new Vector2(0f, vertical ? 1f : 0f);
         btnRT.anchoredPosition = new Vector2(V_MARGIN, vertical ? -V_MARGIN : V_MARGIN);
-        btnRT.sizeDelta = new Vector2(HINT_SIZE, HINT_SIZE);
+        btnRT.sizeDelta = new Vector2(HINT_SIZE, HINT_H);
 
         var btnImg = AsRoundedRect(btnRT.gameObject, cream, R_HINT, ink, OUTLINE_W, true);
         var button = btnRT.gameObject.AddComponent<Button>();
         button.targetGraphic = btnImg;
 
         // Ikon bohlam: lingkaran garis + dudukan + ulir.
-        var glass = NewChild(btnRT, "Bulb_Glass", new Vector2(0f, 9f), new Vector2(30f, 30f));
+        var glass = NewChild(btnRT, "Bulb_Glass", new Vector2(0f, 20.9f), new Vector2(30f, 30f));
         AsCircle(glass.gameObject, new Color(cream.r, cream.g, cream.b, 0f), ink, 2.5f);
 
-        var baseRT = NewChild(btnRT, "Bulb_Base", new Vector2(0f, -11f), new Vector2(16f, 9f));
+        var baseRT = NewChild(btnRT, "Bulb_Base", new Vector2(0f, 5.1f), new Vector2(16f, 9f));
         AsRoundedRect(baseRT.gameObject, ink, 2f, Color.clear, 0f, false);
 
-        var thread = NewChild(btnRT, "Bulb_Thread", new Vector2(0f, -18f), new Vector2(11f, 3f));
+        var thread = NewChild(btnRT, "Bulb_Thread", new Vector2(0f, -1.9f), new Vector2(11f, 3f));
         AsRoundedRect(thread.gameObject, ink, 1.5f, Color.clear, 0f, false);
 
-        // 4. Tulisan "HINT" — isi kartunya emang daftar kontrol, bukan petunjuk soal.
-        //    Kartu vertikal tombolnya di atas -> caption di bawah;
-        //    kartu horizontal tombolnya nempel dasar layar -> caption di atas,
-        //    kalau di bawah bakal kepotong tepi layar.
+        // 4. Tulisan "HINT" — ditaruh DI DALAM kotak, persis di bawah ikon bohlam.
+        //    Rect-nya ikut lebar tombol dikurangi HINT_CAP_PAD di kiri/kanan, dan
+        //    auto-size dibatasi HINT_CAP_FS, jadi hurufnya tidak pernah nyentuh
+        //    garis tepi (OUTLINE_W) atau kemakan sudut membulat (R_HINT).
         var capRT = (RectTransform)new GameObject("HintCaption", typeof(RectTransform)).transform;
         capRT.SetParent(btnRT, false);
-        capRT.anchorMin = capRT.anchorMax = new Vector2(0.5f, vertical ? 0f : 1f);
-        capRT.pivot = new Vector2(0.5f, vertical ? 1f : 0f);
-        capRT.anchoredPosition = new Vector2(0f, vertical ? -4f : 4f);
-        capRT.sizeDelta = new Vector2(HINT_CAPTION_W, HINT_CAPTION_H);
+        capRT.anchorMin = new Vector2(0f, 0f);
+        capRT.anchorMax = new Vector2(1f, 0f);
+        capRT.pivot = new Vector2(0.5f, 0f);
+        capRT.sizeDelta = new Vector2(-HINT_CAP_PAD * 2f, HINT_CAPTION_H);
+        capRT.anchoredPosition = new Vector2(0f, HINT_CAP_Y);
         var cap = capRT.gameObject.AddComponent<TextMeshProUGUI>();
         cap.text = "HINT";
-        cap.fontSize = 16f;
         cap.enableWordWrapping = false;
+        cap.enableAutoSizing = true;
+        cap.fontSizeMin = 10f;
+        cap.fontSizeMax = HINT_CAP_FS;
+        cap.fontSize = HINT_CAP_FS;
         cap.color = ink;
-        cap.alignment = vertical ? TextAlignmentOptions.Top : TextAlignmentOptions.Bottom;
+        cap.alignment = TextAlignmentOptions.Center;
         cap.fontStyle = FontStyles.Bold;
         cap.raycastTarget = false;
         if (font != null) cap.font = font;
@@ -885,7 +892,7 @@ public static class SettingsLegendPortSetup
         //    pojok yang sama. Layout horizontal kartunya di tengah, gak nabrak.
         if (vertical)
         {
-            float drop = HINT_SIZE + HINT_CAPTION_H + HINT_TO_CARD;
+            float drop = HINT_H + HINT_TO_CARD;   // caption sudah di dalam tombol
             card.anchoredPosition = new Vector2(V_MARGIN, -(V_MARGIN + drop));
             if (shadow != null) shadow.anchoredPosition = card.anchoredPosition + new Vector2(-5f, -5f);
         }
