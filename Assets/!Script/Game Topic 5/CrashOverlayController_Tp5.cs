@@ -32,6 +32,10 @@ public class CrashOverlayController_Tp5 : MonoBehaviour
     public float flashInterval = 0.2f;
     public float finalFadeDuration = 0.8f;
 
+    [Header("=== Animasi Alternatif ===")]
+    [Tooltip("Gunakan animasi phishing-hack (dari Topic 3) alih-alih crash biasa. Tidak mengubah alur game.")]
+    public bool usePhishingHackAnimation;
+
     private System.Action _onDone;
     private bool _playing;
 
@@ -46,6 +50,19 @@ public class CrashOverlayController_Tp5 : MonoBehaviour
     {
         Debug.Log("[CrashTp5] PlayCrash called");
         _onDone = onDone;
+
+        // Ganti animasi crash dengan phishing-hack (dari Topic 3) bila diaktifkan —
+        // callback tetap dipanggil sama, sehingga alur game tidak berubah.
+        if (usePhishingHackAnimation)
+        {
+            PhishingHackAnimation anim = PhishingHackAnimation.Cari();
+            if (anim != null)
+            {
+                anim.Mainkan(onDone);
+                return;
+            }
+            Debug.LogWarning("[CrashTp5] PhishingHackAnimation tidak ada di scene — fallback ke crash biasa.");
+        }
 
         // Jaga agar animasi tidak berjalan dua kali (mencegah teks terduplikasi).
         if (_playing)

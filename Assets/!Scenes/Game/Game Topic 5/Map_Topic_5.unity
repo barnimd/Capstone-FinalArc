@@ -4441,6 +4441,7 @@ MonoBehaviour:
   redFlashCount: 3
   flashInterval: 0.2
   finalFadeDuration: 0.8
+  usePhishingHackAnimation: 1
 --- !u!114 &340611516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12915,9 +12916,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2413104714624763989, guid: 4010674f978599f42a833509ce7f77dd, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -33.600098
+      objectReference: {fileID: 0}
+    - target: {fileID: 2413104714624763989, guid: 4010674f978599f42a833509ce7f77dd, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -33.599976
+      objectReference: {fileID: 0}
     - target: {fileID: 5086529941627012174, guid: 4010674f978599f42a833509ce7f77dd, type: 3}
       propertyPath: m_Name
       value: ObjectiveRedesignHUD
+      objectReference: {fileID: 0}
+    - target: {fileID: 7181121766050547749, guid: 4010674f978599f42a833509ce7f77dd, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -33.600098
+      objectReference: {fileID: 0}
+    - target: {fileID: 7181121766050547749, guid: 4010674f978599f42a833509ce7f77dd, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -33.599976
       objectReference: {fileID: 0}
     - target: {fileID: 7661101527237906776, guid: 4010674f978599f42a833509ce7f77dd, type: 3}
       propertyPath: m_Pivot.x
@@ -16252,6 +16269,80 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 899029708}
   m_CullTransparentMesh: 1
+--- !u!1 &900000301
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 900000303}
+  - component: {fileID: 900000302}
+  m_Layer: 0
+  m_Name: PhishingHackAnimation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &900000302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900000301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7487f7e6f64d64949a36edd12281bcd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spritePC: {fileID: 21300000, guid: 350cf36694af5e94b8bb1e9cffe8699d, type: 3}
+  spriteHacker: {fileID: 21300000, guid: 190f06fd7dfcfdc4790eb35c1e3b96c3, type: 3}
+  spriteMail: {fileID: 21300000, guid: ce6a04785671c774990b93b4fdd03232, type: 3}
+  spriteFolder: {fileID: 21300000, guid: 7a2d95a9936c73f469472699d4d96e27, type: 3}
+  sizePC: {x: 340, y: 380}
+  sizeHacker: {x: 400, y: 320}
+  sizeMail: {x: 130, y: 95}
+  sizeFolder: {x: 120, y: 110}
+  posPC: {x: -520, y: -60}
+  posHacker: {x: 520, y: -20}
+  tinggiBusur: 260
+  jumlahStrip: 22
+  durasiGelap: 0.45
+  durasiMasuk: 0.55
+  durasiLempar: 0.9
+  durasiNyangkut: 0.5
+  durasiPerFile: 0.8
+  jedaAntarFile: 0.4
+  jumlahFile: 5
+  durasiOutro: 1.1
+  durasiFadeOut: 0.35
+  teksPeringatan: DATA KAMU DICURI!
+  teksSubPeringatan: Wi-Fi publik yang tidak aman = mengekspos data kepada penyerang.
+  formatCounter: FILE DICURI  {0}/{1}
+  bisaDiSkip: 1
+  warnaGelap: {r: 0.02, g: 0.03, b: 0.05, a: 1}
+  warnaMerah: {r: 1, g: 0.17, b: 0.23, a: 1}
+  warnaGaris: {r: 1, g: 0.28, b: 0.32, a: 1}
+  alphaGelapMaks: 0.94
+  mainkanSaatStartUntukTes: 0
+--- !u!4 &900000303
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900000301}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &911309162
 GameObject:
   m_ObjectHideFlags: 0
@@ -53065,3 +53156,4 @@ SceneRoots:
   - {fileID: 767691651}
   - {fileID: 5537812176827518861}
   - {fileID: 462312508}
+  - {fileID: 900000303}
