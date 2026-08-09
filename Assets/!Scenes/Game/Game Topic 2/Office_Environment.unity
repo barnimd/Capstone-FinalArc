@@ -1030,7 +1030,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 453880788989367354, guid: 0fb9ed04e1e97dd43bae69865a4c2d5f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1985230049649165331, guid: 0fb9ed04e1e97dd43bae69865a4c2d5f, type: 3}
       propertyPath: btnSettings
@@ -1126,6 +1126,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5083525656976407654, guid: 0fb9ed04e1e97dd43bae69865a4c2d5f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6671542426386218961, guid: 0fb9ed04e1e97dd43bae69865a4c2d5f, type: 3}
+      propertyPath: m_SortingOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8338411601244279140, guid: 0fb9ed04e1e97dd43bae69865a4c2d5f, type: 3}
@@ -3268,6 +3272,7 @@ MonoBehaviour:
   target: {fileID: 0}
   player: {fileID: 160293182}
   arrowImage: {fileID: 0}
+  spriteFacing: 0
   rotationOffset: 0
   displayMode: 0
   screenEdgeMargin: 52
@@ -3277,6 +3282,25 @@ MonoBehaviour:
   visibleTargetOffset: {x: 0, y: 44}
   visibleTargetRotation: 180
   hideWithinWorldDistance: 1.5
+  farArrowSprite: {fileID: 0}
+  nearMarkerSprite: {fileID: 0}
+  nearMarkerWorldDistance: 5
+  nearMarkerRotation: 0
+  nearMarkerScale: 1
+  useRendererBounds: 0
+  worldHeightOffset: 0.25
+  markerProfiles: []
+  idleBobEnabled: 1
+  idleBobAmplitude: 5
+  idleBobPeriod: 1.1
+  idleBobScalePulse: 0.06
+  positionSmoothTime: 0.05
+  fadeDuration: 0.15
+  scaleWithDistance: 0
+  scaleNearDistance: 4
+  scaleFarDistance: 24
+  maxDistanceScale: 1
+  minDistanceScale: 0.6
   bounceDuration: 0.4
   bounceCount: 3
   bounceAmplitude: 8
@@ -13272,7 +13296,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &567085275
 MonoBehaviour:
   m_ObjectHideFlags: 0
