@@ -2,6 +2,8 @@ import { buildSystemPrompt, isDuplicateCoachResponse, parseCoachResponse } from 
 
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
 const MODEL = 'deepseek-v4-flash';
+const THINKING = 'enabled';
+const EFFORT = 'high';
 
 export async function requestCoachResponse(stageId, messages, options = {}) {
   const apiKey = process.env.DEEPSEEK_API_KEY;
@@ -12,7 +14,7 @@ export async function requestCoachResponse(stageId, messages, options = {}) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 20000);
     try {
-      const upstream = await fetch(DEEPSEEK_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, signal: controller.signal, body: JSON.stringify({ model: MODEL, thinking: { type: 'disabled' }, messages: [{ role: 'system', content: buildSystemPrompt(stageId) }, ...attemptMessages], response_format: { type: 'json_object' }, max_tokens: 384, temperature: 0.2 }) });
+      const upstream = await fetch(DEEPSEEK_URL, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, signal: controller.signal, body: JSON.stringify({ model: MODEL, thinking: { type: THINKING }, reasoning_effort: EFFORT, messages: [{ role: 'system', content: buildSystemPrompt(stageId) }, ...attemptMessages], response_format: { type: 'json_object' }, max_tokens: 1024, temperature: 0.2 }) });
       const data = await upstream.json();
       if (!upstream.ok) throw coachError(`http_${upstream.status}`, data?.error?.message ?? `DeepSeek HTTP ${upstream.status}`);
       const finishReason = data?.choices?.[0]?.finish_reason;
