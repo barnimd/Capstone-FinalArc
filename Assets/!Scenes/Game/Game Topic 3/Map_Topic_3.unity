@@ -2532,7 +2532,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &291233450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23869,7 +23869,7 @@ MonoBehaviour:
   durasiNyangkut: 0.5
   durasiPerFile: 0.8
   jedaAntarFile: 0.4
-  jumlahFile: 3
+  jumlahFile: 5
   durasiOutro: 1.1
   durasiFadeOut: 0.35
   teksPeringatan: DATA KAMU DICURI!
@@ -27296,7 +27296,7 @@ Transform:
   m_GameObject: {fileID: 1327259501}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 20, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -27377,7 +27377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 495d7162ca410b545a75d8bfb728d1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactionPrompt: Press E
+  interactionPrompt: Tekan E untuk berinteraksi
   onInteract:
     m_PersistentCalls:
       m_Calls:
@@ -30345,7 +30345,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 19.999939, y: -15}
+  m_AnchoredPosition: {x: 20, y: -15}
   m_SizeDelta: {x: 360, y: 50}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1634249280
@@ -30520,7 +30520,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 46, y: 46}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1654320703
 MonoBehaviour:
@@ -30547,8 +30547,8 @@ MonoBehaviour:
   visibleTargetOffset: {x: 0, y: 44}
   visibleTargetRotation: 0
   hideWithinWorldDistance: 1.2
-  farArrowSprite: {fileID: -55241936, guid: 917b62a0c0e7bdc4a8669116f5c98233, type: 3}
-  nearMarkerSprite: {fileID: -320986822, guid: 917b62a0c0e7bdc4a8669116f5c98233, type: 3}
+  farArrowSprite: {fileID: 1500093492, guid: 917b62a0c0e7bdc4a8669116f5c98233, type: 3}
+  nearMarkerSprite: {fileID: 720359660, guid: 917b62a0c0e7bdc4a8669116f5c98233, type: 3}
   nearMarkerWorldDistance: 5
   nearMarkerRotation: 0
   nearMarkerScale: 1
@@ -30582,14 +30582,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0.20187712, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f770cba3027868644984454f295405d0, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
