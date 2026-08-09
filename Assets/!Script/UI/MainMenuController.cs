@@ -53,7 +53,6 @@ public class MainMenuController : MonoBehaviour
 
     // Leaderboard refs
     private Label _yourRankValue, _yourRankSubtitle;
-    private Label _yourBestValue, _yourBestSubtitle;
     private Label _topScoreValue, _topScoreSubtitle;
     private ScrollView _rowList;
     private Button _tabGlobal;
@@ -167,8 +166,6 @@ public class MainMenuController : MonoBehaviour
         // Leaderboard sub-refs
         _yourRankValue = _root.Q<Label>("your-rank-value");
         _yourRankSubtitle = _root.Q<Label>("your-rank-subtitle");
-        _yourBestValue = _root.Q<Label>("your-best-value");
-        _yourBestSubtitle = _root.Q<Label>("your-best-subtitle");
         _topScoreValue = _root.Q<Label>("top-score-value");
         _topScoreSubtitle = _root.Q<Label>("top-score-subtitle");
         _rowList = _root.Q<ScrollView>("row-list");
@@ -435,19 +432,41 @@ public class MainMenuController : MonoBehaviour
         {
             if (_yourRankValue != null) _yourRankValue.text = "#" + mine.rank;
             if (_yourRankSubtitle != null) _yourRankSubtitle.text = $"dari {entries.Length} pemain";
-            if (_yourBestValue != null) _yourBestValue.text = mine.score.ToString();
-            if (_yourBestSubtitle != null) _yourBestSubtitle.text = mine.bestStageName;
+        }
+        else
+        {
+            // User belum masuk daftar top-N yang tampil — cari peringkat global-nya
+            // dari daftar yang lebih besar (sama seperti halaman Profil).
+            if (_yourRankValue != null) _yourRankValue.text = "…";
+            if (_yourRankSubtitle != null) _yourRankSubtitle.text = "Mencari peringkatmu…";
+            if (!string.IsNullOrEmpty(myUid) && LeaderboardManager.Instance != null)
+                LeaderboardManager.Instance.FetchGlobal(100, OnMyGlobalRankLoaded);
+        }
+
+        foreach (GlobalLeaderboardEntryDTO e in entries)
+            _rowList.Add(BuildRow(e, isYou: e.userId == myUid));
+    }
+
+    // Isi kartu PERINGKATMU dengan peringkat global user (dari top 100).
+    // Dipakai kalau user tidak masuk daftar top-N yang tampil di tabel.
+    private void OnMyGlobalRankLoaded(bool ok, GlobalLeaderboardEntryDTO[] entries)
+    {
+        if (!ok || entries == null) return;
+
+        string myUid = FirebaseManager.Instance != null ? FirebaseManager.Instance.LocalId : null;
+        if (string.IsNullOrEmpty(myUid)) return;
+
+        GlobalLeaderboardEntryDTO mine = entries.FirstOrDefault(e => e.userId == myUid);
+        if (mine != null)
+        {
+            if (_yourRankValue != null) _yourRankValue.text = "#" + mine.rank;
+            if (_yourRankSubtitle != null) _yourRankSubtitle.text = $"dari {entries.Length} pemain";
         }
         else
         {
             if (_yourRankValue != null) _yourRankValue.text = "—";
             if (_yourRankSubtitle != null) _yourRankSubtitle.text = "belum masuk papan peringkat";
-            if (_yourBestValue != null) _yourBestValue.text = "—";
-            if (_yourBestSubtitle != null) _yourBestSubtitle.text = "belum ada penyelesaian";
         }
-
-        foreach (GlobalLeaderboardEntryDTO e in entries)
-            _rowList.Add(BuildRow(e, isYou: e.userId == myUid));
     }
 
     // ── Help page ──────────────────────────────────────────────────────────
