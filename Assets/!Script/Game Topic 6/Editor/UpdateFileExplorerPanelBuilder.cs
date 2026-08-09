@@ -155,6 +155,12 @@ public static class UpdateFileExplorerPanelBuilder
         Debug.Log("[Builder] updatefileexplorerpanel selesai dibangun & ExplorerController di-rewire. Scene disimpan.");
     }
 
+    /// <summary>
+    /// Bikin kolom rename + tombol OK di tiap baris. Dimatikan sejak fitur rename dicabut.
+    /// Sengaja static readonly, bukan const, biar compiler nggak ngeluh "unreachable code".
+    /// </summary>
+    static readonly bool ENABLE_RENAME_UI = false;
+
     static FileItem BuildFileRow(Transform parent, int index, bool hasDelete)
     {
         GameObject row = MakeGO("FileItem_" + index, parent);
@@ -195,44 +201,51 @@ public static class UpdateFileExplorerPanelBuilder
             fi.deleteBtn = delBtn;
         }
 
-        // tombol rename
-        GameObject renGo = MakeGO("renameBtn", row.transform);
-        SetRect(renGo, new Vector2(1, 0.5f), new Vector2(1, 0.5f),
-            new Vector2(-10 - deleteOffset - btnW, -18), new Vector2(-10 - deleteOffset, 18));
-        MPImage renImg = AddMP(renGo, cBlue, new Vector4(6, 6, 6, 6));
-        var renBtn = renGo.AddComponent<Button>();
-        renBtn.targetGraphic = renImg;
-        GameObject renLbl = MakeGO("Label", renGo.transform);
-        SetRect(renLbl, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-        AddText(renLbl, "OK", 13, Color.white, TextAlignmentOptions.Center, true);
-        fi.renameBtn = renBtn;
+        // Fitur rename dimatikan: tiap baris cuma nampilin nama file + lock icon,
+        // plus tombol delete di baris terakhir. Kalau suatu saat mau dihidupkan lagi,
+        // set ENABLE_RENAME_UI = true di atas — ExplorerController sudah siap
+        // (WireRow tetap ngecek null, jadi aman kalau tombolnya nggak ada).
+        if (ENABLE_RENAME_UI)
+        {
+            // tombol rename
+            GameObject renGo = MakeGO("renameBtn", row.transform);
+            SetRect(renGo, new Vector2(1, 0.5f), new Vector2(1, 0.5f),
+                new Vector2(-10 - deleteOffset - btnW, -18), new Vector2(-10 - deleteOffset, 18));
+            MPImage renImg = AddMP(renGo, cBlue, new Vector4(6, 6, 6, 6));
+            var renBtn = renGo.AddComponent<Button>();
+            renBtn.targetGraphic = renImg;
+            GameObject renLbl = MakeGO("Label", renGo.transform);
+            SetRect(renLbl, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            AddText(renLbl, "OK", 13, Color.white, TextAlignmentOptions.Center, true);
+            fi.renameBtn = renBtn;
 
-        // input rename (TMP_InputField)
-        float inputRight = 10 + deleteOffset + btnW + 8;
-        GameObject inGo = MakeGO("InputRename", row.transform);
-        SetRect(inGo, new Vector2(1, 0.5f), new Vector2(1, 0.5f),
-            new Vector2(-inputRight - 190, -18), new Vector2(-inputRight, 18));
-        MPImage inImg = AddMP(inGo, cInput, new Vector4(6, 6, 6, 6));
-        var inField = inGo.AddComponent<TMP_InputField>();
-        inField.targetGraphic = inImg;
+            // input rename (TMP_InputField)
+            float inputRight = 10 + deleteOffset + btnW + 8;
+            GameObject inGo = MakeGO("InputRename", row.transform);
+            SetRect(inGo, new Vector2(1, 0.5f), new Vector2(1, 0.5f),
+                new Vector2(-inputRight - 190, -18), new Vector2(-inputRight, 18));
+            MPImage inImg = AddMP(inGo, cInput, new Vector4(6, 6, 6, 6));
+            var inField = inGo.AddComponent<TMP_InputField>();
+            inField.targetGraphic = inImg;
 
-        GameObject textArea = MakeGO("TextArea", inGo.transform);
-        SetRect(textArea, Vector2.zero, Vector2.one, new Vector2(10, 2), new Vector2(-10, -2));
-        textArea.AddComponent<RectMask2D>();
+            GameObject textArea = MakeGO("TextArea", inGo.transform);
+            SetRect(textArea, Vector2.zero, Vector2.one, new Vector2(10, 2), new Vector2(-10, -2));
+            textArea.AddComponent<RectMask2D>();
 
-        GameObject phGo = MakeGO("Placeholder", textArea.transform);
-        SetRect(phGo, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-        TextMeshProUGUI phTxt = AddText(phGo, "rename...", 14, cTextDim, TextAlignmentOptions.MidlineLeft, false);
-        phTxt.fontStyle = FontStyles.Italic;
+            GameObject phGo = MakeGO("Placeholder", textArea.transform);
+            SetRect(phGo, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            TextMeshProUGUI phTxt = AddText(phGo, "rename...", 14, cTextDim, TextAlignmentOptions.MidlineLeft, false);
+            phTxt.fontStyle = FontStyles.Italic;
 
-        GameObject txGo = MakeGO("Text", textArea.transform);
-        SetRect(txGo, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-        TextMeshProUGUI txTxt = AddText(txGo, "", 14, cText, TextAlignmentOptions.MidlineLeft, false);
+            GameObject txGo = MakeGO("Text", textArea.transform);
+            SetRect(txGo, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            TextMeshProUGUI txTxt = AddText(txGo, "", 14, cText, TextAlignmentOptions.MidlineLeft, false);
 
-        inField.textViewport = textArea.GetComponent<RectTransform>();
-        inField.textComponent = txTxt;
-        inField.placeholder = phTxt;
-        fi.inputRename = inField;
+            inField.textViewport = textArea.GetComponent<RectTransform>();
+            inField.textComponent = txTxt;
+            inField.placeholder = phTxt;
+            fi.inputRename = inField;
+        }
 
         return fi;
     }
