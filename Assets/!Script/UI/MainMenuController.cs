@@ -53,6 +53,7 @@ public class MainMenuController : MonoBehaviour
 
     // Leaderboard refs
     private Label _yourRankValue;
+    private Label _topScoreValue, _topScoreSubtitle;
     private ScrollView _rowList;
     private Button _tabGlobal;
 
@@ -164,6 +165,8 @@ public class MainMenuController : MonoBehaviour
 
         // Leaderboard sub-refs
         _yourRankValue = _root.Q<Label>("your-rank-value");
+        _topScoreValue = _root.Q<Label>("top-score-value");
+        _topScoreSubtitle = _root.Q<Label>("top-score-subtitle");
         _rowList = _root.Q<ScrollView>("row-list");
 
         _tabGlobal = _root.Q<Button>("tab-global");
@@ -416,6 +419,9 @@ public class MainMenuController : MonoBehaviour
         }
 
         string myUid = FirebaseManager.Instance != null ? FirebaseManager.Instance.LocalId : null;
+
+        if (_topScoreValue != null) _topScoreValue.text = entries[0].score.ToString();
+        if (_topScoreSubtitle != null) _topScoreSubtitle.text = $"oleh {entries[0].displayName}";
 
         GlobalLeaderboardEntryDTO mine = !string.IsNullOrEmpty(myUid)
             ? entries.FirstOrDefault(e => e.userId == myUid)

@@ -107,9 +107,14 @@
                         <ui:Label text="Skor Tertinggi" class="title" />
                     </ui:VisualElement>
                     <ui:VisualElement class="stat-strip">
-                        <ui:VisualElement name="stat-your-rank" class="stat-card stat-card-last">
+                        <ui:VisualElement name="stat-your-rank" class="stat-card">
                             <ui:Label text="PERINGKATMU" class="stat-label" />
                             <ui:Label text="—" name="your-rank-value" class="stat-value" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="stat-top-score" class="stat-card stat-card-last">
+                            <ui:Label text="SKOR TERTINGGI" class="stat-label" />
+                            <ui:Label text="—" name="top-score-value" class="stat-value" />
+                            <ui:Label text="—" name="top-score-subtitle" class="stat-subtitle" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:VisualElement class="filter-row">
