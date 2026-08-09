@@ -55,14 +55,14 @@ public static class SettingsLegendPortSetup
     private const float V_COL_GAP = 28f;  // jarak antar kolom (divider di tengahnya)
     private const float V_MARGIN  = 26f;  // jarak kartu dari pojok layar
 
-    // ── Tombol CONTROLS + gaya MPUIKit ───────────────────────────────────────
-    private const float HINT_SIZE      = 72f;  // sisi tombol CONTROLS
-    private const float HINT_CAPTION_H = 22f;  // tinggi tulisan "CONTROLS"
+    // ── Tombol HINT + gaya MPUIKit ───────────────────────────────────────────
+    private const float HINT_SIZE      = 72f;  // sisi tombol HINT
+    private const float HINT_CAPTION_H = 22f;  // tinggi tulisan "HINT"
     private const float HINT_CAPTION_W = 140f; // lebar caption, lebih lebar dari tombol biar gak kepotong
     private const float HINT_TO_CARD   = 12f;  // jarak tombol ke kartu
     private const float R_CARD         = 14f;  // radius sudut kartu
     private const float R_KEY          = 7f;   // radius sudut keycap
-    private const float R_HINT         = 10f;  // radius sudut tombol CONTROLS
+    private const float R_HINT         = 10f;  // radius sudut tombol HINT
     private const float OUTLINE_W      = 3f;   // tebal garis tepi
 
     /// <summary>Satu baris legend: daftar keycap + labelnya.</summary>
@@ -360,7 +360,7 @@ public static class SettingsLegendPortSetup
 
         var legend = legendGO.GetComponent<ControlLegendUI>();
 
-        // Cari lewat nama, bukan path — hierarki-nya berubah kalau tombol CONTROLS dipasang.
+        // Cari lewat nama, bukan path — hierarki-nya berubah kalau tombol HINT dipasang.
         var card = FindDeep(legendGO.transform, "Card");
         var shadow = FindDeep(legendGO.transform, "Shadow");
 
@@ -388,7 +388,7 @@ public static class SettingsLegendPortSetup
             log.AppendLine("  isi kartu legend sama kayak prefab, gak diubah.");
         }
 
-        // Restyle MPUIKit + tombol CONTROLS dipasang di semua topic. Keduanya ngubah
+        // Restyle MPUIKit + tombol HINT dipasang di semua topic. Keduanya ngubah
         // struktur (buang child "Inner", sisipin wrapper "Visible"), dan itu gak
         // boleh dilakuin ke prefab instance — jadi unpack dulu kalau masih nyambung.
         if (PrefabUtility.IsPartOfPrefabInstance(legendGO))
@@ -396,7 +396,7 @@ public static class SettingsLegendPortSetup
             PrefabUtility.UnpackPrefabInstance(legendGO, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
             card = FindDeep(legendGO.transform, "Card");
             shadow = FindDeep(legendGO.transform, "Shadow");
-            log.AppendLine("  legend di-unpack (perlu restyle MPUIKit + tombol CONTROLS).");
+            log.AppendLine("  legend di-unpack (perlu restyle MPUIKit + tombol HINT).");
         }
 
         StyleCardMPUI(card, shadow, log);
@@ -798,15 +798,15 @@ public static class SettingsLegendPortSetup
         return go.AddComponent<MPImage>();
     }
 
-    // ── Tombol CONTROLS ──────────────────────────────────────────────────────
+    // ── Tombol HINT ──────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Bungkus legend dalam wrapper "Visible", terus taruh tombol CONTROLS di sebelahnya.
+    /// Bungkus legend dalam wrapper "Visible", terus taruh tombol HINT di sebelahnya.
     ///
     ///   ControlLegendCanvas  [ControlLegendUI + ControlLegendHintToggle]
     ///   └── Visible            ← legendRoot-nya ControlLegendUI (pause / blocker)
     ///       ├── HintButton     ← tetap keliatan pas kartu ditutup
-    ///       └── Legend         ← di-toggle tombol CONTROLS, auto-hide 4 detik
+    ///       └── Legend         ← di-toggle tombol HINT, auto-hide 4 detik
     ///
     /// Posisi tombol ngikut layout kartunya:
     ///   vertikal (side-scroll) → pojok kiri ATAS, kartu turun di bawahnya
@@ -861,18 +861,18 @@ public static class SettingsLegendPortSetup
         var thread = NewChild(btnRT, "Bulb_Thread", new Vector2(0f, -18f), new Vector2(11f, 3f));
         AsRoundedRect(thread.gameObject, ink, 1.5f, Color.clear, 0f, false);
 
-        // 4. Tulisan "CONTROLS" — isi kartunya emang daftar kontrol, bukan petunjuk soal.
+        // 4. Tulisan "HINT" — isi kartunya emang daftar kontrol, bukan petunjuk soal.
         //    Kartu vertikal tombolnya di atas -> caption di bawah;
         //    kartu horizontal tombolnya nempel dasar layar -> caption di atas,
         //    kalau di bawah bakal kepotong tepi layar.
-        var capRT = (RectTransform)new GameObject("ControlsCaption", typeof(RectTransform)).transform;
+        var capRT = (RectTransform)new GameObject("HintCaption", typeof(RectTransform)).transform;
         capRT.SetParent(btnRT, false);
         capRT.anchorMin = capRT.anchorMax = new Vector2(0.5f, vertical ? 0f : 1f);
         capRT.pivot = new Vector2(0.5f, vertical ? 1f : 0f);
         capRT.anchoredPosition = new Vector2(0f, vertical ? -4f : 4f);
         capRT.sizeDelta = new Vector2(HINT_CAPTION_W, HINT_CAPTION_H);
         var cap = capRT.gameObject.AddComponent<TextMeshProUGUI>();
-        cap.text = "CONTROLS";
+        cap.text = "HINT";
         cap.fontSize = 16f;
         cap.enableWordWrapping = false;
         cap.color = ink;
@@ -907,7 +907,7 @@ public static class SettingsLegendPortSetup
 
         legendPanel.gameObject.SetActive(false);
 
-        log.AppendLine("  tombol CONTROLS dipasang. legendRoot -> 'Visible', kartu auto-hide 4 detik.");
+        log.AppendLine("  tombol HINT dipasang. legendRoot -> 'Visible', kartu auto-hide 4 detik.");
     }
 
     private static RectTransform NewChild(RectTransform parent, string name, Vector2 pos, Vector2 size)

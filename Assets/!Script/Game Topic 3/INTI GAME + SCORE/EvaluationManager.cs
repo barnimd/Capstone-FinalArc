@@ -50,6 +50,50 @@ public class EvaluationManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Game over instan — dipakai saat player membalas email phishing. Sisa email dan
+    /// sesi evaluasi dilewati, jadi skor cuma dihitung dari keputusan email yang sudah
+    /// diambil (porsi evaluasi = 0). Hasilnya tetap disimpan ke Neon lalu masuk summary.
+    /// </summary>
+    public void TriggerGameOver(string alasan)
+    {
+        if (_evaluationDone) return;
+        _evaluationDone = true;   // kunci, biar TriggerEvaluation tidak jalan lagi
+
+        int emailCorrect = 0;
+        int emailWrong   = 0;
+        int emailNeutral = 0;
+        if (emailManager != null)
+        {
+            emailCorrect = emailManager.GetScore(DecisionOutcome.Correct);
+            emailWrong   = emailManager.GetScore(DecisionOutcome.Wrong);
+            emailNeutral = emailManager.GetScore(DecisionOutcome.Neutral);
+        }
+
+        int emailTotal = emailManager != null ? emailManager.GetTotalDecisions() : 0;
+        int emailScore = emailTotal > 0
+            ? Mathf.RoundToInt((float)emailCorrect / emailTotal * emailMaxScore)
+            : 0;
+        int totalScore = Mathf.Clamp(emailScore, 0, maxScore);
+
+        if (ScoreManager.instance != null)
+            ScoreManager.instance.SetScore(totalScore);
+
+        int finalScore = ScoreManager.instance != null
+            ? ScoreManager.instance.score
+            : totalScore;
+
+        Debug.Log($"[EvaluationManager] GAME OVER ({alasan}) — evaluasi dilewati. " +
+                  $"Email: C={emailCorrect} W={emailWrong} N={emailNeutral} ({emailScore}) | FinalScore={finalScore}");
+
+        if (StageManager.Instance != null)
+            StageManager.Instance.SubmitFinalScore(stageId, finalScore, maxScore, "Topic3");
+        else
+            Debug.LogWarning("[EvaluationManager] StageManager tidak ada — skor tidak tersimpan ke Neon (cuma lokal).");
+
+        TampilkanSummary();
+    }
+
     public void SelesaiEvaluasi()
     {
         int correct = evaluationPanel.GetCorrectCount();

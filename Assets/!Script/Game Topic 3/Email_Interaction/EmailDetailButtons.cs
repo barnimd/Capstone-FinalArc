@@ -27,7 +27,12 @@ public class EmailDetailButtons : MonoBehaviour
     [Header("=== Referensi ===")]
     public EmailRandomizer emailRandomizer;
 
+    [Header("=== Animasi Kena Hack (Balas email phishing) ===")]
+    [Tooltip("Kosongkan untuk auto-cari di scene. Kalau tidak ada, hasil langsung tampil tanpa animasi.")]
+    public PhishingHackAnimation animasiKenaHack;
+
     private System.Action _onYesAction;
+    private bool          _gameOverSetelahHasil;
 
     private void Start()
     {
@@ -63,11 +68,36 @@ public class EmailDetailButtons : MonoBehaviour
                     EmailManager.Instance.RecordDecision(PlayerAction.Balas, entry);
 
                 if (phishing)
+                {
+                    // Popup dulu. Animasi kena hack + game over jalan setelah player pencet OK.
+                    _gameOverSetelahHasil = true;
                     TampilHasil("Kamu telah membalas email Phishing!\nLain kali harap lebih berhati-hati.");
+                }
                 else
+                {
                     TampilHasil("Balasan terkirim.\nEmail ini adalah email normal.");
+                }
             }
         );
+    }
+
+    /// <summary>
+    /// Putar cutscene hacker mancing data dari PC. Kalau animasinya tidak ada di scene,
+    /// langsung jalankan <paramref name="setelahnya"/> supaya alur game tidak mandek.
+    /// </summary>
+    private void MainkanAnimasiKenaHack(System.Action setelahnya)
+    {
+        if (animasiKenaHack == null)
+            animasiKenaHack = PhishingHackAnimation.Cari();
+
+        if (animasiKenaHack == null)
+        {
+            Debug.LogWarning("[EmailDetailButtons] PhishingHackAnimation tidak ada di scene, hasil ditampilkan langsung.");
+            setelahnya?.Invoke();
+            return;
+        }
+
+        animasiKenaHack.Mainkan(setelahnya);
     }
 
     // ─────────────────────────────────────────────
@@ -125,15 +155,46 @@ public class EmailDetailButtons : MonoBehaviour
         KembaliKeEmailList();
     }
 
-    // Setelah player lihat hasil → email hilang dari list
+    // Setelah player lihat hasil → email hilang dari list.
+    // Khusus kasus balas email phishing: putar animasi kena hack, lalu game over → summary.
     private void OnHasilOk()
     {
         panelHasil.SetActive(false);
+
+        if (_gameOverSetelahHasil)
+        {
+            _gameOverSetelahHasil = false;
+            btnHasilOk.interactable = false;
+
+            // Tutup UI email dulu, baru animasi. Jadi pas overlay fade out player tidak
+            // sempat lihat inbox berkedip sebelum summary muncul.
+            panelEmailDetail.SetActive(false);
+            if (EmailManager.Instance != null)
+                EmailManager.Instance.CloseEmailCanvas();
+
+            MainkanAnimasiKenaHack(GameOverKenaPhishing);
+            return;
+        }
 
         if (emailRandomizer != null)
             emailRandomizer.HilangkanEmailDariList();
         else
             KembaliKeEmailList();
+    }
+
+    /// <summary>Game berakhir karena player membalas email phishing → langsung ke summary.</summary>
+    private void GameOverKenaPhishing()
+    {
+        if (EvaluationManager.Instance != null)
+        {
+            EvaluationManager.Instance.TriggerGameOver("balas_email_phishing");
+        }
+        else
+        {
+            Debug.LogError("[EmailDetailButtons] EvaluationManager tidak ada di scene — summary tidak bisa ditampilkan!");
+            btnHasilOk.interactable = true;
+            KembaliKeEmailList();
+        }
     }
 
     private void TampilKonfirmasi(string pesan, System.Action onYes)
