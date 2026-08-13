@@ -3,7 +3,18 @@
     { "source": "/api/ai/session/start", "destination": "/api/ai/coach?action=session-start" },
     { "source": "/api/ai/chat", "destination": "/api/ai/coach?action=chat" },
     { "source": "/api/ai/session", "destination": "/api/ai/coach?action=session" },
-    { "source": "/api/ai/cleanup", "destination": "/api/ai/coach?action=cleanup" }
+    { "source": "/api/ai/cleanup", "destination": "/api/ai/coach?action=cleanup" },
+
+    { "source": "/api/checkpoint/load", "destination": "/api/checkpoint?action=load" },
+    { "source": "/api/checkpoint/save", "destination": "/api/checkpoint?action=save" },
+
+    { "source": "/api/stage/complete", "destination": "/api/stage?action=complete" },
+    { "source": "/api/stage/restart", "destination": "/api/stage?action=restart" },
+
+    { "source": "/api/poster/image", "destination": "/api/posters?action=image" },
+    { "source": "/api/admin/poster/upload", "destination": "/api/admin/poster?action=upload" },
+    { "source": "/api/admin/poster/delete", "destination": "/api/admin/poster?action=delete" },
+    { "source": "/api/admin/poster/reorder", "destination": "/api/admin/poster?action=reorder" }
   ],
   "crons": [
     { "path": "/api/ai/cleanup", "schedule": "17 3 * * *" }
