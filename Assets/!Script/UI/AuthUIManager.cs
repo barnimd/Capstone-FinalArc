@@ -28,6 +28,10 @@ public class AuthUIManager : MonoBehaviour
     public static readonly string SCENE_GUEST  = "LoginScene";
     public static readonly string SCENE_GAME   = "All_Menu";
 
+    // One-time character pick. All three auth paths route here first when
+    // PlayerProfile.HasChosenGender is false, then on to SCENE_GAME.
+    public static readonly string SCENE_CHARACTER = "CharacterSelect";
+
     // ─── Inspector References ─────────────────────────────────────────────────
 
     [Header("Loading")]
@@ -112,7 +116,65 @@ public class AuthUIManager : MonoBehaviour
 
     public void TransitionToScene(string sceneName)
     {
+        // Gate the game scene behind the one-time character pick.
+        //
+        // Done here rather than at each call site because eight different places
+        // across five auth controllers transition into SCENE_GAME. Patching each
+        // one means any auth path added later silently skips the pick. Gating the
+        // destination catches every path, including future ones.
+        if (sceneName == SCENE_GAME && !PlayerProfile.HasChosenGender)
+        {
+            StartCoroutine(RouteAfterAuth());
+            return;
+        }
+
         StartCoroutine(TransitionCoroutine(sceneName));
+    }
+
+    /// <summary>
+    /// Decide between CharacterSelect and the game for a player whose local cache
+    /// says they have not picked yet.
+    ///
+    /// The cache alone is not enough: someone who picked on another browser has an
+    /// empty cache here, and sending them back through the pick screen would let
+    /// them choose a character the server will then refuse to change. So confirm
+    /// with Neon first, and only show the screen if it really is their first time.
+    /// </summary>
+    private IEnumerator RouteAfterAuth()
+    {
+        string destination = SCENE_CHARACTER;
+
+        if (APIClient.Instance != null)
+        {
+            string displayName = FirebaseManager.Instance != null
+                ? FirebaseManager.Instance.Username
+                : PlayerProfile.DisplayName;
+
+            PlayerProfile.SetDisplayName(displayName);
+
+            bool done = false;
+            APIClient.Instance.UserSync(displayName, (ok, resp, raw) =>
+            {
+                if (ok && resp != null && resp.user != null)
+                {
+                    PlayerProfile.ApplyFromServer(resp.user);
+                    if (PlayerProfile.HasChosenGender) destination = SCENE_GAME;
+                }
+                else
+                {
+                    // Offline or the call failed. Showing the pick screen is the safer
+                    // wrong answer: at worst a returning player re-picks and the server
+                    // keeps their original choice. Skipping it would strand a genuinely
+                    // new player without a character.
+                    Debug.LogWarning("[AuthUIManager] UserSync failed before routing: " + raw);
+                }
+                done = true;
+            });
+
+            yield return new WaitUntil(() => done);
+        }
+
+        yield return TransitionCoroutine(destination);
     }
 
     private IEnumerator TransitionCoroutine(string sceneName)

@@ -58,6 +58,13 @@ public class APIClient : MonoBehaviour
     public void UserSync(string displayName, Action<bool, UserSyncResponse, string> cb)
         => Post(SecMindAPI.Paths.UserSync, new UserSyncRequest { displayName = displayName }, cb);
 
+    /// <summary>
+    /// Upsert the user and record their character choice. Gender is permanent —
+    /// the server ignores this field once the player has already picked.
+    /// </summary>
+    public void UserSyncWithGender(string displayName, string gender, Action<bool, UserSyncResponse, string> cb)
+        => Post(SecMindAPI.Paths.UserSync, new UserSyncRequest { displayName = displayName, gender = gender }, cb);
+
     public void CheckpointSave(string stageId, object checkpointData, Action<bool, CheckpointSaveResponse, string> cb)
         => Post(SecMindAPI.Paths.CheckpointSave, new CheckpointSaveRequest { stageId = stageId, checkpointData = checkpointData }, cb);
 

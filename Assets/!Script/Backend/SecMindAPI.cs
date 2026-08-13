@@ -96,6 +96,8 @@ public class UserRecord
     public string display_name;
     public string email;
     public string role;          // "user" (default) or "admin" — gates the Menu Admin sidebar
+    public string gender;        // "male" (BIMA) or "female" (AYU) — drives MC sprites & voice
+    public bool   gender_chosen; // false = never picked; show CharacterSelect once
     public string created_at;
     public string last_login;
 }
@@ -104,6 +106,8 @@ public class UserRecord
 public class UserSyncRequest
 {
     public string displayName;
+    public string gender;        // "male" | "female", or null to leave untouched.
+                                 // Server ignores it once gender_chosen is true.
 }
 
 [Serializable]
