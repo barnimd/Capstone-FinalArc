@@ -25,6 +25,15 @@ public static class SecMindAPI
         public const string AIChat            = "/api/ai/chat";
         public const string AISession         = "/api/ai/session";
         public const string AdminStageLock    = "/api/admin/stage-lock";
+
+        // Dashboard posters. PosterImage streams the bytes through Vercel instead of
+        // Cloudflare's public r2.dev URL — Indonesian ISPs DNS-hijack that whole domain
+        // to the Internet Positif block page, so no player here could load it.
+        public const string Posters       = "/api/posters";
+        public const string PosterImage   = "/api/poster/image";
+        public const string PosterUpload  = "/api/admin/poster/upload";
+        public const string PosterDelete  = "/api/admin/poster/delete";
+        public const string PosterReorder = "/api/admin/poster/reorder";
     }
 }
 
@@ -207,6 +216,65 @@ public class GlobalLeaderboardResponse
 {
     public bool                        success;
     public GlobalLeaderboardEntryDTO[] leaderboard;
+}
+
+// ── Posters ─────────────────────────────────────────────────────────────────
+
+[Serializable]
+public class PosterInfo
+{
+    public int    id;
+    public string title;
+    public string imageUrl;      // server-relative ("/api/poster/image?id=3") — prefix BaseUrl before requesting
+    public int    sortOrder;
+}
+
+[Serializable]
+public class PostersResponse
+{
+    public bool         success;
+    public PosterInfo[] posters;
+}
+
+[Serializable]
+public class PosterUploadRequest
+{
+    public string title;
+    public string mimeType;      // image/jpeg | image/png | image/webp
+    public string imageBase64;   // no data-URL prefix; server strips one anyway
+}
+
+[Serializable]
+public class PosterUploadResponse
+{
+    public bool       success;
+    public PosterInfo poster;
+}
+
+[Serializable]
+public class PosterDeleteRequest
+{
+    public int id;
+}
+
+[Serializable]
+public class PosterDeleteResponse
+{
+    public bool success;
+    public int  id;
+}
+
+[Serializable]
+public class PosterReorderRequest
+{
+    public int[] ids;            // must match the active poster ids exactly, in the new order
+}
+
+[Serializable]
+public class PosterReorderResponse
+{
+    public bool  success;
+    public int[] ids;
 }
 
 [Serializable]

@@ -277,6 +277,14 @@
                             <ui:Label text="Atur level: buka atau kunci topik pembelajaran." class="admin-card-desc" />
                             <ui:Label text="Buka  →" class="admin-card-open" />
                             </ui:Button>
+                            <ui:Button name="btn-manage-posters" class="admin-card">
+                                <ui:VisualElement class="admin-card-icon-box">
+                                    <ui:Label text="🖼" class="admin-card-icon-emoji" />
+                                </ui:VisualElement>
+                                <ui:Label text="Kelola Poster" class="admin-card-title" />
+                                <ui:Label text="Atur poster slideshow di halaman Dashboard." class="admin-card-desc" />
+                                <ui:Label text="Buka  →" class="admin-card-open" />
+                            </ui:Button>
                         </ui:VisualElement>
                     </ui:VisualElement>
                     <!-- [Manage User] DI-COMMENT — subview "Manage Users" dihilangkan.
@@ -304,6 +312,22 @@
                         </ui:VisualElement>
                         <ui:ScrollView class="class-scroll">
                             <ui:VisualElement name="admin-level-grid" class="lesson-grid" />
+                        </ui:ScrollView>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="admin-manage-posters" class="admin-subview hidden">
+                        <ui:Button name="btn-admin-back-posters" class="admin-back-btn">
+                            <ui:Label text="←  Kembali" class="admin-back-label" />
+                        </ui:Button>
+                        <ui:VisualElement class="admin-header">
+                            <ui:Label text="ADMIN · POSTER" class="label-eyebrow" />
+                            <ui:Label text="Kelola Poster" class="title" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="poster-toolbar">
+                            <ui:Button name="btn-poster-upload" text="+  Tambah Poster" class="poster-upload-btn" />
+                            <ui:Label name="poster-status" class="poster-status" />
+                        </ui:VisualElement>
+                        <ui:ScrollView class="class-scroll">
+                            <ui:VisualElement name="poster-list" class="poster-list" />
                         </ui:ScrollView>
                     </ui:VisualElement>
                 </ui:VisualElement>

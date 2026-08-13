@@ -83,6 +83,23 @@ public class APIClient : MonoBehaviour
     public void SetStageLock(string stageId, bool locked, Action<bool, StageLockResponse, string> cb)
         => Post(SecMindAPI.Paths.AdminStageLock, new StageLockRequest { stageId = stageId, locked = locked }, cb);
 
+    /// <summary>Dashboard poster list. Public — works for guests too.</summary>
+    public void GetPosters(Action<bool, PostersResponse, string> cb)
+        => Get(SecMindAPI.Paths.Posters, cb);
+
+    /// <summary>Admin only. imageBase64 must already be compressed — Vercel rejects bodies over 4.5 MB.</summary>
+    public void UploadPoster(string title, string mimeType, string imageBase64, Action<bool, PosterUploadResponse, string> cb)
+        => Post(SecMindAPI.Paths.PosterUpload,
+                new PosterUploadRequest { title = title, mimeType = mimeType, imageBase64 = imageBase64 }, cb);
+
+    /// <summary>Admin only.</summary>
+    public void DeletePoster(int id, Action<bool, PosterDeleteResponse, string> cb)
+        => Post(SecMindAPI.Paths.PosterDelete, new PosterDeleteRequest { id = id }, cb);
+
+    /// <summary>Admin only. Send every active poster id, in the order they should appear.</summary>
+    public void ReorderPosters(int[] ids, Action<bool, PosterReorderResponse, string> cb)
+        => Post(SecMindAPI.Paths.PosterReorder, new PosterReorderRequest { ids = ids }, cb);
+
     // ── Core ────────────────────────────────────────────────────────────────
 
     private IEnumerator SendRequest<TBody, TResp>(string method, string path, TBody body, Action<bool, TResp, string> callback)

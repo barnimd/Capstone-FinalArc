@@ -1175,6 +1175,136 @@ Button {
     color: rgb(255, 252, 245);
 }
 
+/* ── Menu Admin > Kelola Poster ──────────────────────────────────────────── */
+
+/* Emoji icon for admin cards that have no PNG in Resources/Icons. The older
+   .admin-card-icon rule is commented out with the Manage Users block, so this
+   stands on its own rather than reviving disabled code. */
+.admin-card-icon-emoji {
+    font-size: 26px;
+    color: rgb(255, 252, 245);
+    -unity-text-align: middle-center;
+    width: 58px;
+    height: 58px;
+}
+
+.poster-toolbar {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.poster-upload-btn {
+    background-color: rgb(232, 120, 38);
+    color: rgb(255, 252, 245);
+    border-radius: 12px;
+    padding: 10px 22px;
+    font-size: 15px;
+    -unity-font-style: bold;
+    border-width: 0;
+    transition-property: background-color;
+    transition-duration: 0.15s;
+}
+
+.poster-upload-btn:hover { background-color: rgb(240, 132, 48); }
+
+.poster-upload-btn:disabled { opacity: 0.5; }
+
+.poster-status {
+    color: rgb(180, 166, 150);
+    font-size: 14px;
+    margin-left: 16px;
+    white-space: normal;
+    flex-shrink: 1;
+}
+
+.poster-status-error { color: rgb(232, 108, 96); }
+
+.poster-list { flex-grow: 1; }
+
+.poster-row {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgb(42, 36, 25);
+    border-radius: 16px;
+    padding: 12px 18px;
+    margin-bottom: 12px;
+}
+
+.poster-order {
+    color: rgb(180, 166, 150);
+    font-size: 15px;
+    -unity-font-style: bold;
+    width: 34px;
+}
+
+/* 16:9 so the thumbnail matches the shape of the dashboard slideshow frame. */
+.poster-thumb {
+    width: 128px;
+    height: 72px;
+    border-radius: 10px;
+    background-color: rgb(28, 24, 17);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-right: 18px;
+}
+
+.poster-title {
+    color: rgb(248, 242, 230);
+    font-size: 16px;
+    flex-grow: 1;
+    white-space: normal;
+}
+
+.poster-move-btn {
+    background-color: rgb(58, 51, 40);
+    color: rgb(248, 242, 230);
+    border-radius: 10px;
+    width: 40px;
+    height: 36px;
+    margin-left: 8px;
+    font-size: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    border-width: 0;
+}
+
+.poster-move-btn:hover { background-color: rgb(74, 65, 51); }
+
+.poster-move-btn:disabled { opacity: 0.35; }
+
+.poster-delete-btn {
+    background-color: rgb(58, 51, 40);
+    color: rgb(232, 108, 96);
+    border-radius: 10px;
+    height: 36px;
+    padding: 0 14px;
+    margin-left: 8px;
+    font-size: 15px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    border-width: 0;
+}
+
+.poster-delete-btn:hover { background-color: rgb(74, 65, 51); }
+
+/* Second state of the two-step delete — the button says "Hapus?" and only the
+   next click actually deletes. Cheaper than a modal and just as hard to do by
+   accident. */
+.poster-delete-armed {
+    background-color: rgb(160, 54, 46);
+    color: rgb(255, 244, 242);
+}
+
+.poster-empty {
+    color: rgb(180, 166, 150);
+    font-size: 16px;
+    -unity-text-align: middle-center;
+    padding: 48px;
+    white-space: normal;
+}
+
 .admin-status-unlocked { background-color: rgb(58, 51, 40); }
 .admin-status-locked { background-color: rgb(178, 58, 44); }
 .admin-status-btn:hover { background-color: rgb(232, 120, 38); }

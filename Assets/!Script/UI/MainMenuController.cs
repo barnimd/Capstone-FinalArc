@@ -83,6 +83,14 @@ public class MainMenuController : MonoBehaviour
     private bool _adminGridBuilt;
     private bool _isAdmin;
 
+    // Kelola Poster — slideshow dashboard yang datanya dari server (lihat PosterManager).
+    private Button _btnManagePosters, _btnAdminBackPosters, _btnPosterUpload;
+    private VisualElement _adminManagePosters, _posterList;
+    private Label _posterStatus;
+    // Satu operasi poster jalan pada satu waktu. Upload bisa 2–5 detik, dan klik
+    // kedua di tengah itu bakal ngirim urutan yang dihitung dari data basi.
+    private bool _posterBusy;
+
     // Dashboard page
     private VisualElement _slideshowImage;
     private Button _slideshowPrev;
@@ -90,6 +98,9 @@ public class MainMenuController : MonoBehaviour
     private VisualElement _slideshowDots;
     private int _slideIndex;
     private bool _dashboardWired;
+    // True once PosterManager has slides; drives whether SlideCount/UpdateSlide read
+    // from the server set or fall back to the dashboardSlides array above.
+    private bool _usingServerPosters;
     private Coroutine _autoSlideCoroutine;
 
     // Help page
@@ -156,12 +167,18 @@ public class MainMenuController : MonoBehaviour
         //   _adminManageUsers = _root.Q<VisualElement>("admin-manage-users");
         _adminManageClass = _root.Q<VisualElement>("admin-manage-class");
         _adminLevelGrid = _root.Q<VisualElement>("admin-level-grid");
+        _adminManagePosters = _root.Q<VisualElement>("admin-manage-posters");
+        _posterList = _root.Q<VisualElement>("poster-list");
+        _posterStatus = _root.Q<Label>("poster-status");
         // [Manage User] DI-COMMENT — menu "Manage Users" dihilangkan:
         //   _btnManageUsers = _root.Q<Button>("btn-manage-users");
         _btnManageClass = _root.Q<Button>("btn-manage-class");
         // [Manage User] DI-COMMENT — menu "Manage Users" dihilangkan:
         //   _btnAdminBackUsers = _root.Q<Button>("btn-admin-back-users");
         _btnAdminBackClass = _root.Q<Button>("btn-admin-back-class");
+        _btnManagePosters = _root.Q<Button>("btn-manage-posters");
+        _btnAdminBackPosters = _root.Q<Button>("btn-admin-back-posters");
+        _btnPosterUpload = _root.Q<Button>("btn-poster-upload");
 
         // Leaderboard sub-refs
         _yourRankValue = _root.Q<Label>("your-rank-value");
@@ -217,6 +234,9 @@ public class MainMenuController : MonoBehaviour
         // [Manage User] DI-COMMENT — menu "Manage Users" dihilangkan:
         //   if (_btnAdminBackUsers != null) _btnAdminBackUsers.clicked += ShowAdminHome;
         if (_btnAdminBackClass != null) _btnAdminBackClass.clicked += ShowAdminHome;
+        if (_btnManagePosters != null) _btnManagePosters.clicked += OpenManagePosters;
+        if (_btnAdminBackPosters != null) _btnAdminBackPosters.clicked += ShowAdminHome;
+        if (_btnPosterUpload != null) _btnPosterUpload.clicked += OnPosterUploadClicked;
 
         // Manage Class: isi ikon PNG pada kartu "Manage Class" (Resources/Icons/icon-manage-class.png).
         LoadManageClassIcon();
@@ -297,7 +317,7 @@ public class MainMenuController : MonoBehaviour
                     ShowElement(_pageDashboard);
                     SetupDashboardIfNeeded();
                     // Resume auto-slide if not already running
-                    if (_autoSlideCoroutine == null && dashboardSlides != null && dashboardSlides.Length > 1)
+                    if (_autoSlideCoroutine == null && SlideCount > 1)
                         _autoSlideCoroutine = StartCoroutine(AutoSlideCoroutine());
                 }
                 else if (canvasDashboard != null) canvasDashboard.SetActive(true);
@@ -592,21 +612,56 @@ public class MainMenuController : MonoBehaviour
 
     // ── Dashboard slideshow ─────────────────────────────────────────────────
 
+    // Slides come from the server once posters have loaded; until then, and whenever
+    // the fetch fails, they come from the Inspector array.
+    private int SlideCount => _usingServerPosters
+        ? PosterManager.Count
+        : (dashboardSlides != null ? dashboardSlides.Length : 0);
+
     private void SetupDashboardIfNeeded()
     {
         if (_dashboardWired) return;
         if (_slideshowImage == null) return;
-        if (dashboardSlides == null || dashboardSlides.Length == 0)
+
+        // Paint the shipped sprites first so the dashboard is never blank while the
+        // request is in flight, then swap to the server set when it arrives.
+        _usingServerPosters = false;
+        BuildSlideshow();
+        _dashboardWired = true;
+
+        if (PosterManager.IsLoaded)
         {
-            Debug.LogWarning("[MainMenuController] dashboardSlides is empty — assign banner sprites in Inspector");
+            _usingServerPosters = true;
+            BuildSlideshow();
             return;
         }
 
-        // Build dots
+        PosterManager.Load(ok =>
+        {
+            // On failure the Inspector sprites stay up. A dashboard showing the old
+            // banners beats one showing nothing.
+            if (!ok) return;
+            _usingServerPosters = true;
+            BuildSlideshow();
+        });
+    }
+
+    // Rebuilds the dots and resets to the first slide. Called again whenever the
+    // source changes, so the dot count always matches what is actually on screen.
+    private void BuildSlideshow()
+    {
+        int count = SlideCount;
+        if (count == 0)
+        {
+            if (!_usingServerPosters)
+                Debug.LogWarning("[MainMenuController] dashboardSlides is empty — assign banner sprites in Inspector");
+            return;
+        }
+
         if (_slideshowDots != null)
         {
             _slideshowDots.Clear();
-            for (int i = 0; i < dashboardSlides.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 VisualElement dot = new VisualElement();
                 dot.AddToClassList("slideshow-dot");
@@ -616,11 +671,9 @@ public class MainMenuController : MonoBehaviour
 
         _slideIndex = 0;
         UpdateSlide();
-        _dashboardWired = true;
 
-        // Start auto-slide coroutine
-        if (_autoSlideCoroutine != null) StopCoroutine(_autoSlideCoroutine);
-        _autoSlideCoroutine = StartCoroutine(AutoSlideCoroutine());
+        StopAutoSlide();
+        if (count > 1) _autoSlideCoroutine = StartCoroutine(AutoSlideCoroutine());
     }
 
     // Auto-slide coroutine — only advances the index, does NOT call RestartAutoSlide
@@ -629,8 +682,9 @@ public class MainMenuController : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(slideInterval);
-            if (dashboardSlides == null || dashboardSlides.Length == 0) yield break;
-            _slideIndex = (_slideIndex + 1) % dashboardSlides.Length;
+            int count = SlideCount;
+            if (count == 0) yield break;
+            _slideIndex = (_slideIndex + 1) % count;
             UpdateSlide();
         }
     }
@@ -638,33 +692,20 @@ public class MainMenuController : MonoBehaviour
     // Called by manual button clicks — advances slide AND resets the timer
     private void OnNextClicked()
     {
-        if (dashboardSlides == null || dashboardSlides.Length == 0) return;
-        _slideIndex = (_slideIndex + 1) % dashboardSlides.Length;
+        int count = SlideCount;
+        if (count == 0) return;
+        _slideIndex = (_slideIndex + 1) % count;
         UpdateSlide();
         RestartAutoSlide();
     }
 
     private void OnPrevClicked()
     {
-        if (dashboardSlides == null || dashboardSlides.Length == 0) return;
-        _slideIndex = (_slideIndex - 1 + dashboardSlides.Length) % dashboardSlides.Length;
+        int count = SlideCount;
+        if (count == 0) return;
+        _slideIndex = (_slideIndex - 1 + count) % count;
         UpdateSlide();
         RestartAutoSlide();
-    }
-
-    // Internal slide logic (no timer reset — used by coroutine too)
-    private void NextSlide()
-    {
-        if (dashboardSlides == null || dashboardSlides.Length == 0) return;
-        _slideIndex = (_slideIndex + 1) % dashboardSlides.Length;
-        UpdateSlide();
-    }
-
-    private void PrevSlide()
-    {
-        if (dashboardSlides == null || dashboardSlides.Length == 0) return;
-        _slideIndex = (_slideIndex - 1 + dashboardSlides.Length) % dashboardSlides.Length;
-        UpdateSlide();
     }
 
     private void RestartAutoSlide()
@@ -684,10 +725,26 @@ public class MainMenuController : MonoBehaviour
 
     private void UpdateSlide()
     {
-        if (_slideshowImage == null || dashboardSlides == null || dashboardSlides.Length == 0) return;
-        Sprite slide = dashboardSlides[_slideIndex];
-        if (slide != null)
-            _slideshowImage.style.backgroundImage = new StyleBackground(slide);
+        if (_slideshowImage == null) return;
+
+        int count = SlideCount;
+        if (count == 0) return;
+        // The source can change under us mid-cycle (server posters arriving, or an
+        // admin deleting one), so clamp instead of trusting the old index.
+        if (_slideIndex < 0 || _slideIndex >= count) _slideIndex = 0;
+
+        if (_usingServerPosters)
+        {
+            Texture2D tex = PosterManager.GetTexture(_slideIndex);
+            if (tex != null)
+                _slideshowImage.style.backgroundImage = new StyleBackground(tex);
+        }
+        else
+        {
+            Sprite slide = dashboardSlides[_slideIndex];
+            if (slide != null)
+                _slideshowImage.style.backgroundImage = new StyleBackground(slide);
+        }
 
         // Update dot active state
         if (_slideshowDots != null)
@@ -1026,7 +1083,7 @@ public class MainMenuController : MonoBehaviour
     // Kembali ke halaman admin-home (menampilkan kartu "Manage Class" — "Manage Users" dihilangkan).
     private void ShowAdminHome()
     {
-        SetAdminSubviews(home: true, users: false, cls: false);
+        SetAdminSubviews(home: true, users: false, cls: false, posters: false);
     }
 
     // [Manage User] DI-COMMENT — menu "Manage Users" dihilangkan dari Menu Admin:
@@ -1037,18 +1094,20 @@ public class MainMenuController : MonoBehaviour
 
     private void OpenManageClass()
     {
-        SetAdminSubviews(home: false, users: false, cls: true);
+        SetAdminSubviews(home: false, users: false, cls: true, posters: false);
         BuildAdminLevelGridIfNeeded();
         RefreshLocksFromServer();
     }
 
-    // Manage User: show/hide antar admin-home, subview users (di-comment), dan subview Manage Class.
-    private void SetAdminSubviews(bool home, bool users, bool cls)
+    // Manage User: show/hide antar admin-home, subview users (di-comment), subview Manage Class,
+    // dan subview Kelola Poster.
+    private void SetAdminSubviews(bool home, bool users, bool cls, bool posters)
     {
         ToggleHidden(_adminHome, !home);
         // [Manage User] DI-COMMENT — subview users dihapus:
         //   ToggleHidden(_adminManageUsers, !users);
         ToggleHidden(_adminManageClass, !cls);
+        ToggleHidden(_adminManagePosters, !posters);
     }
 
     // Manage Class icon: memuat PNG dari folder Resources/Icons (nama file: icon-manage-class.png)
@@ -1158,6 +1217,230 @@ public class MainMenuController : MonoBehaviour
         status.EnableInClassList("admin-status-unlocked", unlocked);
         status.EnableInClassList("admin-status-locked", !unlocked);
         status.text = unlocked ? "Terbuka" : "Terkunci";
+    }
+
+    // ── Menu Admin > Kelola Poster ──────────────────────────────────────────
+
+    private void OpenManagePosters()
+    {
+        SetAdminSubviews(home: false, users: false, cls: false, posters: true);
+        LoadPosterList();
+    }
+
+    // Always refetches. The admin opened this page to see the current state, and
+    // a stale list would make the reorder payload wrong.
+    private void LoadPosterList()
+    {
+        if (_posterList == null) return;
+
+        SetPosterStatus("Memuat…", false);
+        PosterManager.Invalidate();
+        PosterManager.Load(_ =>
+        {
+            BuildPosterRows();
+            SetPosterStatus(null, false);
+        });
+    }
+
+    private void BuildPosterRows()
+    {
+        if (_posterList == null) return;
+        _posterList.Clear();
+
+        if (PosterManager.Count == 0)
+        {
+            Label empty = new Label("Belum ada poster. Klik \"Tambah Poster\" untuk mengunggah.");
+            empty.AddToClassList("poster-empty");
+            _posterList.Add(empty);
+            return;
+        }
+
+        for (int i = 0; i < PosterManager.Count; i++)
+            _posterList.Add(BuildPosterRow(i));
+    }
+
+    private VisualElement BuildPosterRow(int index)
+    {
+        PosterInfo info = PosterManager.GetPoster(index);
+        if (info == null) return new VisualElement();
+
+        VisualElement row = new VisualElement();
+        row.AddToClassList("poster-row");
+
+        Label order = new Label((index + 1).ToString("D2"));
+        order.AddToClassList("poster-order");
+        row.Add(order);
+
+        VisualElement thumb = new VisualElement();
+        thumb.AddToClassList("poster-thumb");
+        Texture2D tex = PosterManager.GetTexture(index);
+        if (tex != null) thumb.style.backgroundImage = new StyleBackground(tex);
+        row.Add(thumb);
+
+        Label title = new Label(string.IsNullOrEmpty(info.title) ? $"Poster #{info.id}" : info.title);
+        title.AddToClassList("poster-title");
+        row.Add(title);
+
+        int captured = index;
+
+        Button up = new Button(() => MovePoster(captured, -1)) { text = "↑" };
+        up.AddToClassList("poster-move-btn");
+        up.SetEnabled(index > 0);
+        row.Add(up);
+
+        Button down = new Button(() => MovePoster(captured, +1)) { text = "↓" };
+        down.AddToClassList("poster-move-btn");
+        down.SetEnabled(index < PosterManager.Count - 1);
+        row.Add(down);
+
+        // Two-step delete instead of a modal: the first click arms the button, the
+        // second one actually deletes. A misclick costs nothing and there is no
+        // extra UXML to keep in sync.
+        Button del = new Button { text = "Hapus" };
+        del.AddToClassList("poster-delete-btn");
+        bool armed = false;
+        int posterId = info.id;
+        del.clicked += () =>
+        {
+            if (!armed)
+            {
+                armed = true;
+                del.text = "Yakin?";
+                del.AddToClassList("poster-delete-armed");
+                return;
+            }
+            DeletePoster(posterId);
+        };
+        row.Add(del);
+
+        return row;
+    }
+
+    private void OnPosterUploadClicked()
+    {
+        if (_posterBusy) return;
+
+        WebGLFilePicker.Open((ok, mimeType, base64, error) =>
+        {
+            if (!ok)
+            {
+                // A cancelled dialog reports no error — staying silent is correct there.
+                if (!string.IsNullOrEmpty(error)) SetPosterStatus(error, true);
+                return;
+            }
+            SendPosterUpload(mimeType, base64);
+        });
+    }
+
+    private void SendPosterUpload(string mimeType, string base64)
+    {
+        if (APIClient.Instance == null)
+        {
+            SetPosterStatus("APIClient tidak tersedia", true);
+            return;
+        }
+
+        SetPosterBusy(true, "Mengunggah…");
+        APIClient.Instance.UploadPoster(string.Empty, mimeType, base64, (ok, resp, raw) =>
+        {
+            SetPosterBusy(false, null);
+            if (!ok || resp == null || !resp.success)
+            {
+                SetPosterStatus(DescribeApiError(raw, "Upload gagal"), true);
+                return;
+            }
+            OnPosterSetChanged("Poster ditambahkan");
+        });
+    }
+
+    private void DeletePoster(int id)
+    {
+        if (_posterBusy || APIClient.Instance == null) return;
+
+        SetPosterBusy(true, "Menghapus…");
+        APIClient.Instance.DeletePoster(id, (ok, resp, raw) =>
+        {
+            SetPosterBusy(false, null);
+            if (!ok || resp == null || !resp.success)
+            {
+                SetPosterStatus(DescribeApiError(raw, "Gagal menghapus"), true);
+                return;
+            }
+            OnPosterSetChanged("Poster dihapus");
+        });
+    }
+
+    private void MovePoster(int index, int delta)
+    {
+        if (_posterBusy || APIClient.Instance == null) return;
+
+        int target = index + delta;
+        if (index < 0 || target < 0 || index >= PosterManager.Count || target >= PosterManager.Count) return;
+
+        // The endpoint wants every active id in the new order, not a single move —
+        // a partial list would leave the posters it omits on stale positions.
+        int[] ids = PosterManager.GetOrderedIds();
+        int swap = ids[index];
+        ids[index] = ids[target];
+        ids[target] = swap;
+
+        SetPosterBusy(true, "Menyimpan urutan…");
+        APIClient.Instance.ReorderPosters(ids, (ok, resp, raw) =>
+        {
+            SetPosterBusy(false, null);
+            if (!ok || resp == null || !resp.success)
+            {
+                SetPosterStatus(DescribeApiError(raw, "Gagal mengubah urutan"), true);
+                return;
+            }
+            OnPosterSetChanged(null);
+        });
+    }
+
+    // Refetching after a reorder re-downloads every image, which sounds wasteful but
+    // is not: the proxy marks responses immutable, so the browser serves them from
+    // cache. Trading that for a locally-patched list would risk the UI and the server
+    // disagreeing about order.
+    private void OnPosterSetChanged(string message)
+    {
+        // Force SetupDashboardIfNeeded to rebuild, otherwise the dashboard keeps
+        // showing the old set until the game restarts.
+        _dashboardWired = false;
+
+        LoadPosterList();
+        if (!string.IsNullOrEmpty(message)) SetPosterStatus(message, false);
+    }
+
+    private void SetPosterBusy(bool busy, string message)
+    {
+        _posterBusy = busy;
+        if (_btnPosterUpload != null) _btnPosterUpload.SetEnabled(!busy);
+        if (_posterList != null) _posterList.SetEnabled(!busy);
+        if (!string.IsNullOrEmpty(message)) SetPosterStatus(message, false);
+    }
+
+    private void SetPosterStatus(string message, bool isError)
+    {
+        if (_posterStatus == null) return;
+        _posterStatus.text = message ?? string.Empty;
+        _posterStatus.EnableInClassList("poster-status-error", isError && !string.IsNullOrEmpty(message));
+    }
+
+    // Surfaces the server's own message ("Maksimal 12 poster", "File terlalu besar")
+    // instead of a generic failure, so the admin knows what to change.
+    private static string DescribeApiError(string raw, string fallback)
+    {
+        if (string.IsNullOrEmpty(raw)) return fallback;
+        try
+        {
+            APIErrorResponse parsed = JsonUtility.FromJson<APIErrorResponse>(raw);
+            if (parsed != null && !string.IsNullOrEmpty(parsed.error)) return parsed.error;
+        }
+        catch (System.Exception)
+        {
+            // Not JSON — an HTML error page from the platform, most likely.
+        }
+        return fallback;
     }
 
     // ── Leaderboard row builder ─────────────────────────────────────────────
