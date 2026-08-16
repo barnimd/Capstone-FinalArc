@@ -23,7 +23,8 @@ using UnityEngine.UI;
 public static class EvaluationPanelRedesignBuilder
 {
     // ── palette ──
-    static readonly Color cScrim      = Hex(0x0B, 0x09, 0x08, 0.94f);
+    // Scrim hitam pekat & opaque: layar game di belakangnya harus ketutup total.
+    static readonly Color cScrim      = Hex(0x00, 0x00, 0x00, 1f);
     static readonly Color cCard       = Hex(0x17, 0x13, 0x10);
     static readonly Color cBorder     = Hex(0x2C, 0x23, 0x1D);
     static readonly Color cChoiceOff  = Hex(0x22, 0x1B, 0x16);
@@ -272,6 +273,9 @@ public static class EvaluationPanelRedesignBuilder
             rootRect.anchorMax = Vector2.one;
             rootRect.offsetMin = Vector2.zero;
             rootRect.offsetMax = Vector2.zero;
+            // Skala hidup di QuestionPanel/ResultPanel, bukan di scrim — kalau scrim ikut
+            // diskalakan, pinggir layar bocor dan map kelihatan di balik panel.
+            rootRect.localScale = Vector3.one;
         }
         var scrim = root.GetComponent<Graphic>();
         if (scrim == null) scrim = AddMP(root.gameObject, cScrim, Vector4.zero);
@@ -388,12 +392,13 @@ public static class EvaluationPanelRedesignBuilder
         AddMP(card, cCard, new Vector4(24, 24, 24, 24), 1.5f, cBorder);
 
         GameObject qText = MakeGO("TxtQuestionText", card.transform);
-        Stretch(qText, new Vector2(0, 1), new Vector2(1, 1), new Vector2(64, -336), new Vector2(-64, -72));
+        Stretch(qText, new Vector2(0, 1), new Vector2(1, 1), new Vector2(64, -389), new Vector2(-64, -125));
         q.qText = AddText(qText, "Pertanyaan", 48, cText, TextAlignmentOptions.TopLeft, true);
         q.qText.enableAutoSizing = true;
         q.qText.fontSizeMin = 30;
         q.qText.fontSizeMax = 48;
         q.qText.lineSpacing = -8f;
+        q.qText.enableWordWrapping = true;
 
         GameObject choiceRow = MakeGO("ChoiceRow", card.transform);
         Stretch(choiceRow, Vector2.zero, new Vector2(1, 0), new Vector2(64, 72), new Vector2(-64, 188));
