@@ -12,12 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
   m_Name: VNDialog_Sari_WrapUp_Topic5
   m_EditorClassIdentifier: 
-  playerName: Raka
+  playerName: Kamu
   npcName: Sari
   playerPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerTalkingPortrait: {fileID: 21300000, guid: 95c659829391a004b969732848b77355, type: 3}
   playerThinkingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerSmilingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
+  femalePlayerPortrait: {fileID: 21300000, guid: 457d9f7f459322e4ebd9f545fabd4566, type: 3}
+  femalePlayerTalkingPortrait: {fileID: 21300000, guid: f4ffd3f5ee3068b4d9fc4a49eb3eb079, type: 3}
+  femalePlayerThinkingPortrait: {fileID: 0}
+  femalePlayerSmilingPortrait: {fileID: 0}
   npc2Name: 
   npcPortrait: {fileID: 21300000, guid: 59c7d611995e0a74cbf52cd81e5fb97b, type: 3}
   npcTalkingPortrait: {fileID: 21300000, guid: 59c7d611995e0a74cbf52cd81e5fb97b, type: 3}
@@ -34,33 +38,39 @@ MonoBehaviour:
     expression: {fileID: 0}
     text: Gimana, betah kan di sini?
     voiceClip: {fileID: 8300000, guid: 90c57a6c2596e884ca55b90a272f29fc, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Betah. Oh iya, tadi ada kejadian. Ada orang yang sengaja bikin Wi-Fi palsu
       di dalam kafe.
     voiceClip: {fileID: 8300000, guid: 04a4f4f168a5c384abfa52a715d1aef0, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 5a762c1641c16444a95ac89da63ccb77, type: 3}
   - speaker: 1
     mood: 2
     expression: {fileID: 0}
     text: Serius?! Sudah ditangani?
     voiceClip: {fileID: 8300000, guid: d8d05f2882cf3d14c9eaa8ad2bb8c2ee, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Sudah. Tapi ke depannya, mungkin kafe bisa pasang pengumuman nama Wi-Fi
       resmi di pintu masuk, biar tamu nggak salah connect.
     voiceClip: {fileID: 8300000, guid: 4b904cc24f8837a41b36149c77b3953d, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 9ac2e8d601eebc54cb32b5596936edbf, type: 3}
   - speaker: 1
     mood: 3
     expression: {fileID: 0}
     text: Wah, ide bagus! Terima kasih ya sudah bantu kami.
     voiceClip: {fileID: 8300000, guid: cafb19af0cab1a14091ec6ab11e55f24, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Sama-sama. Jaga keamanan jaringannya ya.
     voiceClip: {fileID: 8300000, guid: b2f90e080d3b3ac43b879d229b22e595, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 6eefd0a9f5867fc429d6c495a0f3991a, type: 3}
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak

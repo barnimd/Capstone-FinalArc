@@ -18,6 +18,10 @@ MonoBehaviour:
   playerTalkingPortrait: {fileID: 21300000, guid: 95c659829391a004b969732848b77355, type: 3}
   playerThinkingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerSmilingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
+  femalePlayerPortrait: {fileID: 21300000, guid: 457d9f7f459322e4ebd9f545fabd4566, type: 3}
+  femalePlayerTalkingPortrait: {fileID: 21300000, guid: f4ffd3f5ee3068b4d9fc4a49eb3eb079, type: 3}
+  femalePlayerThinkingPortrait: {fileID: 0}
+  femalePlayerSmilingPortrait: {fileID: 0}
   npc2Name: 
   npcPortrait: {fileID: 21300000, guid: e65ff769b15391c4685a4d4541b72635, type: 3}
   npcTalkingPortrait: {fileID: 21300000, guid: e65ff769b15391c4685a4d4541b72635, type: 3}
@@ -34,46 +38,54 @@ MonoBehaviour:
     expression: {fileID: 0}
     text: Pagi, Rafi. Kamu kelihatan panik, ada masalah?
     voiceClip: {fileID: 8300000, guid: 3c9a7437a1c8dd344818da396fdd04ba, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 421555a52feecdd4c9b8cd243baab9e9, type: 3}
   - speaker: 1
     mood: 2
     expression: {fileID: 0}
     text: Iya. Semalam anak saya pakai laptop rumah untuk main game, lalu tanpa sengaja
       menghapus folder kerja saya.
     voiceClip: {fileID: 8300000, guid: d79a763be1b4e3a40a2c0e7816d2fa1f, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 2
     expression: {fileID: 0}
     text: Waduh, file pentingnya hilang semua?
     voiceClip: {fileID: 8300000, guid: 4908caf4fa8ec4a42bae4c4206bd6461, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 29db41c7cd4ccd44faf3b46b9ebee7b7, type: 3}
   - speaker: 1
     mood: 2
     expression: {fileID: 0}
     text: Hampir. Untung beberapa dokumen masih ada di backup cloud, jadi tidak semuanya
       hilang.
     voiceClip: {fileID: 8300000, guid: 08c4a467a7b8a7f49a63ccff05e8fa7d, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Sejak itu saya sadar, backup itu bukan cuma untuk serangan virus. Kadang
       file hilang karena salah hapus, perangkat rusak, atau dipakai orang lain.
     voiceClip: {fileID: 8300000, guid: bbeb87ba8dfd4d74989b819bce676c5f, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Berarti kita harus punya salinan cadangan sebelum hal yang tidak diinginkan
       terjadi.
     voiceClip: {fileID: 8300000, guid: 6b637413befcaa142949bf8325953c2d, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 62d1663ed489d4d46a4e766af3fc31ce, type: 3}
   - speaker: 1
     mood: 3
     expression: {fileID: 0}
     text: Betul. Simpan file penting di tempat yang aman dan lakukan backup rutin.
       Sekarang kamu bisa mulai dari meja kerja dan cek pengelolaan filemu.
     voiceClip: {fileID: 8300000, guid: a578a04a7ecd0a0468cc8cde358d48fa, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 3
     expression: {fileID: 0}
     text: Siap. Saya akan lebih hati-hati dan pastikan file kerja punya backup.
     voiceClip: {fileID: 8300000, guid: dd16fe4fdde978d4dbee404a520e05cd, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: c85a928174845414cbfc4634fb47121b, type: 3}
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak

@@ -12,12 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
   m_Name: VNDialog_Talking_Topic3
   m_EditorClassIdentifier: 
-  playerName: Joji
+  playerName: Kamu
   npcName: Arunika
   playerPortrait: {fileID: 21300000, guid: 8dcbb50836ed18e499a0f77d4c54949d, type: 3}
   playerTalkingPortrait: {fileID: 0}
   playerThinkingPortrait: {fileID: 0}
   playerSmilingPortrait: {fileID: 0}
+  femalePlayerPortrait: {fileID: 21300000, guid: 457d9f7f459322e4ebd9f545fabd4566, type: 3}
+  femalePlayerTalkingPortrait: {fileID: 21300000, guid: f4ffd3f5ee3068b4d9fc4a49eb3eb079, type: 3}
+  femalePlayerThinkingPortrait: {fileID: 0}
+  femalePlayerSmilingPortrait: {fileID: 0}
   npc2Name: Bagas
   npcPortrait: {fileID: 21300000, guid: bf6e39962e9012a49afda18797a83373, type: 3}
   npcTalkingPortrait: {fileID: 0}
@@ -32,46 +36,56 @@ MonoBehaviour:
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
-    text: Permisi... eh, halo! Kamu Arunika kan? Aku Joji, baru mulai hari ini.
-    voiceClip: {fileID: 8300000, guid: 6c5088aaa3804368a39d7496852ce342, type: 3}
+    text: Permisi... eh, halo! Kamu Arunika kan? Aku {PLAYER_NAME}, baru mulai hari
+      ini.
+    voiceClip: {fileID: 0}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
-    text: Oh! Joji! Iya aku Arunika, seneng ketemu kamu. Selamat datang di tim!
-    voiceClip: {fileID: 8300000, guid: 45a476418ceb4236b6c987148c6984e6, type: 3}
+    text: Oh! {PLAYER_NAME}! Iya aku Arunika, seneng ketemu kamu. Selamat datang
+      di tim!
+    voiceClip: {fileID: 0}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
     text: Oh iya, tadi ada email masuk ke inbox kamu. Katanya dari IT Department,
       minta klik link buat verifikasi akun.
     voiceClip: {fileID: 8300000, guid: 339cadb8e72141199f491c34c7aad254, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
     text: Wah serius? Baru hari pertama udah ada email penting. Langsung aku klik
       aja kali ya?
     voiceClip: {fileID: 8300000, guid: 19abf9c1fdb84b4d831db488a6221b11, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 8ff0daf5f5c0ec942a4141b858903f32, type: 3}
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
     text: Eh tunggu dulu! Jangan buru-buru. Aku curiga itu bukan email dari kantor
       kita.
     voiceClip: {fileID: 8300000, guid: 160900fae0434d2c84685fba62a04975, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
     text: Hah? Emangnya kenapa? Kan katanya dari IT Department...
     voiceClip: {fileID: 8300000, guid: 9d63d81d252844f99abd0891947fbd06, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 7bafdcc7fd81d514aa1b73465392df6e, type: 3}
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
     text: Coba pastiin dulu isi email nya. Takut nya terjadi hal yang tidak di inginkan.
     voiceClip: {fileID: 8300000, guid: d225694c803e4a3b871670720bf12b35, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
     text: Oh... iya ya, aku nggak kepikiran sampai sana. Ada tips cara bedainnya?
     voiceClip: {fileID: 8300000, guid: ca6804ae3e304dd5b77612acd87c90a9, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 80ec9dcb9d703024b89eaf5977979b22, type: 3}
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
@@ -79,28 +93,33 @@ MonoBehaviour:
       diblokir' bisa jadi taktik urgency. Sengaja dibuat panik biar kamu nggak mikir
       panjang.
     voiceClip: {fileID: 8300000, guid: 089345a5cc254a339e86ef8ec6fb4d66, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
     text: Wah bahaya juga ya. Berarti aku nggak boleh klik link-nya?
     voiceClip: {fileID: 8300000, guid: 53d1e8ba64954788a8a9579b17e3347e, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 4c93b4d5b32fb6b45995340d223b8af3, type: 3}
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
     text: Tepat. Jangan pernah klik link di email yang nggak kamu minta, apalagi
       kalau minta password atau data pribadi.
     voiceClip: {fileID: 8300000, guid: 71f5a5e0771a41af8112af692587ab63, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
     text: Oke oke, aku ngerti sekarang. Makasih banyak ya Arunika, untung kamu ingetin!
     voiceClip: {fileID: 8300000, guid: 44fd695a3e864a52a26d990d8b713f7c, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 7683947cf35bc7b4c9602168b0172291, type: 3}
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
     text: Sama-sama! Yaudah, sekarang coba cek sendiri emailnya di meja operator
       kamu. Lihat apakah kamu bisa bedain mana yang asli dan mana yang phishing!
     voiceClip: {fileID: 8300000, guid: d70a7e2909ab4aa6ac8aa914711bc0ab, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak

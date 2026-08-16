@@ -18,6 +18,10 @@ MonoBehaviour:
   playerTalkingPortrait: {fileID: 21300000, guid: 95c659829391a004b969732848b77355, type: 3}
   playerThinkingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerSmilingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
+  femalePlayerPortrait: {fileID: 21300000, guid: 457d9f7f459322e4ebd9f545fabd4566, type: 3}
+  femalePlayerTalkingPortrait: {fileID: 21300000, guid: f4ffd3f5ee3068b4d9fc4a49eb3eb079, type: 3}
+  femalePlayerThinkingPortrait: {fileID: 0}
+  femalePlayerSmilingPortrait: {fileID: 0}
   npc2Name: 
   npcPortrait: {fileID: 21300000, guid: 79b4712106820ac4bbe4d0dd6cc0152f, type: 3}
   npcTalkingPortrait: {fileID: 21300000, guid: 79b4712106820ac4bbe4d0dd6cc0152f, type: 3}
@@ -34,45 +38,53 @@ MonoBehaviour:
     expression: {fileID: 0}
     text: Selamat datang. Kamu yang baru ditempatkan di area kerja browser, ya?
     voiceClip: {fileID: 8300000, guid: 6b987cd267b1b004cbb8692b6d54a751, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Iya. Saya mau mulai, tapi masih belum yakin harus akses web dari mana dulu.
     voiceClip: {fileID: 8300000, guid: 631c28ecd95662b44af4c4c22e60da48, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 738252448878f5e4d8496da771e181dc, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Mulai dari cara yang aman. Ketik alamat situs resmi langsung, atau pakai
       bookmark kantor kalau sudah disediakan.
     voiceClip: {fileID: 8300000, guid: be89e88baa212044e84674e2174e77bf, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 1
     mood: 2
     expression: {fileID: 0}
     text: Jangan asal klik iklan, link yang muncul tiba-tiba, atau pop up yang memaksa
       kamu menekan tombol tertentu.
     voiceClip: {fileID: 8300000, guid: 16b2ebbc989822040b735872dacf4266, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 2
     expression: {fileID: 0}
     text: Kalau ada pop up yang bilang komputer kena virus dan harus klik sekarang?
     voiceClip: {fileID: 8300000, guid: 744eac1f3d646704ebda2919a3459e3f, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 33c742b70042a2645bfd8421f086e135, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Tutup dari tombol browser atau taskbar. Jangan klik tombol di dalam pop
       up kalau tampilannya mencurigakan, apalagi sampai download aplikasi.
     voiceClip: {fileID: 8300000, guid: 2e36d8595d393574a961d65b96357085, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 1
     mood: 3
     expression: {fileID: 0}
     text: Kalau lapar atau haus, vending machine ada di koridor kanan. Setelah itu
       balik ke meja dan browsing dengan hati-hati.
     voiceClip: {fileID: 8300000, guid: 99abdba271e294348ae4e4c42193e999, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 3
     expression: {fileID: 0}
     text: Siap. Saya ambil minum dulu, lalu kembali ke meja.
     voiceClip: {fileID: 8300000, guid: ca57bea83bb177048a02650d1d941a55, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: eb5cf7d897e55dd4087f9a5277dd4d07, type: 3}
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak

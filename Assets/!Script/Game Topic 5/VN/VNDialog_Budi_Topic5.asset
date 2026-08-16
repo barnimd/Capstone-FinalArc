@@ -12,12 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
   m_Name: VNDialog_Budi_Topic5
   m_EditorClassIdentifier: 
-  playerName: Raka
+  playerName: Kamu
   npcName: Budi
   playerPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerTalkingPortrait: {fileID: 21300000, guid: 95c659829391a004b969732848b77355, type: 3}
   playerThinkingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerSmilingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
+  femalePlayerPortrait: {fileID: 21300000, guid: 457d9f7f459322e4ebd9f545fabd4566, type: 3}
+  femalePlayerTalkingPortrait: {fileID: 21300000, guid: f4ffd3f5ee3068b4d9fc4a49eb3eb079, type: 3}
+  femalePlayerThinkingPortrait: {fileID: 0}
+  femalePlayerSmilingPortrait: {fileID: 0}
   npc2Name: 
   npcPortrait: {fileID: 21300000, guid: b8e6edff401670f41888301acf5e2c94, type: 3}
   npcTalkingPortrait: {fileID: 21300000, guid: b8e6edff401670f41888301acf5e2c94, type: 3}
@@ -34,39 +38,46 @@ MonoBehaviour:
     expression: {fileID: 0}
     text: Eh, nyari sesuatu?
     voiceClip: {fileID: 8300000, guid: 9f617a7de34d31a409436afbe0a1465e, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Lagi perhatiin orang-orang. Kamu lihat ada yang aneh di sini?
     voiceClip: {fileID: 8300000, guid: 77b0eead442c177428e9226b312e2983, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: c176813ad7a142d40916b462531f639b, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Tadi aku lewat ruang karaoke. Ada seorang pria duduk sendiri di pojok.
       Anehnya, dia nggak nyanyi sama sekali, malah fokus banget ke laptop.
     voiceClip: {fileID: 8300000, guid: 516b413fcc7faf940aba46c1e920a202, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Dia bawa tas besar, ada kabel-kabel keluar dan kotak kecil nyala-nyala
       di mejanya.
     voiceClip: {fileID: 8300000, guid: f2cd0c2004ea9334b9938912b0f4ee0f, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Kabel networking?
     voiceClip: {fileID: 8300000, guid: 4b71418ddffb2c646856bb98371f3b77, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 4d4a247f14498424ca8b0dd5ad5a4ead, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Kayaknya iya. Aku nggak ngerti teknis, tapi rasanya nggak lazim buat orang
       yang katanya mau karaoke.
     voiceClip: {fileID: 8300000, guid: 92b7d4f263c85cb4092e34b88963b7c2, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Oke, makasih infonya.
     voiceClip: {fileID: 8300000, guid: 4e9de9a1d52a1a345b3e7729b8f280be, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: f8efc99e3bd839b49a51e092afd9e252, type: 3}
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak

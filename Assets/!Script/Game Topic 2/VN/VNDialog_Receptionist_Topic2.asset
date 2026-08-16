@@ -18,6 +18,10 @@ MonoBehaviour:
   playerTalkingPortrait: {fileID: 21300000, guid: 6f7b85b4da78fd74eb50431daa554c0f, type: 3}
   playerThinkingPortrait: {fileID: 0}
   playerSmilingPortrait: {fileID: 0}
+  femalePlayerPortrait: {fileID: 21300000, guid: 457d9f7f459322e4ebd9f545fabd4566, type: 3}
+  femalePlayerTalkingPortrait: {fileID: 21300000, guid: f4ffd3f5ee3068b4d9fc4a49eb3eb079, type: 3}
+  femalePlayerThinkingPortrait: {fileID: 0}
+  femalePlayerSmilingPortrait: {fileID: 0}
   npc2Name: 
   npcPortrait: {fileID: 21300000, guid: bf6e39962e9012a49afda18797a83373, type: 3}
   npcTalkingPortrait: {fileID: 0}
@@ -34,32 +38,38 @@ MonoBehaviour:
     expression: {fileID: 0}
     text: Selamat datang di kantor! Apakah ini hari pertamamu?
     voiceClip: {fileID: 8300000, guid: ae8892923df64fa5b0cc659ba093caa9, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
     text: Iya, hari pertama. Saya masih bingung harus mulai dari mana.
     voiceClip: {fileID: 8300000, guid: 40030b4ab4fa46d8921f25fb0de903e2, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 1dc2db552d9449146bcf7602c88d9e78, type: 3}
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
     text: Tenang, saya bantu. Meja kerjamu ada di lantai 2, sebelah kiri tangga.
     voiceClip: {fileID: 8300000, guid: daa5c3771b9c4e4683e1e04fc578b059, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: "Sebelum mulai \u2014 jangan asal klik link di email atau pasang aplikasi
       sembarangan, ya."
     voiceClip: {fileID: 8300000, guid: 5dd79373799f48cda9effb1b94028d17, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
     text: Baik, saya akan hati-hati.
     voiceClip: {fileID: 8300000, guid: 7c5c27d833ea43fe869380a230fa1a6a, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 7868faa2a27c2b646a77a98710f975f3, type: 3}
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
     text: Bagus. Selamat bekerja!
     voiceClip: {fileID: 8300000, guid: ca3333b6c42b48048830c0fa7cc84042, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak

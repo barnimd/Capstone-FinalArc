@@ -53,6 +53,10 @@ public class VNLine
 
     [Tooltip("Voice clip for this line. Leave empty = no voice (silent line).")]
     public AudioClip voiceClip;
+
+    [Tooltip("Female voice for PLAYER lines. NPC lines continue using voiceClip. " +
+             "Leave empty to keep the female player line silent; it never falls back to the male voice.")]
+    public AudioClip femalePlayerVoiceClip;
 }
 
 /// <summary>
@@ -84,6 +88,19 @@ public class VNDialogueData : ScriptableObject
 
     [Tooltip("Happy / smiling sprite for the PLAYER. Used when a line's mood = Smiling. (Optional)")]
     public Sprite playerSmilingPortrait;
+
+    [Header("Female Player Portraits — Expressions")]
+    [Tooltip("Female default / idle sprite. If empty, the legacy player portrait is used with a one-time warning.")]
+    public Sprite femalePlayerPortrait;
+
+    [Tooltip("Female mouth-open / speaking sprite. Falls back to the female default sprite.")]
+    public Sprite femalePlayerTalkingPortrait;
+
+    [Tooltip("Female thinking sprite. Falls back to the female default sprite.")]
+    public Sprite femalePlayerThinkingPortrait;
+
+    [Tooltip("Female smiling sprite. Falls back to the female default sprite.")]
+    public Sprite femalePlayerSmilingPortrait;
 
     [Tooltip("Display name for NPC 2 (optional, hanya diisi kalau dialog punya 2 NPC).")]
     public string npc2Name = "";
@@ -145,8 +162,32 @@ public class VNDialogueData : ScriptableObject
     /// </summary>
     public Sprite GetExpressionSprite(VNSpeaker speaker, VNExpression mood)
     {
+        return GetExpressionSprite(speaker, mood, PlayerGender.Male);
+    }
+
+    /// <summary>
+    /// Gender-aware portrait lookup. Gender only affects the Player slot;
+    /// NPC, NPC2, and Narrator keep their existing portraits.
+    /// </summary>
+    public Sprite GetExpressionSprite(VNSpeaker speaker, VNExpression mood, PlayerGender playerGender)
+    {
         if (speaker == VNSpeaker.Player)
         {
+            if (playerGender == PlayerGender.Female)
+            {
+                Sprite femaleDefault = femalePlayerPortrait != null
+                    ? femalePlayerPortrait
+                    : playerPortrait;
+
+                switch (mood)
+                {
+                    case VNExpression.Talking:  return femalePlayerTalkingPortrait  != null ? femalePlayerTalkingPortrait  : femaleDefault;
+                    case VNExpression.Thinking: return femalePlayerThinkingPortrait != null ? femalePlayerThinkingPortrait : femaleDefault;
+                    case VNExpression.Smiling:  return femalePlayerSmilingPortrait  != null ? femalePlayerSmilingPortrait  : femaleDefault;
+                    default: return femaleDefault;
+                }
+            }
+
             switch (mood)
             {
                 case VNExpression.Talking:  return playerTalkingPortrait  != null ? playerTalkingPortrait  : playerPortrait;

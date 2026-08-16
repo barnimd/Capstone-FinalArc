@@ -12,12 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
   m_Name: VNDialog_PakHendra_Topic5
   m_EditorClassIdentifier: 
-  playerName: Raka
+  playerName: Kamu
   npcName: Pak Hendra
   playerPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerTalkingPortrait: {fileID: 21300000, guid: 95c659829391a004b969732848b77355, type: 3}
   playerThinkingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerSmilingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
+  femalePlayerPortrait: {fileID: 21300000, guid: 457d9f7f459322e4ebd9f545fabd4566, type: 3}
+  femalePlayerTalkingPortrait: {fileID: 21300000, guid: f4ffd3f5ee3068b4d9fc4a49eb3eb079, type: 3}
+  femalePlayerThinkingPortrait: {fileID: 0}
+  femalePlayerSmilingPortrait: {fileID: 0}
   npc2Name: 
   npcPortrait: {fileID: 21300000, guid: 594109a26197a644e88c1a8d9d9fe860, type: 3}
   npcTalkingPortrait: {fileID: 21300000, guid: 594109a26197a644e88c1a8d9d9fe860, type: 3}
@@ -34,57 +38,67 @@ MonoBehaviour:
     expression: {fileID: 0}
     text: Oh, tamu? Ada yang bisa dibantu?
     voiceClip: {fileID: 8300000, guid: 26b05b91cb776e5449766989e9a628a3, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Pak, saya mau tanya. Wi-Fi kafe ini namanya CafeBean_Free kan? Tapi ada
       juga FREE_CAFE_WIFI dan CafeBean_Free_5G. Itu punya kafe juga?
     voiceClip: {fileID: 8300000, guid: 3f4e1144693dd684db2c7c1960bdca51, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 15834b70388d86d46b061e7f0308eb96, type: 3}
   - speaker: 1
     mood: 2
     expression: {fileID: 0}
     text: Bukan. Kami hanya punya satu jaringan, CafeBean_Free. Yang lain bukan milik
       kami.
     voiceClip: {fileID: 8300000, guid: f04412e15c22ee44cb1fa2206d85bf20, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Jadi ada yang sengaja bikin jaringan palsu?
     voiceClip: {fileID: 8300000, guid: b07d24c889eb9a747a14fc5f4f50ea64, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: bc8e112d91b37e64e86382647636e002, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Ini disebut Evil Twin Attack. Seseorang membuat hotspot dengan nama yang
       mirip Wi-Fi asli.
     voiceClip: {fileID: 8300000, guid: ac7ec2e8ac97eb543a95f6888021ac94, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: 'Kalau orang connect ke sana, data yang dikirim bisa disadap: password,
       email, bahkan data kartu kredit.'
     voiceClip: {fileID: 8300000, guid: 37502e0c7defd5a48b15e1132b7a265a, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Orangnya masih di sini?
     voiceClip: {fileID: 8300000, guid: cd1039b939471de41b14a1e2a01660aa, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: fcd8e6cce4376dc41bb7f4714b276e32, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Kemungkinan besar iya. Pelakunya harus berada dalam jangkauan fisik. Perhatikan
       orang yang membawa router portable atau laptop dengan antena tambahan.
     voiceClip: {fileID: 8300000, guid: ff9a137b4655b0145ac6afea722131d9, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Saya coba cari.
     voiceClip: {fileID: 8300000, guid: fe2f82d3c6c51e540833af93b1b5220a, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: d27bb6e545438eb4bb73c63cc67877ae, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Hati-hati. Kalau sudah ketemu, jangan konfrontasi sendiri. Langsung kabari
       saya.
     voiceClip: {fileID: 8300000, guid: 1f495a587319b6d449d38d4aaccfd410, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak

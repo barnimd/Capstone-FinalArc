@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 /// <summary>
 /// Shared Visual-Novel style dialogue manager used by Topic 1-6 maps.
@@ -150,6 +151,8 @@ public class VNDialogueManager : MonoBehaviour
     private float nextFastForwardTime;
     private bool wasFastForwardHeld;
     private bool fastForwardBlockedUntilRelease;
+    private string resolvedPlayerName = VNPlayerPresentationResolver.DefaultPlayerName;
+    private readonly HashSet<string> warnedMissingFemaleAssets = new HashSet<string>();
 
     private PlayerMovement playerMovement;
     private VNNPCInteractable activeNPC;
@@ -270,6 +273,13 @@ public class VNDialogueManager : MonoBehaviour
     {
         current = data;
         lineIndex = 0;
+        resolvedPlayerName = VNPlayerPresentationResolver.ResolveDisplayName(data.playerName);
+        PlayerGender playerGender = VNPlayerPresentationResolver.CurrentGender;
+        Sprite resolvedPlayerPortrait = data.GetExpressionSprite(
+            VNSpeaker.Player, VNExpression.Default, playerGender);
+
+        if (playerGender == PlayerGender.Female && data.femalePlayerPortrait == null)
+            WarnMissingFemaleAssetOnce(data, -1, "portrait; using the legacy player portrait");
 
         if (vnRoot != null) vnRoot.SetActive(true);
         if (acceptButton != null) acceptButton.gameObject.SetActive(false);
@@ -277,7 +287,7 @@ public class VNDialogueManager : MonoBehaviour
 
         // Hide PLAYER / NPC placeholder labels when real portrait sprites are provided.
         if (playerPortraitLabel != null)
-            playerPortraitLabel.SetActive(data.playerPortrait == null);
+            playerPortraitLabel.SetActive(resolvedPlayerPortrait == null);
         if (npcPortraitLabel != null)
             npcPortraitLabel.SetActive(data.npcPortrait == null);
 
@@ -312,9 +322,9 @@ public class VNDialogueManager : MonoBehaviour
         // Default portraits — fall back to tinted placeholders if missing
         if (playerPortraitImage != null)
         {
-            if (data.playerPortrait != null)
+            if (resolvedPlayerPortrait != null)
             {
-                playerPortraitImage.sprite = data.playerPortrait;
+                playerPortraitImage.sprite = resolvedPlayerPortrait;
                 playerBaseColor = Color.white;
             }
             else
@@ -370,6 +380,7 @@ public class VNDialogueManager : MonoBehaviour
         }
 
         VNLine line = current.lines[lineIndex];
+        PlayerGender playerGender = VNPlayerPresentationResolver.CurrentGender;
 
         // Resolve portraits based on the line's mood + per-line override.
         // The INACTIVE speaker always uses the Default sprite (listening face).
@@ -378,19 +389,21 @@ public class VNDialogueManager : MonoBehaviour
         //   - the Talking sprite when mood == Default (auto-revert to Default after typing), OR
         //   - the matching mood sprite otherwise (Thinking / Smiling — stays put).
         currentLineSpeaker = line.speaker;
-        autoRevertOnFinish = (line.expression == null && line.mood == VNExpression.Default);
+        bool femalePlayerLine = line.speaker == VNSpeaker.Player && playerGender == PlayerGender.Female;
+        autoRevertOnFinish = (line.mood == VNExpression.Default &&
+                              (line.expression == null || femalePlayerLine));
 
         Sprite activeSprite;
-        if (line.expression != null)
+        if (line.expression != null && !femalePlayerLine)
             activeSprite = line.expression;
         else if (line.mood == VNExpression.Default)
-            activeSprite = current.GetExpressionSprite(line.speaker, VNExpression.Talking);
+            activeSprite = current.GetExpressionSprite(line.speaker, VNExpression.Talking, playerGender);
         else
-            activeSprite = current.GetExpressionSprite(line.speaker, line.mood);
+            activeSprite = current.GetExpressionSprite(line.speaker, line.mood, playerGender);
 
         Sprite playerSprite = (line.speaker == VNSpeaker.Player)
             ? activeSprite
-            : current.GetExpressionSprite(VNSpeaker.Player, VNExpression.Default);
+            : current.GetExpressionSprite(VNSpeaker.Player, VNExpression.Default, playerGender);
 
         // Slot kanan dipakai bersama NPC dan NPC2 — swap sprite tergantung siapa yang bicara.
         Sprite npcSprite;
@@ -423,7 +436,7 @@ public class VNDialogueManager : MonoBehaviour
         {
             switch (line.speaker)
             {
-                case VNSpeaker.Player: speakerNameText.text = current.playerName; break;
+                case VNSpeaker.Player: speakerNameText.text = resolvedPlayerName; break;
                 case VNSpeaker.NPC:    speakerNameText.text = current.npcName; break;
                 case VNSpeaker.NPC2:   speakerNameText.text = current.npc2Name; break;
                 default: speakerNameText.text = ""; break;
@@ -440,12 +453,21 @@ public class VNDialogueManager : MonoBehaviour
 
         // Checkbox "Dialogue" di Settings mematikan voice + klik ketik
         bool dialogueAudioOn = GameSettings.DialogueEnabled;
+        AudioClip resolvedVoiceClip = VNPlayerPresentationResolver.ResolveVoiceClip(line, playerGender);
+
+        if (playerGender == PlayerGender.Female &&
+            line.speaker == VNSpeaker.Player &&
+            !VNPlayerPresentationResolver.ContainsDynamicPlayerName(line.text) &&
+            line.femalePlayerVoiceClip == null)
+        {
+            WarnMissingFemaleAssetOnce(current, lineIndex, "voice; line will be silent");
+        }
 
         if (voiceSource != null)
         {
             voiceSource.Stop();
-            if (dialogueAudioOn && !fastForwarding && line.voiceClip != null)
-                voiceSource.PlayOneShot(line.voiceClip);
+            if (dialogueAudioOn && !fastForwarding && resolvedVoiceClip != null)
+                voiceSource.PlayOneShot(resolvedVoiceClip);
         }
 
         // Single click SFX on each new line (not per character)
@@ -453,7 +475,7 @@ public class VNDialogueManager : MonoBehaviour
             sfxSource.PlayOneShot(keypressClip, keypressVolume);
 
         // Type
-        fullSentence = line.text ?? "";
+        fullSentence = VNPlayerPresentationResolver.ResolveLineText(line.text, resolvedPlayerName);
         if (typingCo != null) StopCoroutine(typingCo);
         typingCo = StartCoroutine(TypeSentence(fullSentence));
     }
@@ -514,7 +536,10 @@ public class VNDialogueManager : MonoBehaviour
         // next line replaces it.
         if (autoRevertOnFinish && current != null)
         {
-            Sprite defaultSprite = current.GetExpressionSprite(currentLineSpeaker, VNExpression.Default);
+            Sprite defaultSprite = current.GetExpressionSprite(
+                currentLineSpeaker,
+                VNExpression.Default,
+                VNPlayerPresentationResolver.CurrentGender);
             if (defaultSprite != null)
             {
                 if (currentLineSpeaker == VNSpeaker.Player && playerPortraitImage != null)
@@ -545,6 +570,18 @@ public class VNDialogueManager : MonoBehaviour
             if (IsFastForwardKeyHeld())
                 fastForwardBlockedUntilRelease = true;
         }
+    }
+
+    void WarnMissingFemaleAssetOnce(VNDialogueData data, int affectedLineIndex, string detail)
+    {
+        string assetName = data != null ? data.name : "UnknownDialogue";
+        string key = assetName + ":" + affectedLineIndex + ":" + detail;
+        if (!warnedMissingFemaleAssets.Add(key))
+            return;
+
+        string lineLabel = affectedLineIndex >= 0 ? " line " + (affectedLineIndex + 1) : string.Empty;
+        Debug.LogWarning("[VNDialogueManager] Missing female " + detail + " in " +
+                         assetName + lineLabel + ".");
     }
 
     void Update()

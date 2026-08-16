@@ -12,12 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
   m_Name: VNDialog_MasAnto_ChoiceC_Topic5
   m_EditorClassIdentifier: 
-  playerName: Raka
+  playerName: Kamu
   npcName: Mas Anto
   playerPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerTalkingPortrait: {fileID: 21300000, guid: 95c659829391a004b969732848b77355, type: 3}
   playerThinkingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerSmilingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
+  femalePlayerPortrait: {fileID: 21300000, guid: 457d9f7f459322e4ebd9f545fabd4566, type: 3}
+  femalePlayerTalkingPortrait: {fileID: 21300000, guid: f4ffd3f5ee3068b4d9fc4a49eb3eb079, type: 3}
+  femalePlayerThinkingPortrait: {fileID: 0}
+  femalePlayerSmilingPortrait: {fileID: 0}
   npc2Name: 
   npcPortrait: {fileID: 21300000, guid: 73896fe4f27144945b5e3d3c555552d5, type: 3}
   npcTalkingPortrait: {fileID: 21300000, guid: 73896fe4f27144945b5e3d3c555552d5, type: 3}
@@ -34,32 +38,38 @@ MonoBehaviour:
     expression: {fileID: 0}
     text: Kenapa kamu lakuin ini?
     voiceClip: {fileID: 8300000, guid: 1c72f71aab3abf14fb48eccac2383565, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: c291d5f1e04c4cc439a82d2613f565e8, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Iseng aja. Orang-orang terlalu gampang percaya Wi-Fi gratis.
     voiceClip: {fileID: 8300000, guid: 4a0d3ec18f9113f41b505b40be31ae08, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Itu bukan iseng. Itu kejahatan siber.
     voiceClip: {fileID: 8300000, guid: 4d80bc76995310d439ddaa12ef70cb7d, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 3bb711c7eda638a43a5e2134e3da8315, type: 3}
   - speaker: 1
     mood: 2
     expression: {fileID: 0}
     text: ...
     voiceClip: {fileID: 0}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Matikan sekarang.
     voiceClip: {fileID: 8300000, guid: f3348191c0d9f3742a81ed5136897d74, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: f58c9d5a08b96a24c9a214b7ef480f84, type: 3}
   - speaker: 2
     mood: 0
     expression: {fileID: 0}
     text: Mas Anto mematikan router dan pergi. Tanpa laporan ke staff, tidak ada
       konsekuensi resmi.
     voiceClip: {fileID: 0}
+    femalePlayerVoiceClip: {fileID: 0}
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak

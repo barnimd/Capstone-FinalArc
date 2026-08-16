@@ -12,12 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
   m_Name: VNDialog_BuDewi_Topic5
   m_EditorClassIdentifier: 
-  playerName: Raka
+  playerName: Kamu
   npcName: Bu Dewi
   playerPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerTalkingPortrait: {fileID: 21300000, guid: 95c659829391a004b969732848b77355, type: 3}
   playerThinkingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerSmilingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
+  femalePlayerPortrait: {fileID: 21300000, guid: 457d9f7f459322e4ebd9f545fabd4566, type: 3}
+  femalePlayerTalkingPortrait: {fileID: 21300000, guid: f4ffd3f5ee3068b4d9fc4a49eb3eb079, type: 3}
+  femalePlayerThinkingPortrait: {fileID: 0}
+  femalePlayerSmilingPortrait: {fileID: 0}
   npc2Name: 
   npcPortrait: {fileID: 21300000, guid: e7203f31b6f3ac64fa0881e82ed1edda, type: 3}
   npcTalkingPortrait: {fileID: 21300000, guid: e7203f31b6f3ac64fa0881e82ed1edda, type: 3}
@@ -34,39 +38,46 @@ MonoBehaviour:
     expression: {fileID: 0}
     text: Ruangan ini sudah dipesan untuk meeting.
     voiceClip: {fileID: 8300000, guid: 46d36520d4a574044a58ef5257e220b5, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Maaf Bu, sebentar saja. Saya mau kasih tahu, ada Wi-Fi palsu di gedung
       ini. Namanya mirip punya kafe.
     voiceClip: {fileID: 8300000, guid: 66f1063623f34f549abf3a3d689ce4a0, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: c996e12b28ea41d468cd5ddfcdba1368, type: 3}
   - speaker: 1
     mood: 2
     expression: {fileID: 0}
     text: Wi-Fi palsu? Saya baru connect ke CafeBean_Free_5G. Ini salah?
     voiceClip: {fileID: 8300000, guid: 5038d1e3d54d7c040821132e725ada8f, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Ya Bu. Itu bukan jaringan kafe. Segera disconnect dan ganti ke CafeBean_Free
       yang terproteksi.
     voiceClip: {fileID: 8300000, guid: 7df69abcf714c2846a5e2bb71c711ef2, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 8d6b6aa1a29d51b41a43c7bd4c5c3664, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Astaga. Saya baru kirim dokumen kontrak tadi. Kalau sampai bocor...
     voiceClip: {fileID: 8300000, guid: 11054b6dee41c49459f630e49726d22d, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Semoga belum sempat disadap. Setelah ini ganti password email dan cek aktivitas
       login yang mencurigakan.
     voiceClip: {fileID: 8300000, guid: be2d3084b3e5f0745a886abdd6d84196, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 7e392a8b7547b2846a455fefd8b8995b, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Terima kasih banyak. Tolong laporkan orang itu.
     voiceClip: {fileID: 8300000, guid: 9e4434dff563b304292e43508113edd2, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak

@@ -18,6 +18,10 @@ MonoBehaviour:
   playerTalkingPortrait: {fileID: 21300000, guid: 6f7b85b4da78fd74eb50431daa554c0f, type: 3}
   playerThinkingPortrait: {fileID: 0}
   playerSmilingPortrait: {fileID: 0}
+  femalePlayerPortrait: {fileID: 21300000, guid: 457d9f7f459322e4ebd9f545fabd4566, type: 3}
+  femalePlayerTalkingPortrait: {fileID: 21300000, guid: f4ffd3f5ee3068b4d9fc4a49eb3eb079, type: 3}
+  femalePlayerThinkingPortrait: {fileID: 0}
+  femalePlayerSmilingPortrait: {fileID: 0}
   npc2Name: 
   npcPortrait: {fileID: 21300000, guid: b6529a954a0d07f44935fa59e90116e2, type: 3}
   npcTalkingPortrait: {fileID: 0}
@@ -34,55 +38,65 @@ MonoBehaviour:
     expression: {fileID: 0}
     text: Hei kamu! IT Support yang baru ya?
     voiceClip: {fileID: 8300000, guid: 6edf149631d54413933426300b239fe0, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
     text: Iya Pak, saya anak IT Support baru disini.
     voiceClip: {fileID: 8300000, guid: 98984a73d01946b38a55c9ac4b581b07, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: e0274e28ec82ed643b5b67c847dad2a4, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: "Pas banget nih. Ini ada email masuk \u2014 katanya update software akuntansi
       baru."
     voiceClip: {fileID: 8300000, guid: 8c928a3eb8674c7faabf215ed7b6c75f, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 1
     mood: 1
     expression: {fileID: 0}
     text: Tolong install di laptop aku ya. Divisi Finance semua sudah pakai versi
       ini katanya.
     voiceClip: {fileID: 8300000, guid: 1564117ed54d414289125fea9ff4bdee, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 2
     expression: {fileID: 0}
     text: "(Software akuntansi dikirim lewat email? \nItu bukan prosedur standar...)"
     voiceClip: {fileID: 8300000, guid: 29be710e121440deab11139803433070, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: 5d9bea1cd7d3dd448a157f90eac88aec, type: 3}
   - speaker: 0
     mood: 1
     expression: {fileID: 0}
     text: "Pak, biasanya update software resmi itu \ntidak dikirim lewat email, harus
       lewat jalur IT."
     voiceClip: {fileID: 8300000, guid: d0ca83e892cc4e20aea8cca9dc525694, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: ab1c6c1acafa3af43adb456251890623, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: "Ih, kamu terlalu ribet. \nIni dari teman aku di Finance, aman kok."
     voiceClip: {fileID: 8300000, guid: e71ea16bbeaf430681da53a289e8f03a, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: "Aku mau meeting sebentar lagi. \nCepet ya ,5 menit aja."
     voiceClip: {fileID: 8300000, guid: 9fca96c95dc44fe4b07a3b13fe2a3190, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 2
     mood: 0
     expression: {fileID: 0}
     text: "(File dari email tidak dikenal, dikirim bukan lewat \nsistem IT resmi,
       dengan tekanan waktu.)"
     voiceClip: {fileID: 0}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 2
     mood: 0
     expression: {fileID: 0}
     text: (Install file ini, atau tolak dan lapor ke supervisor?)
     voiceClip: {fileID: 0}
+    femalePlayerVoiceClip: {fileID: 0}
   hasChoice: 0
   acceptText: Oke Pak, saya install.
   rejectText: Maaf Pak, saya harus verifikasi dulu.

@@ -12,12 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b29ab082cca6a48bf9bd09d0f17099, type: 3}
   m_Name: VNDialog_MasAnto_ChoiceB_Topic5
   m_EditorClassIdentifier: 
-  playerName: Raka
+  playerName: Kamu
   npcName: Mas Anto
   playerPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerTalkingPortrait: {fileID: 21300000, guid: 95c659829391a004b969732848b77355, type: 3}
   playerThinkingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
   playerSmilingPortrait: {fileID: 21300000, guid: 89e838a202b83e144b83d8e430634495, type: 3}
+  femalePlayerPortrait: {fileID: 21300000, guid: 457d9f7f459322e4ebd9f545fabd4566, type: 3}
+  femalePlayerTalkingPortrait: {fileID: 21300000, guid: f4ffd3f5ee3068b4d9fc4a49eb3eb079, type: 3}
+  femalePlayerThinkingPortrait: {fileID: 0}
+  femalePlayerSmilingPortrait: {fileID: 0}
   npc2Name: 
   npcPortrait: {fileID: 21300000, guid: 73896fe4f27144945b5e3d3c555552d5, type: 3}
   npcTalkingPortrait: {fileID: 21300000, guid: 73896fe4f27144945b5e3d3c555552d5, type: 3}
@@ -34,22 +38,26 @@ MonoBehaviour:
     expression: {fileID: 0}
     text: Matikan sekarang, atau saya panggil staff.
     voiceClip: {fileID: 8300000, guid: 8bbfc09c97b93c04fb78a6eedc94e389, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: c72b49a8f95852e48b954a2aa5896e64, type: 3}
   - speaker: 1
     mood: 0
     expression: {fileID: 0}
     text: Oke oke, aku matiin. Nggak ada yang rugi kan?
     voiceClip: {fileID: 8300000, guid: 1434ca11c79918d43b281ef50998fa97, type: 3}
+    femalePlayerVoiceClip: {fileID: 0}
   - speaker: 0
     mood: 0
     expression: {fileID: 0}
     text: Ada yang sudah kena. Kamu harus tanggung jawab.
     voiceClip: {fileID: 8300000, guid: 35016b79281b18d449d5c3c9d7141a9e, type: 3}
+    femalePlayerVoiceClip: {fileID: 8300000, guid: d659d2d7eb771ec4bbf8e20966467942, type: 3}
   - speaker: 2
     mood: 0
     expression: {fileID: 0}
     text: Mas Anto mematikan router, mengemas barangnya, lalu pergi. Wi-Fi palsu
       hilang dari daftar jaringan.
     voiceClip: {fileID: 0}
+    femalePlayerVoiceClip: {fileID: 0}
   hasChoice: 0
   acceptText: Ya
   rejectText: Tidak
